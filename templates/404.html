@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}ვერ მოიძებნა — {{ site_name }}{% endblock %}
+{% block content %}
+  <div class="empty">
+    <h2>404</h2>
+    <p>გვერდი ვერ მოიძებნა.</p>
+    <a class="btn" href="{{ url_for('index') }}">მთავარზე დაბრუნება</a>
+  </div>
+{% endblock %}

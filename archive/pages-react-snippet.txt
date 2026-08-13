@@ -1,0 +1,41 @@
+import catalog from "../data/kinomigma_catalog.json";
+
+export default function CatalogPage() {
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Catalog</h1>
+      {catalog.map(item => (
+        <div key={item.url} style={{ marginBottom: "30px" }}>
+          <h2>{item.title} ({item.year})</h2>
+          <p><strong>Genre:</strong> {item.genre}</p>
+          <p>{item.description}</p>
+          {item.player && (
+            <iframe
+              src={item.player}
+              width="560"
+              height="315"
+              allowFullScreen
+              title={item.title}
+            ></iframe>
+          )}
+          {item.episodes && item.episodes.length > 0 && (
+            <ul>
+              {item.episodes.map((ep, i) => (
+                <li key={i}>
+                  {ep.episode}
+                  <iframe
+                    src={ep.player}
+                    width="560"
+                    height="315"
+                    allowFullScreen
+                    title={ep.episode}
+                  ></iframe>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}

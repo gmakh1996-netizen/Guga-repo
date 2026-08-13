@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}დათვალიერება — {{ site_name }}{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='theme/web/css/filter-redesign.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='theme/web/css/filter-v2.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="filter movie-list filter-redesign">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="ge-filterbar"
+             data-type="{{ media }}" data-genre="{{ genre_id or '' }}"
+             data-year="{{ year }}" data-sort="{{ sort }}" data-q="{{ q }}">
+          <div class="ge-filter__group">
+            <label>კატეგორია</label>
+            <select id="fType">
+              <option value="movie" {{ 'selected' if media=='movie' }}>ფილმები</option>
+              <option value="serial" {{ 'selected' if media in ['tv','serial'] }}>სერიალები</option>
+            </select>
+          </div>
+          <div class="ge-filter__group">
+            <label>ჟანრი</label>
+            <select id="fGenre">
+              <option value="">ყველა ჟანრი</option>
+              {% for g in all_genres %}
+                <option value="{{ g.id }}" {{ 'selected' if genre_id==g.id }}>{{ g.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="ge-filter__group">
+            <label>წელი</label>
+            <select id="fYear">
+              <option value="">ყველა წელი</option>
+              {% for y in years %}
+                <option value="{{ y }}" {{ 'selected' if year==y|string }}>{{ y }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="ge-filter__group">
+            <label>დალაგება</label>
+            <select id="fSort">
+              <option value="popularity" {{ 'selected' if sort=='popularity' }}>პოპულარობით</option>
+              <option value="rating" {{ 'selected' if sort=='rating' }}>რეიტინგით</option>
+              <option value="newest" {{ 'selected' if sort=='newest' }}>უახლესი</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" id="filterResults"></div>
+    <p class="ge-empty" id="filterEmpty" hidden>ამ ფილტრით ვერაფერი მოიძებნა.</p>
+    <div id="filterSentinel" style="height:1px"></div>
+    <div class="ge-loader" id="filterLoader" hidden>იტვირთება…</div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,572 @@
+/* ===========================================================
+   Filter redesign — gemovie.tv
+   1:1 visual match with provided screenshot:
+   - Dark chip pills, hover === active state
+   - Red brand accent (#fb3b3b) for checkbox & submit button
+   - Sticky filter on desktop
+   - Two-column year picker (From / To) with quick-select grid
+   =========================================================== */
+
+/* ---------- Override existing .filter-form / .filter-dropdowns ---------- */
+.filter-redesign .filter-form {
+   background: transparent !important;
+   padding: 0 !important;
+   border-radius: 0 !important;
+   margin-top: 12px;
+}
+
+.filter-redesign .filter-dropdowns {
+   display: flex !important;
+   flex-wrap: wrap;
+   gap: 6px !important;
+   align-items: center;
+   justify-content: flex-start !important;
+   background: rgba(20, 22, 28, 0.55);
+   border: 1px solid rgba(255, 255, 255, 0.04);
+   border-radius: 14px;
+   padding: 8px;
+   row-gap: 8px;
+}
+
+/* Push action group (მოძებნა + გასუფთავება) to far right on wide screens */
+@media (min-width: 768px) {
+   .filter-redesign .filter-item.filter-submit {
+      margin-left: auto !important;
+   }
+}
+@media (max-width: 767.98px) {
+   .filter-redesign .filter-item.filter-submit,
+   .filter-redesign .filter-item.filter-clear {
+      flex: 1 1 auto;
+      text-align: center;
+   }
+   .filter-redesign .filter-item.filter-submit button[type="submit"] {
+      width: 100%;
+   }
+}
+
+/* ---------- Sticky on desktop ---------- */
+@media (min-width: 992px) {
+   body.has-sticky-filter .filter-redesign .filter-form {
+      position: sticky;
+      top: 8px;
+      z-index: 60;
+   }
+   body.has-sticky-filter .filter-redesign .filter-dropdowns {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(15, 16, 19, 0.92);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+   }
+}
+
+/* ---------- Filter chip ---------- */
+.filter-redesign .filter-item {
+   margin: 0 !important;
+   padding: 0 !important;
+   border-radius: 10px;
+   background: #1a1c20;
+   position: relative;
+   transition: background 0.15s ease;
+}
+
+.filter-redesign .filter-item:hover,
+.filter-redesign .filter-item.is-open {
+   background: #25272d;
+}
+
+.filter-redesign .filter-item > .btn.dropdown-toggle {
+   background: transparent !important;
+   border: 0 !important;
+   color: #cfd1d6 !important;
+   padding: 11px 18px !important;
+   font-size: 12px !important;
+   letter-spacing: 0.06em;
+   text-transform: uppercase;
+   font-weight: 600;
+   white-space: nowrap;
+   display: flex !important;
+   align-items: center;
+   gap: 8px;
+   line-height: 1;
+}
+
+.filter-redesign .filter-item:hover > .btn.dropdown-toggle,
+.filter-redesign .filter-item.is-open > .btn.dropdown-toggle {
+   color: #ffffff !important;
+}
+
+/* ---------- Chevron arrow — flip when open ---------- */
+.filter-redesign .filter-item > .btn.dropdown-toggle::after {
+   position: static !important;
+   top: auto !important;
+   right: auto !important;
+   font-size: 10px !important;
+   margin-left: 4px;
+   transition: transform 0.2s ease;
+   color: #8a8d95;
+}
+.filter-redesign .filter-item:hover > .btn.dropdown-toggle::after,
+.filter-redesign .filter-item.is-open > .btn.dropdown-toggle::after {
+   color: #ffffff;
+}
+.filter-redesign .filter-item.is-open > .btn.dropdown-toggle::after {
+   transform: rotate(180deg);
+}
+
+/* ---------- Active filter dot indicator ---------- */
+.filter-redesign .filter-item.has-active::before {
+   content: '';
+   position: absolute;
+   top: 6px;
+   right: 8px;
+   width: 6px;
+   height: 6px;
+   border-radius: 50%;
+   background: #fb3b3b;
+   pointer-events: none;
+}
+
+/* ---------- Submit button — RED brand ---------- */
+.filter-redesign .filter-item.filter-submit {
+   background: transparent !important;
+}
+.filter-redesign .filter-item.filter-submit:hover {
+   background: transparent !important;
+}
+.filter-redesign .filter-item button[type="submit"] {
+   background: #fb3b3b !important;
+   color: #ffffff !important;
+   border: 0 !important;
+   border-radius: 10px !important;
+   padding: 11px 26px !important;
+   font-size: 12px !important;
+   letter-spacing: 0.06em;
+   text-transform: uppercase;
+   font-weight: 700;
+   transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+   min-width: auto !important;
+   cursor: pointer;
+}
+.filter-redesign .filter-item button[type="submit"]:hover {
+   background: #e02a2a !important;
+   transform: translateY(-1px);
+   box-shadow: 0 6px 18px rgba(50,227,227, 0.35);
+}
+
+/* ---------- "გასუფთავება" clear-all link ---------- */
+.filter-redesign .filter-clear {
+   margin-left: 4px !important;
+   background: transparent !important;
+}
+.filter-redesign .filter-clear:hover {
+    color: #fb3b3b;
+}
+.filter-redesign .filter-clear a,
+.filter-redesign .filter-clear .btn {
+   color: #8a8d95 !important;
+   font-size: 12px;
+   letter-spacing: 0.06em;
+   text-transform: uppercase;
+   font-weight: 500;
+   text-decoration: none;
+   padding: 11px 14px;
+   display: inline-block;
+   line-height: 1;
+   cursor: pointer;
+}
+.filter-redesign .filter-clear:hover a,
+.filter-redesign .filter-clear:hover .btn {
+   color: #ffffff !important;
+}
+
+/* ---------- Dropdown panel ---------- */
+.filter-redesign .filter-item {
+   z-index: 1; /* დანარჩენ კონტენტს ზევით, რომ chip-ის ფონი ნათელად ჩანდეს */
+}
+.filter-redesign .filter-item.is-open {
+   z-index: 1100; /* sticky filter-ზე (60) მაღლა — dropdown სხვა chip-ებსაც გადაფარავს */
+}
+.filter-redesign .filter-item .dropdown-menu {
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 12px !important;
+    padding: 10px !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55) !important;
+    min-width: 240px;
+    margin-top: 8px !important;
+    z-index: 1100;
+    overflow: hidden !important;
+}
+.filter-redesign .filter-item .dropdown-menu.show {
+   z-index: 1101;
+}
+
+/* ---------- Search input inside dropdown ---------- */
+.filter-redesign .dropdown-search {
+   padding: 4px 4px 8px !important;
+   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+   margin-bottom: 6px;
+}
+.filter-redesign .dropdown-search input {
+   width: 100% !important;
+   background: rgba(255, 255, 255, 0.04) !important;
+   border: 1px solid rgba(255, 255, 255, 0.06) !important;
+   color: #d8dadf !important;
+   padding: 9px 12px !important;
+   border-radius: 8px !important;
+   font-size: 12px !important;
+   margin: 0 !important;
+   outline: none;
+}
+.filter-redesign .dropdown-search input::placeholder {
+   color: #6a6e76;
+}
+
+/* ---------- Items in dropdown ---------- */
+.filter-redesign .dropdown-item {
+   padding: 8px 8px !important;
+   border-radius: 6px;
+   margin: 1px 0 !important;
+   cursor: pointer;
+   display: flex !important;
+   align-items: center !important;
+   gap: 12px !important;
+   background: transparent !important;
+}
+/* Search filter — must override .filter-redesign .dropdown-item display:flex */
+.filter-redesign .dropdown-item.filter_hide,
+.dropdown-menu .dropdown-item.filter_hide {
+   display: none !important;
+}
+.filter-redesign .dropdown-item:hover {
+   background: rgba(255, 255, 255, 0.04) !important;
+}
+.filter-redesign .dropdown-item .text-inversed {
+   color: #cfd1d6 !important;
+   font-size: 12px !important;
+   letter-spacing: 0.05em;
+   text-transform: uppercase;
+   font-weight: 500;
+}
+.filter-redesign .dropdown-item:hover .text-inversed {
+   color: #ffffff !important;
+}
+
+/* ---------- Square checkbox / radio with red accent ---------- */
+.filter-redesign .filter-custom-radio {
+   width: 16px !important;
+   height: 16px !important;
+   background: rgba(255, 255, 255, 0.05) !important;
+   border: 1.5px solid rgba(255, 255, 255, 0.22) !important;
+   border-radius: 4px !important;
+   margin: 0 !important;
+   flex: 0 0 16px !important;
+   position: relative;
+   transition: background 0.12s ease, border-color 0.12s ease;
+}
+.filter-redesign .filter-radio:checked ~ .filter-custom-radio {
+   background: #fb3b3b !important;
+   border-color: #fb3b3b !important;
+}
+.filter-redesign .filter-radio:checked ~ .filter-custom-radio::after {
+   content: '';
+   position: absolute;
+   left: 4px;
+   top: 1px;
+   width: 5px;
+   height: 9px;
+   border: solid #fff;
+   border-width: 0 2px 2px 0;
+   transform: rotate(45deg);
+}
+
+/* ---------- Scroll content (genres, countries) ---------- */
+.filter-redesign .scroll-content {
+   max-height: 320px;
+   overflow-y: auto;
+   padding: 4px !important;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+.filter-redesign .scroll-content::-webkit-scrollbar {
+   width: 6px;
+}
+.filter-redesign .scroll-content::-webkit-scrollbar-track {
+   background: transparent;
+}
+.filter-redesign .scroll-content::-webkit-scrollbar-thumb {
+   background: rgba(255, 255, 255, 0.16);
+   border-radius: 4px;
+}
+
+/* ===========================================================
+   Year picker — two-column quick-select
+   =========================================================== */
+.filter-redesign .year-dropdown.year-dropdown--grid {
+   width: 440px;
+   max-width: 90vw;
+   padding: 14px 14px 10px !important;
+   right: auto;
+   left: 50%;
+   transform: translateX(-50%);
+}
+.filter-redesign .year-picker__cols {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 14px;
+}
+.filter-redesign .year-picker__col {
+   display: flex;
+   flex-direction: column;
+   align-items: stretch;
+}
+.filter-redesign .year-picker__label {
+   text-align: center;
+   color: #8a8d95;
+   text-transform: uppercase;
+   letter-spacing: 0.08em;
+   font-size: 11px;
+   margin-bottom: 8px;
+   font-weight: 600;
+}
+.filter-redesign .year-picker__display {
+   background: transparent;
+   border: 0;
+   border-radius: 0;
+   border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+   padding: 0 0 8px;
+   margin-bottom: 8px;
+   display: flex;
+   flex-direction: column;
+   align-items: stretch;
+   justify-content: flex-start;
+   gap: 7px;
+}
+.filter-redesign .year-picker__label-inline {
+   color: #b3b7c2;
+   font-size: 10px;
+   text-transform: uppercase;
+   letter-spacing: 0.06em;
+   font-weight: 600;
+   white-space: nowrap;
+   flex-shrink: 0;
+   display: block;
+}
+.filter-redesign .year-picker__input {
+   background: rgba(255, 255, 255, 0.02);
+   border: 1px solid rgba(255, 255, 255, 0.12);
+   border-radius: 0;
+   outline: none;
+   color: #ffffff;
+   font-size: 14px;
+   font-weight: 600;
+   text-align: left;
+   width: 100%;
+   min-width: 0;
+   height: 34px;
+   padding: 0 10px;
+   appearance: textfield;
+   -moz-appearance: textfield;
+}
+.filter-redesign .year-picker__input::-webkit-outer-spin-button,
+.filter-redesign .year-picker__input::-webkit-inner-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+}
+.filter-redesign .year-picker__grid {
+   display: grid;
+   grid-template-columns: 1fr;
+   gap: 0;
+   max-height: 300px;
+   overflow-y: auto;
+   padding-right: 2px;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+.filter-redesign .year-picker__grid::-webkit-scrollbar { width: 6px; }
+.filter-redesign .year-picker__grid::-webkit-scrollbar-track { background: transparent; }
+.filter-redesign .year-picker__grid::-webkit-scrollbar-thumb {
+   background: rgba(255, 255, 255, 0.16);
+   border-radius: 4px;
+}
+.filter-redesign .year-picker__chip {
+   appearance: none;
+   background: transparent;
+   border: 0;
+   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+   color: #cfd1d6;
+   font: 500 13px/1 'NotoSansGeorgian-Regular', system-ui, sans-serif;
+   padding: 9px 4px;
+   border-radius: 0;
+   cursor: pointer;
+   transition: background 0.12s ease, color 0.12s ease;
+   text-align: left;
+}
+.filter-redesign .year-picker__chip:hover {
+   background: rgba(255, 255, 255, 0.06);
+   color: #ffffff;
+}
+.filter-redesign .year-picker__chip.is-active {
+   background: rgba(50,227,227, 0.14) !important;
+   border-bottom-color: #fb3b3b !important;
+   color: #ffffff !important;
+   box-shadow: none !important;
+   font-weight: 700;
+}
+
+/* ---------- IMDb dropdown small fix ---------- */
+.filter-redesign .imdb-dropdown {
+   padding: 10px !important;
+}
+.filter-redesign .numb-interval {
+   gap: 0px;
+}
+.imdb-dropdown .numb-interval {
+   padding: 2px 0px;
+}
+.filter-redesign .interval-from,
+.filter-redesign .interval-to {
+   flex: 1 1 0;
+}
+.filter-redesign .interval-from input,
+.filter-redesign .interval-to input {
+   width: 100%;
+   background: rgba(255, 255, 255, 0.04);
+   border: 1px solid rgba(255, 255, 255, 0.08);
+   border-radius: 8px;
+   padding: 6px 8px;
+   color: #fff;
+   text-align: center;
+   font-size: 13px;
+   line-height: 1.2;
+   height: 32px;
+}
+
+/* ---------- IMDb preset chips (9.0 და მეტი, …) ---------- */
+.filter-redesign .imdb-presets {
+   display: flex;
+   flex-direction: column;
+   gap: 0;
+   margin-top: 8px;
+   padding-top: 8px;
+   border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.filter-redesign .imdb-preset {
+   appearance: none;
+   background: transparent;
+   border: 0;
+   color: #b6b9c0;
+   padding: 6px 8px;
+   font: 400 13px/1.2 'NotoSansGeorgian-Regular', system-ui, sans-serif;
+   text-transform: none;
+   letter-spacing: 0;
+   cursor: pointer;
+   text-align: left;
+   border-radius: 6px;
+   transition: color 0.15s ease;
+}
+.filter-redesign .imdb-preset:hover {
+   background: transparent;
+   border: 0;
+   color: #ffffff;
+}
+.filter-redesign .imdb-preset.is-active {
+   background: transparent !important;
+   border: 0 !important;
+   color: #fb3b3b !important;
+   box-shadow: none !important;
+   font-weight: 600;
+}
+
+/* ===========================================================
+   Active filter pills row (.filter-results > .ResultFitreed)
+   — დიდი filter-bar-ის ქვემოთ ნაჩვენები chip-ები არჩეული filter-ებით
+   =========================================================== */
+.filter-redesign .filter-results {
+   background: transparent !important;
+   padding: 0 !important;
+   border-radius: 0 !important;
+   margin-top: 0 !important;
+   margin-bottom: 12px;
+}
+.filter-redesign .ResultFitreed {
+   list-style: none;
+   margin: 0 !important;
+   padding: 0 !important;
+   display: flex;
+   flex-wrap: wrap;
+   gap: 8px;
+   width: 100%;
+}
+.filter-redesign .ResultFitreed:empty {
+   display: none;
+}
+.filter-redesign .ResultFitreed li,
+.filter-redesign .ResultFitreed li.chip {
+   list-style: none;
+   margin: 0 !important;
+   padding: 0 !important;
+   float: none !important;
+   background: transparent;
+}
+.filter-redesign .ResultFitreed li a {
+   display: inline-flex !important;
+   align-items: center;
+   gap: 8px;
+   background: #1a1c20 !important;
+   border: 1px solid rgba(255, 255, 255, 0.05);
+   color: #ffffff !important;
+   padding: 8px 8px 8px 14px !important;
+   border-radius: 999px !important;
+   font-size: 12px;
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   font-weight: 600;
+   text-decoration: none !important;
+   transition: background 0.15s ease, border-color 0.15s ease;
+}
+.filter-redesign .ResultFitreed li a:hover {
+   background: #25272d !important;
+   border-color: rgba(50,227,227, 0.4);
+}
+.filter-redesign .ResultFitreed li a span,
+.filter-redesign .ResultFitreed li a .removeEleMentFilter {
+   width: 22px !important;
+   height: 22px !important;
+   margin: 0 !important;
+   background: rgba(255, 255, 255, 0.06) !important;
+   border-radius: 50% !important;
+   display: inline-flex !important;
+   align-items: center;
+   justify-content: center;
+   float: none !important;
+   font-size: 11px;
+   color: #ffffff;
+   cursor: pointer;
+   transition: background 0.12s ease, color 0.12s ease;
+}
+.filter-redesign .ResultFitreed li a:hover span,
+.filter-redesign .ResultFitreed li a span:hover {
+   background: #fb3b3b !important;
+   color: #ffffff !important;
+}
+
+/* ---------- Mobile/narrow ---------- */
+@media (max-width: 575.98px) {
+   .filter-redesign .year-dropdown.year-dropdown--grid {
+      width: 320px;
+      padding: 12px 12px 4px !important;
+   }
+   .filter-redesign .year-picker__cols { gap: 12px; }
+   .filter-redesign .year-picker__grid { max-height: 260px; }
+   .filter-redesign .year-picker__input { font-size: 13px; }
+   .filter-redesign .year-picker__label-inline { font-size: 9px; }
+   .filter-redesign .filter-dropdowns {
+      gap: 4px !important;
+   }
+   .filter-redesign .filter-item > .btn.dropdown-toggle {
+      padding: 9px 14px !important;
+      font-size: 11px !important;
+   }
+}
+

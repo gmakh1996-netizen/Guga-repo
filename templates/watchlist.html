@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}სანახავი სია — {{ site_name }}{% endblock %}
+
+{% block content %}
+  <section class="row">
+    <h2 class="row__title">ჩემი სანახავი სია</h2>
+    <div class="grid" id="watchlist-grid"></div>
+    <p class="empty__text" id="watchlist-empty" style="display:none">
+      სია ცარიელია. ფილმის ან სერიალის ბარათზე ♥ ღილაკით დაამატეთ.
+    </p>
+  </section>
+{% endblock %}

@@ -1,0 +1,323 @@
+/* GEMOVIE custom layer — fills gaps around ge.movie theme classes */
+:root { --ge-red: #32e3e3; --ge-dark: #14161d; --ge-card: #1b1e27; }
+
+/* premium ქართული ფონტი — ყველგან */
+html, body, .content, input, select, button, textarea,
+h1, h2, h3, h4, h5, .ge-section-title, .arial, .nav-link, .movie-card__title,
+.mf-titlebar h1, .SlidetTitle, .ge-hero__title {
+  font-family: "Noto Sans Georgian", "FiraGO", -apple-system, "Segoe UI", sans-serif !important;
+}
+html, body { background: #0e0f14; color: #fff; overflow-x: hidden !important; max-width: 100%; }
+.content { overflow-x: hidden !important; }
+.container { max-width: 100%; }
+/* scrollbar — ნეიტრალური მუქი (ცისფერი „ლურჯი ზოლი" მოხსნილია) */
+::-webkit-scrollbar, body::-webkit-scrollbar { width: 8px !important; height: 8px !important; }
+::-webkit-scrollbar-track, body::-webkit-scrollbar-track { background: transparent !important; }
+::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb { background: #2a2e3a !important; border-radius: 4px !important; }
+::-webkit-scrollbar-thumb:hover, body::-webkit-scrollbar-thumb:hover { background: #3a4152 !important; }
+html { scrollbar-width: thin; scrollbar-color: #2a2e3a transparent; }
+
+/* section titles / row heads */
+.ge-section-title { font-size: 22px; font-weight: 700; margin: 0; color: #fff; }
+.ge-row-head { display: flex; align-items: center; justify-content: space-between; margin: 28px 0 14px; }
+.ge-more { color: #b3b3b3; font-size: 14px; }
+.ge-more:hover { color: var(--ge-red); }
+
+/* row slider nav buttons */
+.movies-slider { position: relative; }
+.movies-slider .sbtns .prev-slide,
+.movies-slider .sbtns .next-slide {
+  position: absolute; top: 40%; transform: translateY(-50%); z-index: 20;
+  width: 42px; height: 42px; border-radius: 50%; background: rgba(0,0,0,.6);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 26px; cursor: pointer; user-select: none; transition: .2s;
+}
+.movies-slider .sbtns .prev-slide { left: 4px; }
+.movies-slider .sbtns .next-slide { right: 4px; }
+.movies-slider .sbtns .prev-slide:hover,
+.movies-slider .sbtns .next-slide:hover { background: var(--ge-red); }
+.swiper-button-disabled { opacity: .3; pointer-events: none; }
+
+/* hero — featured (left 60%) + 3x3 thumbs (right 40%) */
+.hero { margin-top: 18px; }
+.hero-slider:after { display: none !important; }
+.ge-hero { display: flex; gap: 16px; height: 560px; }
+.ge-hero__featured { position: relative; flex: 0 0 60%; max-width: 60%; border-radius: 14px; overflow: hidden; display: block; }
+.ge-hero__bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: background-image .3s ease; }
+.ge-hero__featured::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,11,16,.9) 0%, rgba(10,11,16,.4) 40%, rgba(10,11,16,.05) 70%); }
+.ge-hero__info { position: absolute; left: 40px; bottom: 50px; z-index: 2; max-width: 80%; }
+.ge-hero__play { display: inline-block; background: var(--ge-red); color: #fff; padding: 12px 30px; border-radius: 8px; font-weight: 600; font-size: 15px; }
+.ge-hero__featured:hover .ge-hero__play { background: #32e3e3; }
+.ge-hero__title { font-size: 40px; font-weight: 800; color: #fff; margin: 22px 0 12px; text-shadow: 0 2px 12px rgba(0,0,0,.6); }
+.ge-hero__meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.ge-hero__genres span { color: #d7d7d7; font-size: 14px; }
+.ge-hero__genres span:not(:last-child)::after { content: "•"; margin: 0 8px; color: #777; }
+.imdb-badge { background: #f5c518; color: #000; font-weight: 700; padding: 4px 9px; border-radius: 4px; font-size: 13px; }
+
+.ge-hero__thumbs { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 14px; }
+.ge-hero__thumb { position: relative; border-radius: 10px; overflow: hidden; cursor: pointer; background: #10131a; transition: transform .2s, box-shadow .2s; }
+.ge-hero__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ge-hero__thumb.active { outline: 3px solid var(--ge-red); outline-offset: -3px; }
+.ge-hero__thumb:hover { transform: scale(1.04); z-index: 3; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+.ge-hero__thumb-title { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 10px; font-size: 12px; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.85)); opacity: 0; transition: .2s; }
+.ge-hero__thumb:hover .ge-hero__thumb-title { opacity: 1; }
+@media (max-width: 992px) {
+  .ge-hero { flex-direction: column; height: auto; }
+  .ge-hero__featured { flex: none; max-width: 100%; height: 340px; }
+  .ge-hero__thumbs { grid-template-rows: repeat(2, 90px); }
+  .ge-hero__title { font-size: 26px; }
+}
+
+/* filter bar */
+.ge-filterbar { display: flex; flex-wrap: wrap; gap: 16px; padding: 22px 0 8px; align-items: flex-end; }
+.ge-filter__group { display: flex; flex-direction: column; gap: 6px; }
+.ge-filter__group label { font-size: 12px; color: #9aa0ac; }
+.ge-filterbar select {
+  background: var(--ge-card); color: #fff; border: 1px solid #2a2e3a;
+  border-radius: 8px; padding: 10px 14px; font-size: 14px; min-width: 160px; cursor: pointer;
+}
+.ge-filterbar select:focus { outline: none; border-color: var(--ge-red); }
+
+#filterResults { margin-top: 10px; }
+.ge-loader { text-align: center; padding: 26px; color: #9aa0ac; }
+.ge-empty { text-align: center; padding: 40px; color: #9aa0ac; }
+
+/* detail page */
+.movies-full { position: relative; padding: 30px 0 50px; z-index: 0; float: none !important; width: 100% !important; }
+.movies.related { clear: both; }
+/* თემის დეკორატიული overlay — კლიკები არ დაიჭიროს */
+.movies-full::after, .movies-full:after { pointer-events: none !important; z-index: 1 !important; }
+.movies-full .bg-image { position: absolute; top: 0; left: 0; right: 0; height: 720px !important; background-size: cover; background-position: center 18%;
+  filter: blur(6px) brightness(.42); opacity: .6; z-index: 0 !important; pointer-events: none; transform: scale(1.05);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.95) 0%, rgba(0,0,0,.55) 52%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.95) 0%, rgba(0,0,0,.55) 52%, rgba(0,0,0,0) 100%); }
+.movies-full .container { position: relative; z-index: 300; }
+.movies-full__content, .movies-full__player, #movie_embed { position: relative; z-index: 300 !important; }
+.movies-full__player { pointer-events: auto; }
+/* detail — poster left + player right (ge.movie layout: ორივე ტოლ სიმაღლეზე) */
+/* !important-ები აჭარბებენ თემის მკაცრ height/width-ებს (580/702/280px) */
+.movies-full__content { display: flex !important; gap: 20px; align-items: stretch !important; height: 580px !important; padding: 0 !important; margin: 0 0 34px !important; float: none !important; }
+.movies-full__poster { flex: 0 0 386px !important; width: 386px !important; max-width: 386px; height: 100% !important; display: flex !important; flex-direction: column; float: none !important; border-radius: 12px; overflow: hidden; background: #10131a; }
+.movies-full__poster img { width: 100%; flex: 1 1 auto; min-height: 0; height: auto !important; object-fit: cover; display: block; background: #10131a; border-radius: 0; }
+.mf-trailer { background: var(--ge-red); color: #fff; border: 0; padding: 16px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; flex: 0 0 auto; }
+.mf-trailer:hover { background: #32e3e3; }
+.movies-full__player { flex: 1 1 auto !important; width: auto !important; position: relative; aspect-ratio: auto !important; height: 100% !important; background: #000; border-radius: 12px; overflow: hidden; margin: 0 !important; float: none !important; font-size: 0 !important; }
+@media (max-width: 1200px) { .movies-full__content { height: 470px !important; } .movies-full__poster { flex-basis: 320px !important; width: 320px !important; } }
+@media (max-width: 860px) {
+  .movies-full__content { height: auto !important; flex-direction: column; }
+  .movies-full__poster { flex: none !important; width: 100% !important; max-width: 300px; height: auto !important; margin: 0 auto; }
+  .movies-full__poster img { aspect-ratio: 2/3; flex: none; }
+  .movies-full__player { height: auto !important; aspect-ratio: 16/9; width: 100% !important; }
+}
+.movies-full__player iframe { width: 100%; height: 100%; border: 0; display: block; }
+.ge-noplayer { display: flex; align-items: center; justify-content: center; height: 100%; color: #9aa0ac; }
+.mf-sources { position: absolute; top: 12px; left: 12px; z-index: 5; display: flex; gap: 8px; flex-wrap: wrap; }
+.mf-source { background: rgba(20,22,29,.85); color: #fff; border: 1px solid #2a2e3a; border-radius: 6px; padding: 7px 14px; cursor: pointer; font-size: 13px; }
+.mf-source.active, .mf-source:hover { background: var(--ge-red); border-color: var(--ge-red); }
+
+/* ===== detail — info block (ge.movie style) ===== */
+:root { --ge-gold: #d7b15a; }
+.movies-full__inside { margin-top: 30px; }
+
+/* titlebar: titles + tool buttons */
+.mf-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.mf-head__titles h1 { font-size: 30px; font-weight: 700; margin: 0; color: #fff; line-height: 1.2; }
+.mf-orig { color: #9096a2; margin-top: 8px; font-size: 13px; letter-spacing: .5px; text-transform: uppercase; }
+.mf-tools { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.mf-tool { width: 46px; height: 46px; border-radius: 50%; background: transparent; border: 1px solid #33384a;
+  color: #aeb4c0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: .18s; padding: 0; }
+.mf-tool svg { width: 20px; height: 20px; fill: currentColor; }
+.mf-tool:hover { border-color: #4a516a; color: #fff; }
+.mf-fav.is-active { background: var(--ge-red); border-color: var(--ge-red); color: #fff; }
+.mf-help { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; border: 0; cursor: pointer;
+  background: var(--ge-red); color: #fff; border-radius: 8px; font-size: 14px; font-weight: 600; }
+.mf-help svg { width: 18px; height: 18px; fill: currentColor; }
+.mf-help:hover { background: #32e3e3; }
+
+/* rating bar: IMDb (left) + stars/score/votes (right) */
+.mf-ratingbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 22px 0 24px; flex-wrap: wrap; }
+.mf-imdb { display: inline-flex; align-items: center; gap: 12px; }
+.mf-imdb__logo { background: #f5c518; color: #000; font-weight: 800; font-size: 13px; letter-spacing: -.5px;
+  padding: 5px 8px; border-radius: 5px; font-family: Arial, sans-serif; }
+.mf-imdb b { color: #fff; font-size: 20px; font-weight: 700; }
+.mf-userrate { display: inline-flex; align-items: center; gap: 14px; }
+.mf-stars { display: inline-flex; gap: 3px; }
+.mf-star { width: 22px; height: 22px; fill: #3a3f4d; }
+.mf-star.is-on { fill: #f5c518; }
+.mf-score { background: var(--ge-red); color: #fff; font-weight: 700; font-size: 14px; min-width: 40px; text-align: center;
+  padding: 6px 8px; border-radius: 8px; }
+.mf-votes { display: inline-flex; align-items: center; gap: 6px; color: #9096a2; font-size: 14px; }
+.mf-votes svg { width: 18px; height: 18px; fill: #9096a2; }
+
+/* info list: label: value */
+.mf-info { list-style: none; margin: 0 0 26px; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.mf-info li { font-size: 15px; line-height: 1.5; }
+.mf-info__k { color: #8a8f9a; margin-right: 8px; }
+.mf-info__v, .mf-info__v a { color: var(--ge-gold); }
+.mf-info__v a:hover { color: #fff; text-decoration: underline; }
+.mf-info__v--plain { color: var(--ge-gold); }
+
+/* plot */
+.mf-plot { max-width: 980px; margin-top: 6px; }
+.mf-plot__title { font-size: 16px; font-weight: 700; color: #fff; margin: 0 0 12px; }
+.mf-plot p { line-height: 1.8; color: #c3c7d0; margin: 0; }
+
+/* actors */
+.mf-cast { margin-top: 40px; }
+.mf-cast__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.mf-cast__nav { display: flex; gap: 8px; }
+.mf-cast__btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid #33384a; background: transparent;
+  color: #aeb4c0; font-size: 20px; line-height: 1; cursor: pointer; transition: .18s; }
+.mf-cast__btn:hover { border-color: var(--ge-red); color: #fff; background: var(--ge-red); }
+.mf-cast__row { display: flex; gap: 18px; overflow-x: auto; scroll-behavior: smooth; padding-bottom: 8px; scrollbar-width: none; }
+.mf-cast__row::-webkit-scrollbar { display: none; }
+.mf-actor { flex: 0 0 120px; text-align: center; }
+.mf-actor__photo { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; background: #1b1e27; margin: 0 auto 10px;
+  display: flex; align-items: center; justify-content: center; }
+.mf-actor__photo img { width: 100%; height: 100%; object-fit: cover; }
+.mf-actor__ph::after { content: ""; width: 48px; height: 48px; border-radius: 50%; background: #2a2e3a; }
+.mf-actor__initials { font-size: 34px; font-weight: 700; color: #4a516a; }
+.mf-actor__name { font-size: 13px; color: #cfd2d8; line-height: 1.3; }
+
+/* recommended section — full-width even grid + styled title */
+/* თემა `.movies.related`-ს ზოგ შემთხვევაში მალავს (display:none/float/50%) — ვაჩვენებთ */
+.movies.related { display: block !important; float: none !important; width: 100% !important; }
+.related { margin-top: 48px; }
+.ge-rec-title { font-size: 24px; font-weight: 700; color: #fff;
+  letter-spacing: .3px; margin: 0 0 22px; position: relative; padding-left: 15px;
+  display: block; height: 30px !important; line-height: 30px !important; min-height: 0 !important; }
+.ge-rec-title::before { content: ""; position: absolute; left: 0; top: 2px; height: 24px; width: 5px;
+  border-radius: 3px; background: var(--ge-red); }
+.ge-rec-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 26px 18px; width: 100%; }
+.ge-rec-grid > [class*="col-"] { width: 100% !important; max-width: 100% !important; flex: none !important;
+  padding: 0 !important; margin: 0 !important; min-width: 0; }
+.ge-rec-grid .movie-card__title h2 a span,
+.ge-rec-grid .movie-card__title h2 a p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 1500px) { .ge-rec-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media (max-width: 1200px) { .ge-rec-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 860px)  { .ge-rec-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 12px; } }
+@media (max-width: 560px)  { .ge-rec-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px) {
+  .mf-head { flex-direction: column; }
+  .mf-head__titles h1 { font-size: 24px; }
+  .mf-ratingbar { gap: 12px; }
+}
+
+/* header logo — MW shield emblem (square), larger than the old wordmark */
+.header-top__logo img { height: 52px !important; width: auto; display: block; }
+
+/* search autocomplete */
+.header-top__search { position: relative; }
+#search_autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: #1b1e27; border-radius: 0 0 10px 10px; overflow: hidden; z-index: 999; display: none; box-shadow: 0 12px 30px rgba(0,0,0,.5); max-height: 70vh; overflow-y: auto; }
+#search_autocomplete.open { display: block; }
+.ac-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; color: #fff; }
+.ac-item:hover { background: #262a35; }
+.ac-item img { width: 38px; height: 54px; object-fit: cover; border-radius: 4px; }
+.ac-title { font-size: 14px; }
+
+/* ============ CARD OVERRIDES (fix poster fit / badges / overflow) ============ */
+.sidebar { z-index: 1000 !important; }
+/* sidebar Lucide icons — stroke-based, არა fill */
+.sidebar .nav-link svg { fill: none !important; stroke: currentColor !important; width: 24px !important; height: 24px !important; }
+.sidebar .nav-link svg path, .sidebar .nav-link svg rect, .sidebar .nav-link svg circle { fill: none !important; stroke: currentColor !important; }
+.header { position: relative; z-index: 500; }
+
+.movie-card { position: relative; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
+.movie-card__img {
+  width: 100%; height: auto !important; aspect-ratio: 16 / 9;
+  border-radius: 10px; overflow: hidden; position: relative; background: #10131a;
+}
+.movie-card__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.movie-card__img img.ge-broken { display: none; }
+/* გატეხილი/ცარიელი პოსტერის placeholder — ჩამჯდარი, არა ცარიელი */
+img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; opacity: .5; }
+.ge-hero__thumb img.ge-ph { padding: 20%; }
+.movies-full__poster img.ge-ph { padding: 24%; }
+
+/* year badge — bottom-right (ge.movie-style) */
+.movie-card__img .actions {
+  position: absolute; bottom: 8px; right: 8px; top: auto; left: auto;
+  width: auto !important; z-index: 4; opacity: 1 !important; visibility: visible !important;
+}
+.movie-card__img .actions .year {
+  padding: 3px 8px; border: 0; border-radius: 6px; background: rgba(0,0,0,.72);
+  color: #fff; font-size: 12px; opacity: 1;
+}
+/* imdb rating — bottom-left over gradient */
+.movie-card__img .rates {
+  position: absolute; left: 0; right: 0; bottom: 0; width: 100%;
+  padding: 30px 10px 10px; display: flex; align-items: flex-end; justify-content: flex-start;
+  background: linear-gradient(transparent, rgba(0,0,0,.85));
+}
+.movie-card__img .rates .imdb span {
+  background: #f5c518; color: #000; font-weight: 700; padding: 3px 7px;
+  border-radius: 4px; font-size: 12px;
+}
+/* play overlay on hover */
+.movie-card__img .play {
+  position: absolute; inset: 0; width: 100% !important; height: 100% !important;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,.45); opacity: 0; visibility: hidden; transition: .2s; z-index: 3;
+}
+.movie-card:hover .movie-card__img .play { opacity: 1; visibility: visible; }
+.movie-card__img .play a { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+.movie-card__img .play svg { width: 56px; height: 56px; fill: #fff; }
+
+.movie-card__title { display: block; margin-top: 10px; }
+.movie-card__title h2 { width: 100%; margin: 0; }
+.movie-card__title h2 a span {
+  display: block; float: none; width: 100%; color: #fff; font-size: 14px; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0;
+}
+.movie-card__title h2 a p {
+  display: block; float: none; width: 100%; color: #8a8f9a; font-size: 12px; margin: 2px 0 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* results grid — 5 columns on desktop (ge.movie-style landscape cards) */
+#filterResults { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 16px; margin-top: 18px; }
+@media (min-width: 576px) { #filterResults { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 768px) { #filterResults { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1200px) { #filterResults { grid-template-columns: repeat(5, 1fr); } }
+.ge-cell { min-width: 0; }
+.movies-slider .swiper { overflow: hidden; padding: 4px 0; }
+.movies-slider .swiper-slide { height: auto; }
+/* პრემიერა — პორტრეტ-პოსტერების კარუსელი (ge.movie-ვით) */
+.movies--portrait { position: relative; overflow: hidden; padding: 10px 0 30px; }
+.movies--portrait .movie-card__img { aspect-ratio: 2 / 3; }
+.movies--portrait .movie-card__title h2 a p { display: none; }
+/* ჰოვერზე ცვალებადი ფონი (backdrop) */
+.ge-prem-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background-size: cover; background-position: center;
+  transition: background-image .45s ease-in-out; opacity: 1;
+}
+.ge-prem-shade { position: absolute; inset: 0; z-index: 0;
+  background: linear-gradient(180deg, rgba(10,11,16,.45) 0%, rgba(10,11,16,.3) 45%, rgba(10,11,16,.75) 100%); }
+.movies--portrait .container { position: relative; z-index: 1; }
+.movies--portrait .movie-card { transition: transform .2s; }
+.movies--portrait .swiper-slide:hover .movie-card { transform: translateY(-6px); }
+
+/* persons — grid of circular photos */
+#personsResults { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px 16px; margin-top: 18px; }
+@media (min-width: 576px) { #personsResults { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 768px) { #personsResults { grid-template-columns: repeat(6, 1fr); } }
+@media (min-width: 1200px) { #personsResults { grid-template-columns: repeat(7, 1fr); } }
+.ge-person { text-align: center; min-width: 0; }
+.ge-person__photo { width: 130px; height: 130px; border-radius: 50%; overflow: hidden; background: #1b1e27; margin: 0 auto 12px; position: relative; }
+.ge-person__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ge-person__ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #1b1e27; }
+.ge-person__ph::after { content: ""; width: 54px; height: 54px; border-radius: 50%; background: #2a2e3a; }
+.ge-person__name { font-size: 14px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ge-person__en { font-size: 12px; color: #8a8f9a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* category row icon */
+.ge-row-head { gap: 10px; }
+.ge-row-head .ge-head-left { display: flex; align-items: center; gap: 10px; }
+/* premium category icon — თეთრი აიქონი ღილაკის ფერის (აქცენტი) ფონზე */
+.ge-row-head .ge-head-left { display: flex; align-items: center; gap: 12px; }
+.ge-ico-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%; flex: 0 0 40px;
+  background: var(--ge-red);
+}
+.ge-row-head .ge-ico { width: 21px; height: 21px; color: #fff; fill: none; stroke: currentColor; }

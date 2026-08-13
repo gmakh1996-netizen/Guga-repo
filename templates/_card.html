@@ -1,0 +1,28 @@
+{# ფილმის/სერიალის ბარათი. მუშაობს Movie/Series ობიექტზე და TMDB dict-ზე. #}
+{% set mt = m.media_type | default('movie') %}
+{% set route = 'series_detail' if mt == 'tv' else 'movie_detail' %}
+{% set poster = m.poster_url or img(m.poster_path) %}
+<div class="card">
+  <a class="card__link" href="{{ url_for(route, movie_id=m.id) if mt=='movie' else url_for('series_detail', series_id=m.id) }}">
+    <div class="card__poster">
+      {% if poster %}
+        <img src="{{ poster }}" alt="{{ m.title or m.name }}" loading="lazy">
+      {% else %}
+        <div class="card__noposter">{{ m.title or m.name }}</div>
+      {% endif %}
+      {% if m.vote_average %}
+        <span class="card__rating">★ {{ '%.1f'|format(m.vote_average) }}</span>
+      {% endif %}
+      {% if mt == 'tv' %}<span class="card__badge">სერიალი</span>{% endif %}
+      {% if m.streams and m.streams|length %}<span class="card__play">▶</span>{% endif %}
+    </div>
+    <div class="card__meta">
+      <span class="card__title">{{ m.title or m.name }}</span>
+      {% set d = m.release_date or m.first_air_date %}
+      {% if d %}<span class="card__year">{{ d[:4] }}</span>{% endif %}
+    </div>
+  </a>
+  <button class="card__fav" title="სანახავ სიაში"
+          data-id="{{ m.id }}" data-type="{{ mt }}"
+          data-title="{{ m.title or m.name }}" data-poster="{{ poster or '' }}">♥</button>
+</div>

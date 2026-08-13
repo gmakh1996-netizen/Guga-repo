@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}ძებნა: {{ q }} — {{ site_name }}{% endblock %}
+
+{% block content %}
+  <section class="row">
+    <h2 class="row__title">
+      {% if q %}შედეგები: „{{ q }}“{% else %}ძებნა{% endif %}
+    </h2>
+
+    {% if results %}
+      <div class="grid">
+        {% for m in results %}{% include "_card.html" %}{% endfor %}
+      </div>
+    {% elif q %}
+      <p class="empty__text">ვერაფერი მოიძებნა „{{ q }}“-ზე.</p>
+    {% endif %}
+  </section>
+{% endblock %}

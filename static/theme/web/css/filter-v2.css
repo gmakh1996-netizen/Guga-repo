@@ -1,0 +1,416 @@
+/* ============================================================
+   Filter V2 — flat outline design (Variant B)
+   ------------------------------------------------------------
+   CSS-only overlay over filter-redesign.css. Zero HTML changes:
+   re-paints the existing filter bar, dropdowns, chips and movie
+   cards into the sharp-corner outline aesthetic from the new
+   reference. Activates ONLY when <body class="filter-ui-v2">.
+   ============================================================ */
+
+/* ── Activation guard ───────────────────────────────────────── */
+body.filter-ui-v2 {
+   --fv-bg:        #0b0c0e;
+   --fv-surface:   #16181b;
+   --fv-line:      rgba(255, 255, 255, 0.12);
+   --fv-line-soft: rgba(255, 255, 255, 0.06);
+   --fv-text:      #ffffff;
+   --fv-text-mute: rgba(255, 255, 255, 0.55);
+   --fv-text-dim:  rgba(255, 255, 255, 0.40);
+   --fv-accent:    #32e3e3;
+   --fv-pill-h:    40px;
+}
+
+/* Page background — keep page itself dark; don't fight existing layout */
+body.filter-ui-v2 .filter-redesign {
+    background: #00000000 !important;
+}
+
+/* ── 1. Toolbar wrapper ─────────────────────────────────────── */
+body.filter-ui-v2 .filter-redesign .filter-form {
+   background: transparent !important;
+   border: 0 !important;
+   padding: 0 !important;
+   margin-top: 16px;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-dropdowns {
+   background: transparent !important;
+   border: 0 !important;
+   border-radius: 0 !important;
+   padding: 0 !important;
+   gap: 8px !important;
+   row-gap: 8px;
+   align-items: center;
+   box-shadow: initial !important;
+}
+
+/* ── 2. Pills (filter triggers) ─────────────────────────────── */
+body.filter-ui-v2 .filter-redesign .filter-item {
+   padding: 0 !important;
+   margin: 0 !important;
+   position: relative;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-item > .btn,
+body.filter-ui-v2 .filter-redesign .filter-item > .dropdown-toggle {
+   display: inline-flex;
+   align-items: center;
+   gap: 6px;
+   height: var(--fv-pill-h);
+   padding: 0 16px !important;
+   background: transparent !important;
+   border: 1px solid var(--fv-line) !important;
+   border-radius: 6px !important;
+   color: var(--fv-text) !important;
+   font-size: 14px !important;
+   line-height: 1;
+   white-space: nowrap;
+   cursor: pointer;
+   transition: border-color 120ms ease, color 120ms ease;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-item > .btn:hover, body.filter-ui-v2 .filter-redesign .filter-item.is-open > .btn {
+    border-color: initial !important;
+    background: transparent !important;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-item > .btn:hover,
+body.filter-ui-v2 .filter-redesign .filter-item.is-open > .btn {
+   border-color: rgba(255, 255, 255, 0.30) !important;
+   background: transparent !important;
+}
+
+.filter-redesign .filter-item {
+	background: transparent !important;
+}
+
+/* Chevron (Bootstrap-injected) — restyle as a thin caret to the right */
+body.filter-ui-v2 .filter-redesign .filter-item > .dropdown-toggle::after {
+   border: 0 !important;
+   width: 8px;
+   height: 8px;
+   margin-left: 4px;
+   border-right: 1.5px solid currentColor;
+   border-bottom: 1.5px solid currentColor;
+   transform: rotate(45deg) translateY(-2px);
+   transition: transform 160ms ease;
+   opacity: 0.85;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-item.is-open > .dropdown-toggle::after {
+   transform: rotate(-135deg) translateY(2px);
+}
+
+/* Active filter — small dot + count */
+body.filter-ui-v2 .filter-redesign .filter-item.has-active > .btn {
+   color: var(--fv-text) !important;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-item.has-active > .btn::before {
+   content: "";
+   position: absolute;
+   top: 6px;
+   right: 8px;
+   width: 6px;
+   height: 6px;
+   border-radius: 999px;
+   background: var(--fv-accent);
+}
+
+/* Submit ("მოძებნა") — keep red filled, but flat */
+body.filter-ui-v2 .filter-redesign .filter-item.filter-submit {
+   margin-left: auto !important;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-item.filter-submit > button {
+    height: var(--fv-pill-h);
+    padding: 0 22px;
+    background: #32e3e3;
+    border: 0 !important;
+    border-radius: 999px !important;
+    color: #fff !important;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Clear ("გასუფთავება") — text link, no border */
+body.filter-ui-v2 .filter-redesign .filter-item.filter-clear > a {
+    height: var(--fv-pill-h);
+    display: inline-flex;
+    align-items: center;
+    padding: 0 8px !important;
+    background: transparent !important;
+    border: 0 !important;
+    color: #ffffff !important;
+    font-size: 13px !important;
+}
+
+/* ── 3. Dropdown panels — flat, sharp ───────────────────────── */
+
+
+body.filter-ui-v2 .filter-redesign .dropdown-search input::placeholder {
+   color: var(--fv-text-dim);
+}
+
+
+
+/* ── 4. Year picker (flat) ──────────────────────────────────── */
+body.filter-ui-v2 .filter-redesign .year-picker__cols {
+   gap: 12px;
+}
+
+body.filter-ui-v2 .filter-redesign .year-picker__display {
+   display: flex;
+   flex-direction: column;
+   align-items: stretch;
+   gap: 7px;
+   margin-bottom: 8px;
+   padding: 0 0 8px;
+   border: 0 !important;
+   border-bottom: 1px solid var(--fv-line) !important;
+   border-radius: 0 !important;
+   background: transparent !important;
+}
+
+body.filter-ui-v2 .filter-redesign .year-picker__label-inline {
+   display: block;
+   font-size: 10px;
+   font-weight: 600;
+   text-transform: uppercase;
+   letter-spacing: 0.06em;
+   color: var(--fv-text-mute) !important;
+}
+
+body.filter-ui-v2 .filter-redesign .year-picker__input {
+	width: 100% !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    color: #d8dadf !important;
+    padding: 9px 12px !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    margin: 0 !important;
+    outline: none;
+}
+
+body.filter-ui-v2 .filter-redesign .year-picker__grid {
+   display: grid;
+   grid-template-columns: 1fr;
+   gap: 0;
+   max-height: 300px;
+   overflow-y: auto;
+   padding-right: 2px;
+}
+
+body.filter-ui-v2 .filter-redesign .year-picker__chip {
+   width: 100%;
+   text-align: left;
+   padding: 9px 4px;
+   border-radius: 0 !important;
+   background: transparent !important;
+   border: 0 !important;
+   border-bottom: 1px solid var(--fv-line-soft) !important;
+   color: var(--fv-text) !important;
+}
+
+body.filter-ui-v2 .filter-redesign .year-picker__chip:hover {
+   background: rgba(255, 255, 255, 0.04) !important;
+}
+
+body.filter-ui-v2 .filter-redesign .year-picker__chip.is-active {
+   background: rgba(50,227,227, 0.14) !important;
+   border-bottom-color: var(--fv-accent) !important;
+   color: #fff !important;
+}
+
+/* ── 5. IMDb picker (flat) ──────────────────────────────────── */
+body.filter-ui-v2 .filter-redesign .imdb-dropdown .numb-interval {
+   gap: 6px;
+   padding: 4px 0 8px;
+}
+
+body.filter-ui-v2 .filter-redesign .imdb-dropdown .interval-from input,
+body.filter-ui-v2 .filter-redesign .imdb-dropdown .interval-to input {
+	width: 100% !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    color: #d8dadf !important;
+    padding: 9px 12px !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    margin: 0 !important;
+    outline: none;
+}
+
+body.filter-ui-v2 .filter-redesign .imdb-presets {
+   display: flex;
+   flex-direction: column;
+   gap: 2px;
+   margin-top: 4px;
+}
+
+body.filter-ui-v2 .filter-redesign .imdb-preset {
+   width: 100%;
+   text-align: left;
+   padding: 6px 8px;
+   background: transparent !important;
+   border: 0 !important;
+   border-radius: 0 !important;
+   color: var(--fv-text);
+   font-size: 13px;
+   cursor: pointer;
+   transition: background 100ms ease;
+}
+
+body.filter-ui-v2 .filter-redesign .imdb-preset:hover {
+   background: rgba(255, 255, 255, 0.04) !important;
+}
+
+body.filter-ui-v2 .filter-redesign .imdb-preset.is-active {
+   background: rgba(50,227,227, 0.10) !important;
+   color: var(--fv-accent) !important;
+}
+
+/* ── 6. Active chips row (.filter-results .ResultFitreed) ───── */
+body.filter-ui-v2 .filter-redesign .filter-results {
+   margin-top: 12px;
+   padding: 0;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-results .ResultFitreed {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 8px;
+   list-style: none;
+   margin: 0;
+   padding: 0;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-results .ResultFitreed:empty {
+   display: none;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-results .ResultFitreed > li.chip {
+   list-style: none;
+   margin: 0;
+   padding: 0;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-results .ResultFitreed > li.chip > a
+ {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 32px;
+    padding: 0 10px;
+    background: #4c4c4c29 !important;
+    border-radius: 4px !important;
+    color: var(--fv-text);
+    font-size: 11px;
+	font-weight: 400;
+    text-decoration: none;
+    line-height: 1;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-results .ResultFitreed > li.chip .removeEleMentFilter {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   width: 16px;
+   height: 16px;
+   border-radius: 999px;
+   color: var(--fv-text-mute);
+   font-size: 12px;
+   cursor: pointer;
+   transition: color 120ms ease;
+}
+
+body.filter-ui-v2 .filter-redesign .filter-results .ResultFitreed > li.chip .removeEleMentFilter:hover {
+   color: var(--fv-accent);
+}
+
+body.filter-ui-v2 .filter-redesign .filter-results .ResultFitreed > li.chip i.icofont-close::before {
+   content: "✕";
+   font-style: normal;
+   font-family: inherit;
+}
+
+/* ── 7. Movie cards on filter pages — flat ──────────────────── */
+body.filter-ui-v2 .mlist .popular-card,
+body.filter-ui-v2 .mlist .serials-card {
+   background: transparent !important;
+   border: 0 !important;
+   border-radius: 0 !important;
+   box-shadow: none !important;
+   overflow: visible !important;
+}
+
+body.filter-ui-v2 .mlist .popular-card__img,
+body.filter-ui-v2 .mlist .serials-card__img {
+   border-radius: 0 !important;
+   overflow: hidden;
+}
+
+body.filter-ui-v2 .mlist .popular-card__img img,
+body.filter-ui-v2 .mlist .serials-card__img img {
+   border-radius: 0 !important;
+}
+
+body.filter-ui-v2 .mlist .popular-card__title {
+   margin-top: 10px;
+   text-align: left;
+   padding: 0 2px;
+}
+
+body.filter-ui-v2 .mlist .popular-card__title a,
+body.filter-ui-v2 .mlist .popular-card__title h3,
+body.filter-ui-v2 .mlist .popular-card__title h2 {
+   font-size: 14px !important;
+   line-height: 1.3 !important;
+   color: var(--fv-text) !important;
+}
+
+body.filter-ui-v2 .mlist .popular-card__title .year,
+body.filter-ui-v2 .mlist .popular-card__title small {
+   color: var(--fv-text-mute);
+   font-size: 12px;
+}
+
+/* IMDb badge — flat rectangle, no rounded corners */
+body.filter-ui-v2 .mlist .popular-card__img .rates,
+body.filter-ui-v2 .mlist .popular-card__img .imdb {
+   border-radius: 0 !important;
+}
+
+/* ── 8. Mobile fallback (≤767px) — show pills wrapping nicely  */
+@media (max-width: 767.98px) {
+   body.filter-ui-v2 .filter-redesign .filter-dropdowns {
+      flex-direction: row;
+      flex-wrap: wrap;
+   }
+   body.filter-ui-v2 .filter-redesign .filter-item.filter-submit {
+      width: 100%;
+      margin-left: 0 !important;
+      margin-top: 4px;
+   }
+   body.filter-ui-v2 .filter-redesign .filter-item.filter-submit > button {
+      width: 100%;
+   }
+}
+
+/* ── 9. Sticky filter (desktop) — keep but flat ────────────── */
+@media (min-width: 992px) {
+    body.has-sticky-filter.filter-ui-v2 .filter-redesign .filter-form {
+        border-radius: 8px !important;
+        padding: 20px 20px !important;
+        background: #242731 !important;
+        margin-bottom: 10px;
+    }
+}
+
+.filter-redesign .filter-item button[type="submit"]:hover {
+    background: #32e3e3;
+    transform: initial !important;
+    box-shadow: initial !important;
+}

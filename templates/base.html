@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>{% block title %}{{ site_name }}{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}?v=cyan" sizes="any">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}?v=cyan">
+  <link rel="stylesheet" href="{{ url_for('static', filename='theme/web/plugins/swiper/swiper-bundle.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='theme/web/plugins/bootstrap/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='theme/web/plugins/select2/css/select2.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='theme/web/css/style.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='theme/web/css/styles.css') }}">
+  {% block head %}{% endblock %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='fonts/noto.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ge-custom.css') }}">
+</head>
+<body>
+{% set path = request.path %}
+<nav class="sidebar">
+  <ul class="navbar-nav">
+    {% set nav_ic = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"' %}
+    <li class="nav-item">
+      <a href="/" class="nav-link arial py-3 {{ 'active' if path == '/' }}" title="მთავარი">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <div class="pt-xl-2">მთავარი</div>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/browse?type=movie" class="nav-link arial py-3 {{ 'active' if path in ['/browse','/filter-movies'] and media=='movie' }}" title="ფილმები">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+        <div class="pt-xl-2">ფილმები</div>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/browse?type=serial" class="nav-link arial py-3 {{ 'active' if media=='tv' }}" title="სერიალები">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2-5 5-5-5"/><rect width="20" height="15" x="2" y="7" rx="2"/></svg>
+        <div class="pt-xl-2">სერიალები</div>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/browse?type=trailer" class="nav-link arial py-3 {{ 'active' if media=='trailer' }}" title="თრეილერები">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.296 3.464 3.02 3.956"/><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3z"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="m6.18 5.276 3.1 3.899"/></svg>
+        <div class="pt-xl-2">თრეილერები</div>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/persons" class="nav-link arial py-3 {{ 'active' if path=='/persons' }}" title="მსახიობები">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11c-1.5 0-2.5.5-3 2"/><path d="M4 6a2 2 0 0 0-2 2v4a5 5 0 0 0 5 5 8 8 0 0 1 5 2 8 8 0 0 1 5-2 5 5 0 0 0 5-5V8a2 2 0 0 0-2-2h-3a8 8 0 0 0-5 2 8 8 0 0 0-5-2z"/><path d="M6 11c1.5 0 2.5.5 3 2"/></svg>
+        <div class="pt-xl-2">მსახიობები</div>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/watchlist" class="nav-link arial py-3 {{ 'active' if path=='/watchlist' }}" title="სანახავი">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>
+        <div class="pt-xl-2">სანახავი</div>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<section class="content">
+  <header class="header">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="header-top">
+            <div class="header-top__logo">
+              <a href="/"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="{{ site_name }}"></a>
+            </div>
+            <div class="header-top__search">
+              <form id="SearchMovie" action="/browse" autocomplete="off">
+                <input type="hidden" name="type" value="search">
+                <input type="text" id="search" name="search" autocomplete="off" placeholder="საძიებო სიტყვა...">
+                <button type="submit"><i class="icofont-search"></i> ძებნა</button>
+              </form>
+              <div id="search_autocomplete"></div>
+            </div>
+            <div class="header-top__actions"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {% block content %}{% endblock %}
+</section>
+
+<script src="{{ url_for('static', filename='theme/web/js/int.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

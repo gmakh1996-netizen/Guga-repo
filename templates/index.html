@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ site_name }} ფილმები და სერიალები ქართულად{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="ge-hero" id="HeroSlider" data-type="movie" data-sort="trending">
+            <a class="ge-hero__featured" id="heroFeatured" href="#">
+              <div class="ge-hero__bg" id="heroBg"></div>
+              <div class="ge-hero__info">
+                <span class="ge-hero__play">ფილმის ყურება</span>
+                <h2 class="ge-hero__title" id="heroTitle"></h2>
+                <div class="ge-hero__meta">
+                  <span class="ge-hero__genres" id="heroGenres"></span>
+                  <span class="imdb-badge" id="heroImdb"></span>
+                </div>
+              </div>
+            </a>
+            <div class="ge-hero__thumbs" id="heroThumbs"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="rows">
+    <div class="cw-row" id="cwRow" data-title="განაგრძე ყურება" data-icon="resume"></div>
+    <div class="movies-row" data-title="ფილმები ქართულად"          data-icon="film"    data-type="movie"  data-sort="popularity"></div>
+    <div class="movies-row" data-title="სერიალები ქართულად"        data-icon="tv"      data-type="serial" data-sort="recent"></div>
+    <div class="movies-row" data-title="პრემიერა"                 data-icon="premiere" data-type="movie" data-sort="recent" data-portrait="1"></div>
+    <div class="movies-row" data-title="ახალი დამატებული ფილმები"   data-icon="newfilm" data-type="movie"  data-sort="recent"></div>
+    <div class="movies-row" data-title="ახალი დამატებული ეპიზოდები" data-icon="newtv"   data-type="serial" data-sort="recent"></div>
+  </div>
+{% endblock %}

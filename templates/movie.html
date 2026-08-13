@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% from "_moviecard.html" import movie_card %}
+{% block title %}{{ movie.title }} — {{ site_name }}{% endblock %}
+
+{% block content %}
+{% set poster = movie.poster_url or img(movie.poster_path) %}
+{% set is_tv = movie.media_type == 'tv' %}
+{% set streams = movie.streams|sort(attribute='sort') if movie.streams else [] %}
+{% set score5 = ((movie.rating or 0) / 2) %}
+<div class="movies-full" id="movies-full">
+  {% if poster %}<div class="bg-image" style="background-image:url('{{ poster }}')"></div>{% endif %}
+  <div class="container">
+
+    <div class="movies-full__content">
+      <div class="movies-full__poster">
+        <img src="{{ poster or '/static/theme/web/img/poster.svg' }}" alt="{{ movie.title }}" onerror="this.onerror=null;this.src='/static/theme/web/img/poster.svg';this.classList.add('ge-ph')">
+        {% if movie.trailer_key %}
+          <button class="mf-trailer" data-trailer="https://www.youtube.com/embed/{{ movie.trailer_key }}?autoplay=1">
+            {{ 'სერიალის თრეილერი' if is_tv else 'ფილმის თრეილერი' }}
+          </button>
+        {% endif %}
+      </div>
+
+      <div class="movies-full__player" id="player">
+        {% if streams %}
+          {% if streams|length > 1 %}
+            <div class="mf-sources">
+              {% for s in streams %}
+                <button class="mf-source {{ 'active' if loop.first }}" data-src="{{ s.url }}">{{ s.label or 'წყარო' }} {{ loop.index }}</button>
+              {% endfor %}
+            </div>
+          {% endif %}
+          <iframe id="movie_embed" src="{{ streams[0].url }}" width="100%" height="100%"
+                  frameborder="0" allowfullscreen referrerpolicy="no-referrer"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        {% elif movie.trailer_key %}
+          <iframe id="movie_embed" src="https://www.youtube.com/embed/{{ movie.trailer_key }}"
+                  width="100%" height="100%" frameborder="0" allowfullscreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        {% else %}
+          <div class="ge-noplayer">ფლეერი მიუწვდომელია</div>
+        {% endif %}
+      </div>
+    </div>
+    <!-- /.movies-full__content -->
+
+    <div class="movies-full__inside">
+
+      <div class="mf-head">
+        <div class="mf-head__titles">
+          <h1>{{ movie.title }}{% if movie.year %} ({{ movie.year }}){% endif %}</h1>
+          {% if movie.original_title and movie.original_title != movie.title %}
+            <div class="mf-orig">{{ movie.original_title }} / ქართულად{% if not is_tv %}, ინგლისურად, რუსულად{% endif %}</div>
+          {% endif %}
+        </div>
+        <div class="mf-tools">
+          <button class="mf-tool" type="button" title="მოგვიანებით">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm.5-13H11v6l5.2 3.1.8-1.3-4.5-2.7V7z"/></svg>
+          </button>
+          <button class="mf-tool card__fav mf-fav" type="button" title="სანახავ სიაში"
+                  data-id="{{ movie.id }}" data-type="{{ 'tv' if is_tv else 'movie' }}"
+                  data-title="{{ movie.title }}" data-poster="{{ poster or '' }}">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </button>
+          <button class="mf-tool" type="button" title="შეტყობინება">
+            <svg viewBox="0 0 24 24"><path d="M12 22a2.5 2.5 0 002.45-2h-4.9A2.5 2.5 0 0012 22zm6-6v-5.5c0-3.07-1.64-5.64-4.5-6.32V3.5a1.5 1.5 0 00-3 0v.68C7.63 4.86 6 7.42 6 10.5V16l-2 2v1h16v-1l-2-2z"/></svg>
+          </button>
+          <button class="mf-help" type="button" title="პრობლემის შეტყობინება">
+            <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+            <span>დახმარება</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="mf-ratingbar">
+        {% if movie.rating %}
+        <div class="mf-imdb"><span class="mf-imdb__logo">IMDb</span><b>{{ movie.rating }}</b></div>
+        {% endif %}
+        <div class="mf-userrate">
+          <div class="mf-stars" title="{{ score5|round(1) }} / 5">
+            {% for i in range(1, 6) %}
+              <svg class="mf-star {{ 'is-on' if i <= (score5|round(0, 'common')|int) }}" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.784 1.401 8.168L12 18.896l-7.335 3.866 1.401-8.168L.132 9.21l8.2-1.192z"/></svg>
+            {% endfor %}
+          </div>
+          {% if movie.rating %}<span class="mf-score">{{ score5|round(1) }}</span>{% endif %}
+          {% if movie.vote_count %}<span class="mf-votes"><svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4 0-9 2-9 6v2h18v-2c0-4-5-6-9-6z"/></svg>{{ movie.vote_count }}</span>{% endif %}
+        </div>
+      </div>
+
+      <ul class="mf-info">
+        {% if movie.genres %}
+        <li><span class="mf-info__k">ჟანრი:</span>
+          <span class="mf-info__v">
+            {% for g in movie.genres %}<a href="/browse?type={{ 'serial' if is_tv else 'movie' }}&genre={{ g.id }}">{{ g.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}
+          </span>
+        </li>
+        {% endif %}
+        {% if movie.studio %}<li><span class="mf-info__k">სტუდია:</span> <span class="mf-info__v mf-info__v--plain">{{ movie.studio }}</span></li>{% endif %}
+        {% if movie.year %}<li><span class="mf-info__k">გამოშვების წელი:</span> <span class="mf-info__v">{{ movie.year }}</span></li>{% endif %}
+        {% if movie.director %}<li><span class="mf-info__k">რეჟისორი:</span> <span class="mf-info__v mf-info__v--plain">{{ movie.director }}</span></li>{% endif %}
+        {% if is_tv and movie.number_of_seasons %}<li><span class="mf-info__k">სეზონები:</span> <span class="mf-info__v">{{ movie.number_of_seasons }}</span></li>{% endif %}
+        {% if movie.runtime %}<li><span class="mf-info__k">ხანგრძლივობა:</span> <span class="mf-info__v">{{ movie.runtime }} წთ</span></li>{% endif %}
+        {% if movie.country %}<li><span class="mf-info__k">ქვეყანა:</span> <span class="mf-info__v mf-info__v--plain">{{ movie.country }}</span></li>{% endif %}
+        {% if movie.budget %}<li><span class="mf-info__k">ბიუჯეტი:</span> <span class="mf-info__v mf-info__v--plain">$ {{ "{:,}".format(movie.budget) }}</span></li>{% endif %}
+        {% if movie.revenue %}<li><span class="mf-info__k">შემოსავალი:</span> <span class="mf-info__v mf-info__v--plain">$ {{ "{:,}".format(movie.revenue) }}</span></li>{% endif %}
+      </ul>
+
+      {% if movie.overview %}
+        <div class="mf-plot">
+          <h3 class="mf-plot__title">ფილმის სიუჟეტი:</h3>
+          <p>{{ movie.overview }}</p>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if cast %}
+    <section class="mf-cast">
+      <div class="mf-cast__head">
+        <h2 class="ge-section-title">მსახიობები</h2>
+        <div class="mf-cast__nav">
+          <button type="button" class="mf-cast__btn" data-dir="-1">‹</button>
+          <button type="button" class="mf-cast__btn" data-dir="1">›</button>
+        </div>
+      </div>
+      <div class="mf-cast__row" id="castRow">
+        {% for a in cast %}
+        <div class="mf-actor">
+          <div class="mf-actor__photo">
+            {% if a.photo %}<img src="{{ a.photo }}" alt="{{ a.name }}" loading="lazy" onerror="this.style.display='none';this.parentNode.classList.add('mf-actor__ph')">
+            {% else %}<span class="mf-actor__initials">{{ a.name[:1] }}</span>{% endif %}
+          </div>
+          <div class="mf-actor__name">{{ a.name }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+  </div>
+</div>
+
+{% if similar %}
+<section class="movies related">
+  <div class="container">
+    <h2 class="ge-rec-title">რეკომენდირებული ფილმები</h2>
+    <div class="ge-rec-grid">
+      {% for m in similar %}{{ movie_card(m) }}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/watchlist.js') }}"></script>
+<script>
+  (function () {
+    var frame = document.getElementById('movie_embed');
+    document.querySelectorAll('.mf-source').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (frame) frame.src = this.dataset.src;
+        document.querySelectorAll('.mf-source').forEach(function (x) { x.classList.remove('active'); });
+        this.classList.add('active');
+      });
+    });
+    var tb = document.querySelector('.mf-trailer');
+    if (tb) tb.addEventListener('click', function () { if (frame) frame.src = this.dataset.trailer; });
+
+    // მსახიობების ჰორიზონტალური სქროლი
+    var row = document.getElementById('castRow');
+    document.querySelectorAll('.mf-cast__btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (row) row.scrollBy({ left: this.dataset.dir * row.clientWidth * 0.8, behavior: 'smooth' });
+      });
+    });
+
+    // „განაგრძე ყურება" — ვინახავთ ნანახ ფილმს localStorage-ში
+    try {
+      var rec = {
+        id: {{ movie.id }},
+        type: "{{ 'tv' if movie.media_type == 'tv' else 'movie' }}",
+        title: {{ movie.title|tojson }},
+        title_en: {{ (movie.original_title or '')|tojson }},
+        year: "{{ movie.year or '' }}",
+        rating: {{ movie.rating or 0 }},
+        poster: {{ (movie.poster_url or img(movie.poster_path) or '')|tojson }},
+        url: "{{ '/series/' if movie.media_type == 'tv' else '/movie/' }}{{ movie.id }}"
+      };
+      var list = JSON.parse(localStorage.getItem("gemovie_recent") || "[]");
+      list = list.filter(function (x) { return !(x.id === rec.id && x.type === rec.type); });
+      list.unshift(rec);
+      localStorage.setItem("gemovie_recent", JSON.stringify(list.slice(0, 30)));
+    } catch (e) {}
+  })();
+</script>
+{% endblock %}

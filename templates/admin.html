@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}ადმინი · {{ site_name }}{% endblock %}
+
+{% block content %}
+<section class="admin container">
+  <h1>ადმინ-პანელი</h1>
+  <p class="admin__hint">
+    სინქრონიზაცია TMDB-დან. საჭიროა <code>ADMIN_TOKEN</code> (იხ. <code>.env</code>).
+    token ინახება მხოლოდ ამ ბრაუზერში (localStorage), არასდროს URL-ში.
+  </p>
+
+  <div class="admin__row">
+    <input id="admin-token" type="password" placeholder="ADMIN_TOKEN"
+           autocomplete="off" spellcheck="false">
+    <button id="sync-btn" class="btn" type="button">Sync Movies</button>
+  </div>
+
+  <p id="admin-status" class="admin__status" role="status" aria-live="polite"></p>
+
+  <div id="admin-stats" class="admin__stats" hidden>
+    <div class="stat"><span class="stat__num" data-k="found">0</span><span>ნაპოვნი</span></div>
+    <div class="stat"><span class="stat__num" data-k="new">0</span><span>ახალი</span></div>
+    <div class="stat"><span class="stat__num" data-k="updated">0</span><span>განახლდა</span></div>
+    <div class="stat"><span class="stat__num" data-k="skipped">0</span><span>გამოტოვა</span></div>
+    <div class="stat"><span class="stat__num" data-k="errors">0</span><span>შეცდომა</span></div>
+  </div>
+  <p id="admin-total" class="admin__total"></p>
+</section>
+
+<script>
+(function () {
+  const tokenInput = document.getElementById('admin-token');
+  const btn = document.getElementById('sync-btn');
+  const statusEl = document.getElementById('admin-status');
+  const statsEl = document.getElementById('admin-stats');
+  const totalEl = document.getElementById('admin-total');
+  const KEY = 'gemovie_admin_token';
+
+  // token-ის დამახსოვრება ამ ბრაუზერში
+  tokenInput.value = localStorage.getItem(KEY) || '';
+  tokenInput.addEventListener('change', () => localStorage.setItem(KEY, tokenInput.value));
+
+  btn.addEventListener('click', async () => {
+    const token = tokenInput.value.trim();
+    if (!token) { statusEl.textContent = 'შეიყვანეთ ADMIN_TOKEN.'; return; }
+    localStorage.setItem(KEY, token);
+
+    btn.disabled = true;
+    statusEl.textContent = 'სინქრონიზაცია მიმდინარეობს... (შესაძლოა 1-2 წუთი)';
+    statsEl.hidden = true;
+    totalEl.textContent = '';
+
+    try {
+      const res = await fetch('/api/admin/sync', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        statusEl.textContent = 'შეცდომა: ' + (data.error || res.status);
+        return;
+      }
+      const s = data.stats;
+      statsEl.querySelectorAll('.stat__num').forEach(el => {
+        el.textContent = s[el.dataset.k] ?? 0;
+      });
+      statsEl.hidden = false;
+      totalEl.textContent =
+        `ბაზაში ახლა: ${s.total_movies} ფილმი, ${s.total_series} სერიალი.`;
+      statusEl.textContent = 'დასრულდა ✓';
+    } catch (err) {
+      statusEl.textContent = 'ქსელის შეცდომა: ' + err.message;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+})();
+</script>
+{% endblock %}

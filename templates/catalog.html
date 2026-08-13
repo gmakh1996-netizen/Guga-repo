@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}კატალოგი — {{ site_name }}{% endblock %}
+
+{% block content %}
+  <section class="row">
+    <h2 class="row__title">კატალოგი</h2>
+
+    <div class="catalog__controls">
+      <div class="catalog__search">
+        <input type="search" id="catSearch" placeholder="ძებნა სათაურით..." autocomplete="off">
+      </div>
+      <div class="filters">
+        <select id="catGenre" aria-label="ჟანრი">
+          <option value="all">ყველა ჟანრი</option>
+        </select>
+        <select id="catType" aria-label="ტიპი">
+          <option value="all">ყველა ტიპი</option>
+          <option value="movie">ფილმები</option>
+          <option value="series">სერიალები</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid" id="catGrid"></div>
+    <p class="empty__text" id="catEmpty" hidden>შედეგი ვერ მოიძებნა.</p>
+  </section>
+
+  {# ---- დეტალური ხედი (Modal) ---- #}
+  <div class="modal" id="catModal" hidden>
+    <div class="modal__overlay" data-close></div>
+    <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+      <button class="modal__close" data-close aria-label="დახურვა">✕</button>
+
+      <h2 class="modal__title" id="mTitle"></h2>
+      <div class="modal__meta" id="mMeta"></div>
+      <p class="modal__desc" id="mDesc"></p>
+
+      <div class="player__stage" id="mStage" hidden>
+        <iframe id="mFrame" allowfullscreen
+                allow="autoplay; encrypted-media; fullscreen"
+                referrerpolicy="no-referrer"></iframe>
+      </div>
+
+      <div id="mEpisodes"></div>
+
+      <p class="player__note" id="mNote" hidden>ფლეიერი მიუწვდომელია.</p>
+
+      <a class="btn btn--ghost modal__source" id="mSource" target="_blank" rel="noopener">წყარო ↗</a>
+    </div>
+  </div>
+
+  {# მონაცემები JSON blob-ად — client-side ძებნა/ფილტრი/მოდალისთვის #}
+  <script id="catalog-data" type="application/json">{{ items | tojson }}</script>
+  <script src="{{ url_for('static', filename='js/catalog.js') }}"></script>
+{% endblock %}
