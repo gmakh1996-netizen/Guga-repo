@@ -4,4 +4,7 @@ __pycache__/
 venv/
 .env
 *.db
+*.db-shm
+*.db-wal
+!gemovie.db
 .DS_Store
