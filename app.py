@@ -147,6 +147,22 @@ def register_routes(app):
     def _model_for(media):
         return Series if media in ("serial", "tv", "series") else Movie
 
+    def _has_poster(Model):
+        """მხოლოდ ისეთი ჩანაწერები, რომლებსაც ნამდვილი სურათი აქვთ.
+
+        ge.movie-ს ზოგ ჩანაწერს poster_url გატეხილი აქვს (მაგ. `.../big/original`
+        ფაილის სახელის გარეშე) → ბარათი placeholder-ით ჩნდება და დიზაინს აფუჭებს.
+        ვფილტრავთ URL-ს ნამდვილი სურათის გაფართოებით — ცარიელი/გატეხილი გამოირიცხოს.
+        """
+        col = Model.poster_url
+        return db.and_(
+            col.isnot(None), col != "",
+            db.or_(
+                col.ilike("%.jpg"), col.ilike("%.jpeg"),
+                col.ilike("%.png"), col.ilike("%.webp"),
+            ),
+        )
+
     def _serialize(rec):
         return {
             "id": rec.id,
@@ -176,7 +192,7 @@ def register_routes(app):
         if media == "search" and q:
             combined = []
             for M in (Movie, Series):
-                combined += M.query.filter(M.title.ilike(f"%{q}%")).order_by(
+                combined += M.query.filter(M.title.ilike(f"%{q}%"), _has_poster(M)).order_by(
                     M.popularity.desc()
                 ).limit(300).all()
             combined.sort(key=lambda x: x.popularity or 0, reverse=True)
@@ -216,6 +232,9 @@ def register_routes(app):
         else:
             query = query.order_by(Model.popularity.desc(), Model.vote_average.desc())
 
+        # უფოტო/გატეხილპოსტერიანი ჩანაწერები არასდროს დაბრუნდეს (მთავარი/ჰერო/ბრაუზი/თრეილერი)
+        query = query.filter(_has_poster(Model))
+
         total = query.count()
         items = query.offset((page - 1) * per).limit(per).all()
         return jsonify(
@@ -231,10 +250,10 @@ def register_routes(app):
         q = request.args.get("q", "").strip()
         if len(q) < 2:
             return jsonify(items=[])
-        movies = Movie.query.filter(Movie.title.ilike(f"%{q}%")).order_by(
+        movies = Movie.query.filter(Movie.title.ilike(f"%{q}%"), _has_poster(Movie)).order_by(
             Movie.popularity.desc()
         ).limit(6).all()
-        series = Series.query.filter(Series.title.ilike(f"%{q}%")).order_by(
+        series = Series.query.filter(Series.title.ilike(f"%{q}%"), _has_poster(Series)).order_by(
             Series.popularity.desc()
         ).limit(4).all()
         return jsonify(items=[_serialize(x) for x in movies + series])

@@ -4,6 +4,16 @@
 
   var PH = "/static/theme/web/img/poster.svg";  // გატეხილი/ცარიელი პოსტერის placeholder
 
+  // სურათის ჩატვირთვა თუ ჩავარდა → მთელი ბარათი ამოვშალოთ (placeholder-ის ნაცვლად),
+  // რომ უფოტო ფილმი/სერიალი არსად გამოჩნდეს. სერვერიც ფილტრავს, ეს — უსაფრთხოების ბადე.
+  window.geImgFail = function (img) {
+    var card = img.closest(".swiper-slide") || img.closest(".ge-cell") || img.closest(".movie-card");
+    if (!card || !card.parentNode) { img.style.visibility = "hidden"; return; }
+    var cont = card.closest(".swiper");
+    card.parentNode.removeChild(card);
+    if (cont && cont.swiper) { try { cont.swiper.update(); } catch (e) {} }
+  };
+
   var PLAY_SVG =
     '<svg viewBox="0 0 265.4 265.4" xmlns="http://www.w3.org/2000/svg"><path d="M194.2 123.7l-78.1-51.1c-1.9-1.3-4-1.9-6.1-1.9 -5.5 0-9.7 4.5-9.7 10.5v103.2c0 6 4.2 10.5 9.7 10.5 2.1 0 4.2-0.7 6.1-1.9l78.1-51.1c3.3-2.1 5.1-5.4 5.1-9C199.3 129.1 197.4 125.8 194.2 123.7z"></path></svg>';
 
@@ -26,7 +36,7 @@
     var rates = m.rating ? '<div class="rates"><div class="imdb"><span>IMDb ' + esc(m.rating) + "</span></div></div>" : "";
     var year = m.year ? '<span class="year">' + esc(m.year) + "</span>" : "";
     var src = (portrait && m.poster_portrait) ? m.poster_portrait : (m.poster || PH);
-    var img = '<img src="' + esc(src) + '" alt="' + esc(m.title) + '" loading="lazy" onerror="this.onerror=null;this.src=\'' + PH + '\';this.classList.add(\'ge-ph\')">';
+    var img = '<img src="' + esc(src) + '" alt="' + esc(m.title) + '" loading="lazy" onerror="this.onerror=null;geImgFail(this)">';
     var en = m.title_en ? "<p>" + esc(m.title_en) + "</p>" : "";
     return (
       '<div class="movie-card">' +
