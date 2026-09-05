@@ -268,7 +268,7 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
   .sidebar .nav-link {
     display: flex !important; flex-direction: row; align-items: center; justify-content: center; gap: 6px;
     height: 56px; width: 100%; padding: 0 8px !important; margin: 0 !important; border-radius: 0 !important;
-    background: #232d3f; border: none; cursor: pointer; text-decoration: none;
+    background: #171e2a; border: none; cursor: pointer; text-decoration: none;
     color: #ffffff; transition: .18s ease;
   }
   .sidebar .nav-link svg { width: 18px !important; height: 18px !important; flex: 0 0 auto; transition: .18s ease; }
@@ -278,9 +278,9 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
     white-space: nowrap;
   }
   .sidebar .nav-link:hover {
-    background: #0f0f0f; color: #fff; border-radius: 0 !important;
+    background: #05070a; color: #fff; border-radius: 0 !important;
   }
-  .sidebar .nav-link.active { background: #0f0f0f !important; color: #fff !important; border-radius: 0 !important; }
+  .sidebar .nav-link.active { background: #05070a !important; color: #fff !important; border-radius: 0 !important; }
   .sidebar .nav-link:hover svg, .sidebar .nav-link:hover svg path,
   .sidebar .nav-link:hover svg rect, .sidebar .nav-link:hover svg circle,
   .sidebar .nav-link.active svg, .sidebar .nav-link.active svg path,
