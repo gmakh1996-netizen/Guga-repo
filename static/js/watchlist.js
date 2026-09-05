@@ -8,6 +8,8 @@
     catch (e) { return []; }
   };
   const save = (list) => localStorage.setItem(KEY, JSON.stringify(list));
+  const esc = (s) => (s == null ? "" : String(s)).replace(/[&<>"]/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const keyOf = (id, type) => `${type}:${id}`;
   const has = (list, id, type) =>
     list.some((x) => keyOf(x.id, x.type) === keyOf(id, type));
@@ -63,17 +65,18 @@
     if (emptyMsg) emptyMsg.style.display = "none";
     list.forEach((it) => {
       const href = it.type === "tv" ? `/series/${it.id}` : `/movie/${it.id}`;
-      const poster = it.poster
-        ? `<img src="${it.poster}" alt="${it.title}" loading="lazy">`
-        : `<div class="card__noposter">${it.title}</div>`;
+      const poster = it.poster || "/static/theme/web/img/poster.svg";
+      const title = esc(it.title);
       const el = document.createElement("div");
-      el.className = "card";
+      el.className = "col-6 col-md-4 col-lg-3 col-xxl-2";
       el.innerHTML =
-        `<a class="card__link" href="${href}"><div class="card__poster">${poster}` +
-        (it.type === "tv" ? `<span class="card__badge">სერიალი</span>` : "") +
-        `</div><div class="card__meta"><span class="card__title">${it.title}</span></div></a>` +
-        `<button class="card__fav is-active" data-id="${it.id}" data-type="${it.type}" ` +
-        `data-title="${it.title}" data-poster="${it.poster || ""}">♥</button>`;
+        `<div class="movie-card"><div class="movie-card__img">` +
+        `<img src="${esc(poster)}" alt="${title}" loading="lazy" onerror="this.onerror=null;this.src='/static/theme/web/img/poster.svg';this.classList.add('ge-ph')">` +
+        `<a href="${href}" class="play"><svg viewBox="0 0 265.4 265.4" xmlns="http://www.w3.org/2000/svg"><path d="M194.2 123.7l-78.1-51.1c-1.9-1.3-4-1.9-6.1-1.9 -5.5 0-9.7 4.5-9.7 10.5v103.2c0 6 4.2 10.5 9.7 10.5 2.1 0 4.2-0.7 6.1-1.9l78.1-51.1c3.3-2.1 5.1-5.4 5.1-9C199.3 129.1 197.4 125.8 194.2 123.7z"></path></svg></a>` +
+        (it.type === "tv" ? `<div class="actions"><span class="year">სერიალი</span></div>` : "") +
+        `<button class="card__fav wl-remove is-active" title="ამოშლა" data-id="${it.id}" data-type="${esc(it.type)}" ` +
+        `data-title="${title}" data-poster="${esc(it.poster || "")}">♥</button>` +
+        `</div><div class="movie-card__title"><h2><a href="${href}"><span>${title}</span></a></h2></div></div>`;
       grid.appendChild(el);
     });
   }

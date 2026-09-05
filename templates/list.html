@@ -1,21 +1,33 @@
 {% extends "base.html" %}
+{% from "_moviecard.html" import movie_card %}
 {% block title %}{{ title }} — {{ site_name }}{% endblock %}
 
 {% block content %}
-  <section class="row">
-    <h2 class="row__title">{{ title }}</h2>
-    <div class="grid">
-      {% for m in movies.items %}{% include "_card.html" %}{% endfor %}
-    </div>
+<section class="movies">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="ge-row-head" style="margin-top:24px">
+          <div class="ge-head-left">
+            <h2 class="ge-section-title">{{ title }}</h2>
+          </div>
+        </div>
 
-    <div class="pager">
-      {% if movies.has_prev %}
-        <a class="btn btn--ghost" href="?page={{ movies.prev_num }}">← წინა</a>
-      {% endif %}
-      <span class="pager__info">გვ. {{ movies.page }} / {{ movies.pages }}</span>
-      {% if movies.has_next %}
-        <a class="btn btn--ghost" href="?page={{ movies.next_num }}">შემდეგი →</a>
-      {% endif %}
+        <div class="ge-rec-grid">
+          {% for m in movies.items %}{{ movie_card(m) }}{% endfor %}
+        </div>
+
+        <div class="ge-pager">
+          {% if movies.has_prev %}
+            <a class="ge-pager__btn" href="?page={{ movies.prev_num }}">← წინა</a>
+          {% endif %}
+          <span class="ge-pager__info">გვ. {{ movies.page }} / {{ movies.pages }}</span>
+          {% if movies.has_next %}
+            <a class="ge-pager__btn" href="?page={{ movies.next_num }}">შემდეგი →</a>
+          {% endif %}
+        </div>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
 {% endblock %}

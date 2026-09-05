@@ -2,11 +2,25 @@
 {% block title %}სანახავი სია — {{ site_name }}{% endblock %}
 
 {% block content %}
-  <section class="row">
-    <h2 class="row__title">ჩემი სანახავი სია</h2>
-    <div class="grid" id="watchlist-grid"></div>
-    <p class="empty__text" id="watchlist-empty" style="display:none">
-      სია ცარიელია. ფილმის ან სერიალის ბარათზე ♥ ღილაკით დაამატეთ.
-    </p>
-  </section>
+<section class="movies">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="ge-row-head" style="margin-top:24px">
+          <div class="ge-head-left">
+            <h2 class="ge-section-title">ჩემი სანახავი სია</h2>
+          </div>
+        </div>
+        <div class="ge-rec-grid" id="watchlist-grid"></div>
+        <p class="ge-empty" id="watchlist-empty" style="display:none">
+          სია ცარიელია. ფილმის ან სერიალის გვერდზე ♥ ღილაკით დაამატეთ.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/watchlist.js') }}"></script>
 {% endblock %}

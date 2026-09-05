@@ -201,6 +201,8 @@ html { scrollbar-width: thin; scrollbar-color: #2a2e3a transparent; }
   .mf-head { flex-direction: column; }
   .mf-head__titles h1 { font-size: 24px; }
   .mf-ratingbar { gap: 12px; }
+  /* ვიწრო ტელეფონებზე (≤360px) 4 ღილაკი ერთ მწკრივში აღარ ეტევა — ვახვევთ */
+  .mf-tools { flex-wrap: wrap; row-gap: 10px; }
 }
 
 /* header logo — MW shield emblem (square), larger than the old wordmark */
@@ -390,6 +392,10 @@ img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; o
   .ge-section-title { font-size: 18px; }
   .ge-ico-badge { width: 34px; height: 34px; flex: 0 0 34px; }
   .ge-row-head .ge-ico { width: 18px; height: 18px; }
+
+  /* მსახიობის ფოტო — ფიქსირებული 130px ტაბლეტის (768px) 6-სვეტიან ბადეზე
+     საკუთარ უჯრას სცდება და მთელ grid-ს გარეთ სწევს; ვხდით ფლუიდურს */
+  .ge-person__photo { width: 100%; max-width: 130px; height: auto; aspect-ratio: 1 / 1; }
 }
 
 /* --- ტელეფონი (≤560px): ჰერო + ფილტრი დახვეწა --- */
@@ -410,3 +416,25 @@ img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; o
   /* მსახიობის ფოტო — ფიქსირებული 130px ბადის უჯრას სცდება; ვხდით ფლუიდურს */
   .ge-person__photo { width: 100%; max-width: 120px; height: auto; aspect-ratio: 1 / 1; }
 }
+
+/* ============================================================
+   watchlist / search / genre-list / 404 — ეს გვერდები აშენებულია
+   ge.movie-თემის კლასებზე (.movie-card, .ge-rec-grid, .ge-section-title
+   და ა.შ.), რომ ამ პროექტში უკვე მუშა, სრულად responsive სისტემას
+   ეყრდნობოდნენ.
+   ============================================================ */
+.ge-btn { display: inline-block; background: var(--ge-red); color: #fff; padding: 12px 28px;
+  border-radius: 8px; font-weight: 600; font-size: 15px; }
+.ge-btn:hover { background: #32e3e3; }
+
+.ge-pager { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 32px 0; flex-wrap: wrap; }
+.ge-pager__btn { background: var(--ge-card); border: 1px solid #2a2e3a; color: #fff; padding: 9px 18px;
+  border-radius: 8px; font-size: 14px; }
+.ge-pager__btn:hover { border-color: var(--ge-red); color: var(--ge-red); }
+.ge-pager__info { color: #9aa0ac; font-size: 14px; }
+
+/* watchlist — ამოშლის ღილაკი ბარათის პოსტერზე */
+.wl-remove { position: absolute; top: 8px; right: 8px; z-index: 5; width: 32px; height: 32px;
+  border-radius: 50%; border: 0; background: rgba(0,0,0,.65); color: #fff; font-size: 15px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: .15s; }
+.wl-remove:hover { background: var(--ge-red); }

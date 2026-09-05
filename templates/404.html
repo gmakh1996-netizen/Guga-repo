@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block title %}ვერ მოიძებნა — {{ site_name }}{% endblock %}
 {% block content %}
-  <div class="empty">
-    <h2>404</h2>
-    <p>გვერდი ვერ მოიძებნა.</p>
-    <a class="btn" href="{{ url_for('index') }}">მთავარზე დაბრუნება</a>
+  <div class="container">
+    <div class="ge-empty" style="padding:100px 20px">
+      <h2 class="ge-section-title" style="font-size:32px;margin-bottom:10px">404</h2>
+      <p style="margin-bottom:20px">გვერდი ვერ მოიძებნა.</p>
+      <a class="ge-btn" href="{{ url_for('index') }}">მთავარზე დაბრუნება</a>
+    </div>
   </div>
 {% endblock %}

@@ -1,18 +1,29 @@
 {% extends "base.html" %}
+{% from "_moviecard.html" import movie_card %}
 {% block title %}ძებნა: {{ q }} — {{ site_name }}{% endblock %}
 
 {% block content %}
-  <section class="row">
-    <h2 class="row__title">
-      {% if q %}შედეგები: „{{ q }}“{% else %}ძებნა{% endif %}
-    </h2>
+<section class="movies">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="ge-row-head" style="margin-top:24px">
+          <div class="ge-head-left">
+            <h2 class="ge-section-title">
+              {% if q %}შედეგები: „{{ q }}“{% else %}ძებნა{% endif %}
+            </h2>
+          </div>
+        </div>
 
-    {% if results %}
-      <div class="grid">
-        {% for m in results %}{% include "_card.html" %}{% endfor %}
+        {% if results %}
+          <div class="ge-rec-grid">
+            {% for m in results %}{{ movie_card(m) }}{% endfor %}
+          </div>
+        {% elif q %}
+          <p class="ge-empty">ვერაფერი მოიძებნა „{{ q }}“-ზე.</p>
+        {% endif %}
       </div>
-    {% elif q %}
-      <p class="empty__text">ვერაფერი მოიძებნა „{{ q }}“-ზე.</p>
-    {% endif %}
-  </section>
+    </div>
+  </div>
+</section>
 {% endblock %}
