@@ -1,5 +1,5 @@
 /* GEMOVIE custom layer — fills gaps around ge.movie theme classes */
-:root { --ge-red: #ff0000; --ge-dark: #000000; --ge-card: #3d0000; }
+:root { --ge-red: #008170; --ge-dark: #0f0f0f; --ge-card: #232d3f; }
 
 /* premium ქართული ფონტი — adjaranett.com-ის მიხედვით (BPG Mrgvlovani) */
 html, body, .content, input, select, button, textarea, a, p, li, .arial, .nav-link {
@@ -10,15 +10,15 @@ h1, h2, h3, h4, h5, .ge-section-title, .movie-card__title,
 .mf-titlebar h1, .SlidetTitle, .ge-hero__title {
   font-family: "BPG Mrgvlovani Caps", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Georgian", sans-serif !important;
 }
-html, body { background: #000000; color: #fff; overflow-x: hidden !important; max-width: 100%; }
+html, body { background: #0f0f0f; color: #fff; overflow-x: hidden !important; max-width: 100%; }
 .content { overflow-x: hidden !important; }
 .container { max-width: 100%; }
 /* scrollbar — ნეიტრალური მუქი (ცისფერი „ლურჯი ზოლი" მოხსნილია) */
 ::-webkit-scrollbar, body::-webkit-scrollbar { width: 8px !important; height: 8px !important; }
 ::-webkit-scrollbar-track, body::-webkit-scrollbar-track { background: transparent !important; }
-::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb { background: #950101 !important; border-radius: 4px !important; }
-::-webkit-scrollbar-thumb:hover, body::-webkit-scrollbar-thumb:hover { background: #ff0000 !important; }
-html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
+::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb { background: #005b41 !important; border-radius: 4px !important; }
+::-webkit-scrollbar-thumb:hover, body::-webkit-scrollbar-thumb:hover { background: #008170 !important; }
+html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 
 /* section titles / row heads */
 .ge-section-title { font-size: 17px; font-weight: 700; margin: 0; color: #fff; }
@@ -50,7 +50,7 @@ html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
 .ge-hero__featured::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,11,16,.9) 0%, rgba(10,11,16,.4) 40%, rgba(10,11,16,.05) 70%); }
 .ge-hero__info { position: absolute; left: 40px; bottom: 50px; z-index: 2; max-width: 80%; }
 .ge-hero__play { display: inline-block; background: var(--ge-red); color: #fff; padding: 12px 30px; border-radius: 8px; font-weight: 600; font-size: 15px; }
-.ge-hero__featured:hover .ge-hero__play { background: #ff0000; }
+.ge-hero__featured:hover .ge-hero__play { background: #008170; }
 .ge-hero__title { font-size: 40px; font-weight: 800; color: #fff; margin: 22px 0 12px; text-shadow: 0 2px 12px rgba(0,0,0,.6); }
 .ge-hero__meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .ge-hero__genres span { color: #d7d7d7; font-size: 14px; }
@@ -58,7 +58,7 @@ html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
 .imdb-badge { background: #f5c518; color: #000; font-weight: 700; padding: 4px 9px; border-radius: 4px; font-size: 13px; }
 
 .ge-hero__thumbs { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 14px; }
-.ge-hero__thumb { position: relative; border-radius: 10px; overflow: hidden; cursor: pointer; background: #3d0000; transition: transform .2s, box-shadow .2s; }
+.ge-hero__thumb { position: relative; border-radius: 10px; overflow: hidden; cursor: pointer; background: #232d3f; transition: transform .2s, box-shadow .2s; }
 .ge-hero__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ge-hero__thumb.active { outline: 3px solid var(--ge-red); outline-offset: -3px; }
 .ge-hero__thumb:hover { transform: scale(1.04); z-index: 3; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
@@ -80,11 +80,11 @@ html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
   font-size: 12px; line-height: 1.6; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: #9aa0ac;
 }
 .ge-filterbar select {
-  background: var(--ge-card); color: #fff; border: 1px solid #950101;
+  background: var(--ge-card); color: #fff; border: 1px solid #005b41;
   border-radius: 10px; padding: 12px 16px; font-size: 14px; min-width: 170px; cursor: pointer;
   transition: border-color .15s;
 }
-.ge-filterbar select:hover { border-color: #ff0000; }
+.ge-filterbar select:hover { border-color: #008170; }
 .ge-filterbar select:focus { outline: none; border-color: var(--ge-red); }
 .ge-loader { text-align: center; padding: 26px; color: #9aa0ac; }
 .ge-empty { text-align: center; padding: 40px; color: #9aa0ac; }
@@ -104,10 +104,10 @@ html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
 /* detail — poster left + player right (ge.movie layout: ორივე ტოლ სიმაღლეზე) */
 /* !important-ები აჭარბებენ თემის მკაცრ height/width-ებს (580/702/280px) */
 .movies-full__content { display: flex !important; gap: 20px; align-items: stretch !important; height: 580px !important; padding: 0 !important; margin: 0 0 34px !important; float: none !important; }
-.movies-full__poster { flex: 0 0 386px !important; width: 386px !important; max-width: 386px; height: 100% !important; display: flex !important; flex-direction: column; float: none !important; border-radius: 12px; overflow: hidden; background: #3d0000; }
-.movies-full__poster img { width: 100%; flex: 1 1 auto; min-height: 0; height: auto !important; object-fit: cover; display: block; background: #3d0000; border-radius: 0; }
+.movies-full__poster { flex: 0 0 386px !important; width: 386px !important; max-width: 386px; height: 100% !important; display: flex !important; flex-direction: column; float: none !important; border-radius: 12px; overflow: hidden; background: #232d3f; }
+.movies-full__poster img { width: 100%; flex: 1 1 auto; min-height: 0; height: auto !important; object-fit: cover; display: block; background: #232d3f; border-radius: 0; }
 .mf-trailer { background: var(--ge-red); color: #fff; border: 0; padding: 16px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; flex: 0 0 auto; }
-.mf-trailer:hover { background: #ff0000; }
+.mf-trailer:hover { background: #008170; }
 .movies-full__player { flex: 1 1 auto !important; width: auto !important; position: relative; aspect-ratio: auto !important; height: 100% !important; background: #000; border-radius: 12px; overflow: hidden; margin: 0 !important; float: none !important; font-size: 0 !important; }
 @media (max-width: 1200px) { .movies-full__content { height: 470px !important; } .movies-full__poster { flex-basis: 320px !important; width: 320px !important; } }
 @media (max-width: 860px) {
@@ -119,14 +119,14 @@ html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
 .movies-full__player iframe { width: 100%; height: 100%; border: 0; display: block; }
 .ge-noplayer { display: flex; align-items: center; justify-content: center; height: 100%; color: #9aa0ac; }
 .mf-sources { position: absolute; top: 12px; left: 12px; z-index: 5; display: flex; gap: 8px; flex-wrap: wrap; }
-.mf-source { background: rgba(20,22,29,.85); color: #fff; border: 1px solid #950101; border-radius: 6px; padding: 7px 14px; cursor: pointer; font-size: 13px; }
+.mf-source { background: rgba(20,22,29,.85); color: #fff; border: 1px solid #005b41; border-radius: 6px; padding: 7px 14px; cursor: pointer; font-size: 13px; }
 .mf-source.active, .mf-source:hover { background: var(--ge-red); border-color: var(--ge-red); }
 
 /* ეპიზოდის ღილაკები — სერიალის/ანიმეს დეტალურ გვერდზე, ფლეერის ქვემოთ, ჰორიზონტალური სქროლით */
 .mf-episodes { display: flex; gap: 8px; overflow-x: auto; scroll-behavior: smooth; padding: 16px 0 4px;
   margin: 0 0 8px; scrollbar-width: none; }
 .mf-episodes::-webkit-scrollbar { display: none; }
-.mf-episode { flex: 0 0 auto; min-width: 42px; background: var(--ge-card); color: #cfd2d8; border: 1px solid #950101;
+.mf-episode { flex: 0 0 auto; min-width: 42px; background: var(--ge-card); color: #cfd2d8; border: 1px solid #005b41;
   border-radius: 8px; padding: 9px 14px; cursor: pointer; font-size: 14px; font-weight: 600; text-align: center; }
 .mf-episode:hover { border-color: #4a516a; color: #fff; }
 .mf-episode.active { background: var(--ge-red); border-color: var(--ge-red); color: #fff; }
@@ -148,7 +148,7 @@ html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
 .mf-help { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; border: 0; cursor: pointer;
   background: var(--ge-red); color: #fff; border-radius: 8px; font-size: 14px; font-weight: 600; }
 .mf-help svg { width: 18px; height: 18px; fill: currentColor; }
-.mf-help:hover { background: #ff0000; }
+.mf-help:hover { background: #008170; }
 
 /* rating bar: IMDb (left) + stars/score/votes (right) */
 .mf-ratingbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 22px 0 24px; flex-wrap: wrap; }
@@ -188,10 +188,10 @@ html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
 .mf-cast__row { display: flex; gap: 18px; overflow-x: auto; scroll-behavior: smooth; padding-bottom: 8px; scrollbar-width: none; }
 .mf-cast__row::-webkit-scrollbar { display: none; }
 .mf-actor { flex: 0 0 120px; text-align: center; }
-.mf-actor__photo { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; background: #3d0000; margin: 0 auto 10px;
+.mf-actor__photo { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; background: #232d3f; margin: 0 auto 10px;
   display: flex; align-items: center; justify-content: center; }
 .mf-actor__photo img { width: 100%; height: 100%; object-fit: cover; }
-.mf-actor__ph::after { content: ""; width: 48px; height: 48px; border-radius: 50%; background: #950101; }
+.mf-actor__ph::after { content: ""; width: 48px; height: 48px; border-radius: 50%; background: #005b41; }
 .mf-actor__initials { font-size: 34px; font-weight: 700; color: #4a516a; }
 .mf-actor__name { font-size: 13px; color: #cfd2d8; line-height: 1.3; }
 
@@ -226,10 +226,10 @@ html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
 
 /* search autocomplete */
 .header-top__search { position: relative; }
-#search_autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: #3d0000; border-radius: 0 0 10px 10px; overflow: hidden; z-index: 999; display: none; box-shadow: 0 12px 30px rgba(0,0,0,.5); max-height: 70vh; overflow-y: auto; }
+#search_autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: #232d3f; border-radius: 0 0 10px 10px; overflow: hidden; z-index: 999; display: none; box-shadow: 0 12px 30px rgba(0,0,0,.5); max-height: 70vh; overflow-y: auto; }
 #search_autocomplete.open { display: block; }
 .ac-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; color: #fff; }
-.ac-item:hover { background: #950101; }
+.ac-item:hover { background: #005b41; }
 .ac-item img { width: 38px; height: 54px; object-fit: cover; border-radius: 4px; }
 .ac-title { font-size: 14px; }
 
@@ -247,12 +247,12 @@ html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
    მთელი DOM-ნესთინგისგან დამოუკიდებლად მუშაობს. */
 @media (min-width: 1025px) {
   .content { width: 100% !important; margin-left: 0 !important; float: none !important; }
-  .header { background: #242731 !important; }
+  .header { background: #232d3f !important; }
   .header-top { justify-content: space-between !important; gap: 18px; }
   .header-top__logo { flex: 0 0 auto; }
   .header-top__search { flex: 0 0 auto; width: 340px !important; }
   .header-top__search button {
-    background: #a0b4e8 !important; color: #1c1f2b !important;
+    background: #008170 !important; color: #232d3f !important;
   }
   .sidebar {
     position: static !important; left: auto !important; top: auto !important;
@@ -268,7 +268,7 @@ html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
   .sidebar .nav-link {
     display: flex !important; flex-direction: row; align-items: center; justify-content: center; gap: 6px;
     height: 56px; width: 100%; padding: 0 8px !important; margin: 0 !important; border-radius: 0 !important;
-    background: #1d1d1d; border: none; cursor: pointer; text-decoration: none;
+    background: #232d3f; border: none; cursor: pointer; text-decoration: none;
     color: #ffffff; transition: .18s ease;
   }
   .sidebar .nav-link svg { width: 18px !important; height: 18px !important; flex: 0 0 auto; transition: .18s ease; }
@@ -278,9 +278,9 @@ html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
     white-space: nowrap;
   }
   .sidebar .nav-link:hover {
-    background: #101010; color: #fff; border-radius: 0 !important;
+    background: #0f0f0f; color: #fff; border-radius: 0 !important;
   }
-  .sidebar .nav-link.active { background: #101010 !important; color: #fff !important; border-radius: 0 !important; }
+  .sidebar .nav-link.active { background: #0f0f0f !important; color: #fff !important; border-radius: 0 !important; }
   .sidebar .nav-link:hover svg, .sidebar .nav-link:hover svg path,
   .sidebar .nav-link:hover svg rect, .sidebar .nav-link:hover svg circle,
   .sidebar .nav-link.active svg, .sidebar .nav-link.active svg path,
@@ -293,12 +293,12 @@ html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
 .movie-card { position: relative; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
 .movie-card__img {
   width: 100%; height: auto !important; aspect-ratio: 16 / 9;
-  border-radius: 10px; overflow: hidden; position: relative; background: #3d0000;
+  border-radius: 10px; overflow: hidden; position: relative; background: #232d3f;
 }
 .movie-card__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .movie-card__img img.ge-broken { display: none; }
 /* გატეხილი/ცარიელი პოსტერის placeholder — ჩამჯდარი, არა ცარიელი */
-img.ge-ph { object-fit: contain !important; background: #3d0000; padding: 14%; opacity: .5; }
+img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; opacity: .5; }
 .ge-hero__thumb img.ge-ph { padding: 20%; }
 .movies-full__poster img.ge-ph { padding: 24%; }
 
@@ -387,10 +387,10 @@ img.ge-ph { object-fit: contain !important; background: #3d0000; padding: 14%; o
 @media (min-width: 768px) { #personsResults { grid-template-columns: repeat(6, 1fr); } }
 @media (min-width: 1200px) { #personsResults { grid-template-columns: repeat(7, 1fr); } }
 .ge-person { text-align: center; min-width: 0; }
-.ge-person__photo { width: 130px; height: 130px; border-radius: 50%; overflow: hidden; background: #3d0000; margin: 0 auto 12px; position: relative; }
+.ge-person__photo { width: 130px; height: 130px; border-radius: 50%; overflow: hidden; background: #232d3f; margin: 0 auto 12px; position: relative; }
 .ge-person__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ge-person__ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #3d0000; }
-.ge-person__ph::after { content: ""; width: 54px; height: 54px; border-radius: 50%; background: #950101; }
+.ge-person__ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #232d3f; }
+.ge-person__ph::after { content: ""; width: 54px; height: 54px; border-radius: 50%; background: #005b41; }
 .ge-person__name { font-size: 14px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ge-person__en { font-size: 12px; color: #8a8f9a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
@@ -418,7 +418,7 @@ img.ge-ph { object-fit: contain !important; background: #3d0000; padding: 14%; o
 
   /* --- header + hero: თემა მათ ≤1024px-ზე მალავს (.mob-header-ს ელოდება,
          რომელიც ჩვენს markup-ში არ არის) — ვაბრუნებთ --- */
-  .header { display: block !important; position: sticky; top: 0; z-index: 900; background: #000000; border-bottom: 1px solid #3d0000; }
+  .header { display: block !important; position: sticky; top: 0; z-index: 900; background: #0f0f0f; border-bottom: 1px solid #232d3f; }
   .hero { display: block !important; }
   /* browse/trailers გვერდის ფილტრი — თემა `.filter`-ს მობილურზე მალავს
      (.filter-btn toggle-ს ელოდება); ვაბრუნებთ */
@@ -430,7 +430,7 @@ img.ge-ph { object-fit: contain !important; background: #3d0000; padding: 14%; o
   .header-top__actions { display: none !important; }
   /* ძებნა თემა მალავს — ვაბრუნებთ, სრული სიგანის pill --- */
   .header-top__search { display: block !important; width: 100%; }
-  .header-top__search form { display: flex !important; align-items: stretch; width: 100%; height: auto !important; background: #3d0000; border: 1px solid #950101; border-radius: 10px; overflow: hidden; }
+  .header-top__search form { display: flex !important; align-items: stretch; width: 100%; height: auto !important; background: #232d3f; border: 1px solid #005b41; border-radius: 10px; overflow: hidden; }
   .header-top__search input { display: block !important; flex: 1 1 auto; width: auto !important; min-width: 0; height: auto !important; line-height: 1.3 !important; background: transparent !important; border: 0 !important; color: #fff !important; padding: 12px 14px !important; font-size: 14px; }
   .header-top__search button { flex: 0 0 auto; width: auto !important; height: auto !important; display: inline-flex !important; align-items: center; gap: 6px; border: 0; background: var(--ge-red) !important; color: #fff !important; padding: 0 18px !important; font-size: 14px; white-space: nowrap; }
   #search_autocomplete { border-radius: 0 0 10px 10px; }
@@ -440,7 +440,7 @@ img.ge-ph { object-fit: contain !important; background: #3d0000; padding: 14%; o
     position: fixed !important; bottom: 0; left: 0; right: 0; top: auto !important;
     width: 100% !important; height: 60px !important; float: none !important;
     display: block !important; z-index: 1000; margin: 0 !important; padding: 0 !important;
-    background: #000000 !important; border-top: 1px solid #950101; border-radius: 0;
+    background: #0f0f0f !important; border-top: 1px solid #005b41; border-radius: 0;
     box-shadow: 0 -4px 20px rgba(0,0,0,.45);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
@@ -507,10 +507,10 @@ img.ge-ph { object-fit: contain !important; background: #3d0000; padding: 14%; o
    ============================================================ */
 .ge-btn { display: inline-block; background: var(--ge-red); color: #fff; padding: 12px 28px;
   border-radius: 8px; font-weight: 600; font-size: 15px; }
-.ge-btn:hover { background: #ff0000; }
+.ge-btn:hover { background: #008170; }
 
 .ge-pager { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 32px 0; flex-wrap: wrap; }
-.ge-pager__btn { background: var(--ge-card); border: 1px solid #950101; color: #fff; padding: 9px 18px;
+.ge-pager__btn { background: var(--ge-card); border: 1px solid #005b41; color: #fff; padding: 9px 18px;
   border-radius: 8px; font-size: 14px; }
 .ge-pager__btn:hover { border-color: var(--ge-red); color: var(--ge-red); }
 .ge-pager__info { color: #9aa0ac; font-size: 14px; }

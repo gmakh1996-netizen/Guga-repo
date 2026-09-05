@@ -444,47 +444,47 @@ h4 {
 }
 
 [data-tooltip].simptip-position-top:before {
-  border-top-color: #ff0000;
+  border-top-color: #008170;
 }
 
 [data-tooltip].simptip-position-top:after {
-  background-color: #ff0000;
+  background-color: #008170;
   color: #ecf0f1;
 }
 
 [data-tooltip].simptip-position-bottom:before {
-  border-bottom-color: #ff0000;
+  border-bottom-color: #008170;
 }
 
 [data-tooltip].simptip-position-bottom:after {
-  background-color: #ff0000;
+  background-color: #008170;
   color: #ecf0f1;
 }
 
 [data-tooltip].simptip-position-left:before {
-  border-left-color: #ff0000;
+  border-left-color: #008170;
 }
 
 [data-tooltip].simptip-position-left:after {
-  background-color: #ff0000;
+  background-color: #008170;
   color: #fff;
 }
 
 [data-tooltip].simptip-position-right:before {
-  border-right-color: #ff0000;
+  border-right-color: #008170;
 }
 
 [data-tooltip].simptip-position-right:after {
-  background-color: #ff0000;
+  background-color: #008170;
   color: #fff;
 }
 
 [data-tooltip].simptip-position-top.half-arrow:before {
-  border-right: 7px solid #ff0000;
+  border-right: 7px solid #008170;
 }
 
 [data-tooltip].simptip-position-bottom.half-arrow:before {
-  border-right: 7px solid #ff0000;
+  border-right: 7px solid #008170;
 }
 
 [data-tooltip]:focus,
@@ -587,7 +587,7 @@ h4 {
 
 .simptip-position-right.half-arrow:before {
   margin-left: 3px;
-  border-right: 7px solid #ff0000;
+  border-right: 7px solid #008170;
 }
 
 .simptip-position-left:after,
@@ -626,7 +626,7 @@ h4 {
 
 .simptip-position-left.half-arrow:before {
   margin-right: 3px;
-  border-left: 7px solid #ff0000;
+  border-left: 7px solid #008170;
 }
 
 .simptip-position-bottom:after,
@@ -644,7 +644,7 @@ h4 {
 .simptip-position-bottom.half-arrow:before,
 .simptip-position-top.half-arrow:before {
   border-style: none;
-  border-right: 7px solid #ff0000;
+  border-right: 7px solid #008170;
 }
 
 .simptip-position-bottom:after,
@@ -767,13 +767,13 @@ body::-webkit-scrollbar-track {
 }
 
 body::-webkit-scrollbar-thumb {
-  background: #ff0000;
+  background: #008170;
   height: 150px;
   border-radius: 5px;
 }
 
 body::-webkit-scrollbar-thumb:hover {
-  background: #ff0000;
+  background: #008170;
 }
 
 .container {
@@ -793,7 +793,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .select2-results__options::-webkit-scrollbar-thumb:hover {
-  background: #ff0000;
+  background: #008170;
 }
 
 .select2-dropdown {
@@ -847,7 +847,7 @@ body::-webkit-scrollbar-thumb:hover {
   position: absolute;
   left: 0;
   top: 0;
-  background: #ff0000;
+  background: #008170;
 }
 
 .sidebar ul li a.active svg {
@@ -861,7 +861,7 @@ body::-webkit-scrollbar-thumb:hover {
 
 .sidebar ul li a:hover {
   color: #fff;
-  background: #ff00009c;
+  background: #0081709c;
 }
 
 .sidebar ul li a:hover:before {
@@ -871,7 +871,7 @@ body::-webkit-scrollbar-thumb:hover {
   position: absolute;
   left: 0;
   top: 0;
-  background: #ff0000;
+  background: #008170;
 }
 
 .sidebar ul li a:hover svg {
@@ -940,7 +940,7 @@ body::-webkit-scrollbar-thumb:hover {
 .header-top__search button {
   width: 125px;
   float: right;
-  background: #ff0000;
+  background: #008170;
   padding: 15px 30px;
   border-radius: 35px;
   display: flex;
@@ -986,13 +986,13 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .header-top__search-results ul::-webkit-scrollbar-thumb {
-  background: #ff0000;
+  background: #008170;
   height: 150px;
   border-radius: 5px;
 }
 
 .header-top__search-results ul::-webkit-scrollbar-thumb:hover {
-  background: #ff0000;
+  background: #008170;
 }
 
 .header-top__search-results ul li {
@@ -1031,7 +1031,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .header-top__search-results ul li a .infos .hashtag {
-  background: #ff0000;
+  background: #008170;
   padding: 10px 10px;
   border-radius: 35px;
   float: left;
@@ -1107,7 +1107,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .hero-slider__info .play-btn {
-  background: #ff0000;
+  background: #008170;
   color: #fff;
   border-radius: 10px;
   margin-top: 60px;
@@ -1196,7 +1196,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .hero-slider__info .hero-details .cats ul li a:hover {
-  color: #ff0000;
+  color: #008170;
 }
 
 .hero-slider__main {
@@ -1240,7 +1240,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .hero-slider__thumbs ul li.active {
-  border: 2px solid #ff0000;
+  border: 2px solid #008170;
 }
 
 .hero-slider__thumbs ul li:nth-child(1) {
@@ -1345,7 +1345,7 @@ body::-webkit-scrollbar-thumb:hover {
   width: 40px;
   height: 40px;
   float: left;
-  background: #ff0000;
+  background: #008170;
   border-radius: 50%;
   margin-right: 15px;
 }
@@ -1389,7 +1389,7 @@ a.showall {
 }
 
 a.showall:hover {
-  color: #ff0000;
+  color: #008170;
 }
 
 .section-title .sbtns .swiper-next2 {
@@ -1416,7 +1416,7 @@ a.showall:hover {
 }
 
 .section-title .chooseTabs ul li.active a {
-  background: #ff0000;
+  background: #008170;
 }
 
 .movies-slider__content h1 a {
@@ -1604,11 +1604,11 @@ a.showall:hover {
 }
 
 .movie-card__img .options li a:hover {
-  color: #ff0000;
+  color: #008170;
 }
 
 .movie-card__img .options li a:hover svg {
-  fill: #ff0000;
+  fill: #008170;
 }
 
 .movie-card__title {
@@ -1771,7 +1771,7 @@ a.showall:hover {
 
 .smallmodal .btn-login {
   float: right;
-  background: #ff0000;
+  background: #008170;
   margin-left: 15px;
 }
 
@@ -1824,7 +1824,7 @@ a.showall:hover {
   position: absolute;
   right: 25px;
   top: 20px;
-  color: #ff0000;
+  color: #008170;
 }
 
 .smallmodal .form-group input {
@@ -1954,7 +1954,7 @@ a.showall:hover {
 
 .infomodal .btn-login {
   float: right;
-  background: #ff0000;
+  background: #008170;
   margin-left: 15px;
 }
 
@@ -2007,7 +2007,7 @@ a.showall:hover {
   position: absolute;
   right: 25px;
   top: 20px;
-  color: #ff0000;
+  color: #008170;
 }
 
 .infomodal .form-group input {
@@ -2233,7 +2233,7 @@ a.showall:hover {
 }
 
 .formside-content form .wbtn-dark {
-  background: #ff0000;
+  background: #008170;
   color: #fff;
   font-size: 13px;
   border-radius: 35px;
@@ -2273,7 +2273,7 @@ a.showall:hover {
   position: absolute;
   right: 25px;
   top: 20px;
-  color: #ff0000;
+  color: #008170;
 }
 
 .formside-content form .form-group input {
@@ -2312,7 +2312,7 @@ a.showall:hover {
 }
 
 .styled-checkbox:hover + label:before {
-  background: #ff0000;
+  background: #008170;
 }
 
 .styled-checkbox:focus + label:before {
@@ -2320,7 +2320,7 @@ a.showall:hover {
 }
 
 .styled-checkbox:checked + label:before {
-  background: #ff0000;
+  background: #008170;
 }
 
 .styled-checkbox:disabled + label {
@@ -2416,7 +2416,7 @@ a.showall:hover {
   height: 5px;
   overflow: hidden;
   height: 100%;
-  background: #ff0000;
+  background: #008170;
   overflow: hidden;
 }
 
@@ -2617,11 +2617,11 @@ a.showall:hover {
 }
 
 .popular-card__img .options li a:hover {
-  color: #ff0000;
+  color: #008170;
 }
 
 .popular-card__img .options li a:hover svg {
-  fill: #ff0000;
+  fill: #008170;
 }
 
 .popular-card__title {
@@ -2766,7 +2766,7 @@ a.showall:hover {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #ff0000;
+  background: #008170;
   cursor: pointer;
   font-size: 12px;
   color: #fff;
@@ -2948,7 +2948,7 @@ a.showall:hover {
 
 .serials-card__img figure .title span {
   font-size: 12px;
-  background: #ff0000;
+  background: #008170;
   padding: 5px 10px;
   border-radius: 5px;
   display: none;
@@ -2994,11 +2994,11 @@ a.showall:hover {
 }
 
 .serials-card__img .options li a:hover {
-  color: #ff0000;
+  color: #008170;
 }
 
 .serials-card__img .options li a:hover svg {
-  fill: #ff0000;
+  fill: #008170;
 }
 
 .serials-card__info {
@@ -3234,7 +3234,7 @@ a.showall:hover {
 }
 
 .pagination ul li.active a {
-  background: #ff0000;
+  background: #008170;
 }
 
 .pagination ul li:last-child {
@@ -3271,7 +3271,7 @@ a.showall:hover {
 }
 
 .filter .filter-item button[type="submit"] {
-  background: #ff0000;
+  background: #008170;
   padding: 15px 30px;
   border-radius: 5px;
   color: #fff;
@@ -3376,13 +3376,13 @@ a.showall:hover {
 }
 
 .dropdown-menu::-webkit-scrollbar-thumb {
-  background: #ff0000;
+  background: #008170;
   height: 150px;
   border-radius: 5px;
 }
 
 .dropdown-menu::-webkit-scrollbar-thumb:hover {
-  background: #ff0000;
+  background: #008170;
 }
 
 .dropdown-menu label,
@@ -3405,7 +3405,7 @@ a.showall:hover {
 }
 
 .dropdown-menu .filter-radio:checked ~ .filter-custom-radio {
-  background-color: #ff0000;
+  background-color: #008170;
 }
 
 .dropdown-menu .filter-custom-radio {
@@ -3423,7 +3423,7 @@ a.showall:hover {
 .dropdown-menu .dropdown-item:focus,
 .dropdown-menu .dropdown-item:hover {
   background: 0;
-  color: #ff0000;
+  color: #008170;
   cursor: pointer;
 }
 
@@ -3514,7 +3514,7 @@ a.showall:hover {
   padding: 20px 0;
   text-align: center;
   cursor: pointer;
-  background: #ff0000;
+  background: #008170;
   color: #fff;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
@@ -3525,7 +3525,7 @@ a.showall:hover {
   margin-left: 20px;
   height: 100%;
   float: right;
-  background: #ff0000;
+  background: #008170;
   color: #fff;
   font-size: 21px;
 }
@@ -3595,7 +3595,7 @@ a.showall:hover {
 
 .actions li.active svg,
 #action_menu li.active svg {
-  fill: #ff0000 !important;
+  fill: #008170 !important;
 }
 
 .movies-full__inside-rates {
@@ -3638,7 +3638,7 @@ a.showall:hover {
   width: 30px;
   height: 30px;
   color: #fff;
-  background: #ff0000;
+  background: #008170;
   border-radius: 50%;
   margin-left: 20px;
 }
@@ -3771,7 +3771,7 @@ button.subscribe {
   position: absolute;
   width: 30px;
   height: 30px;
-  background: #ff0000;
+  background: #008170;
   z-index: 9;
   font-size: 12px;
   color: #fff;
@@ -3847,7 +3847,7 @@ button.subscribe svg {
   border-radius: 35px;
   -webkit-box-shadow: 0 1em 2em -0.5em rgb(0 0 0 / 35%);
   box-shadow: 0 1em 2em -0.5em rgb(0 0 0 / 35%);
-  background: #ff0000;
+  background: #008170;
   font-size: 11px;
   color: #fff;
   z-index: 1000;
@@ -3868,7 +3868,7 @@ button.subscribe svg {
   bottom: 100%;
   margin-bottom: 15px;
   border-bottom-width: 0;
-  border-top-color: #ff0000;
+  border-top-color: #008170;
 }
 
 [tooltip]:not([flow]):after,
@@ -4129,7 +4129,7 @@ button.subscribe svg {
 }
 
 .comments-item__name-options ul li a.active {
-  color: #ff0000;
+  color: #008170;
 }
 
 .comments-item__name-options ul li a svg {
@@ -4180,12 +4180,12 @@ button.subscribe svg {
 }
 
 .comments-item__name button:hover {
-  background: #ff0000;
-  color: #ff0000;
+  background: #008170;
+  color: #008170;
 }
 
 .CommentLike.active {
-  color: #ff0000;
+  color: #008170;
 }
 
 .wrapp_subcommnet:before {
@@ -4241,7 +4241,7 @@ ul.options button:hover {
 }
 
 ul.options button:hover svg {
-  color: #ff0000;
+  color: #008170;
 }
 
 ul.options button svg {
@@ -4265,9 +4265,9 @@ ul.options button span {
 }
 
 .comments .alert.alert-danger {
-  background: #ff0000;
+  background: #008170;
   padding: 20px;
-  border-color: #ff0000;
+  border-color: #008170;
   color: #fff;
 }
 
@@ -4281,7 +4281,7 @@ ul.options button span {
 
 .myprofile a {
   width: 100%;
-  color: #ff0000;
+  color: #008170;
 }
 
 .myprofile figure {
@@ -4315,7 +4315,7 @@ ul.options button span {
 }
 
 .myprofile-name p {
-  color: #ff0000;
+  color: #008170;
 }
 
 .myprofile-name p sub {
@@ -4368,7 +4368,7 @@ ul.options button span {
 }
 
 .myprofile ul li a:hover {
-  color: #ff0000;
+  color: #008170;
 }
 
 .myprofile ul li.id {
@@ -4381,7 +4381,7 @@ ul.options button span {
 }
 
 .myprofile ul li.logout {
-  background: #ff0000;
+  background: #008170;
   text-align: center;
   margin-top: 10px;
 }
@@ -4408,7 +4408,7 @@ ul.options button span {
 }
 
 .myprofile:hover figure img {
-  background: #ff0000;
+  background: #008170;
 }
 
 .myprofile:hover button.dropnav {
@@ -4506,7 +4506,7 @@ ul.options button span {
 }
 
 .pheader-cover__img .ptitle span a {
-  color: #ff0000;
+  color: #008170;
 }
 
 .pheader-cover__nav {
@@ -4527,13 +4527,13 @@ ul.options button span {
 }
 
 .pheader-cover__nav ul li.active a {
-  border-bottom: 3px solid #ff0000;
-  color: #ff0000;
+  border-bottom: 3px solid #008170;
+  color: #008170;
 }
 
 .pheader-cover__nav ul li:hover a {
-  border-bottom: 3px solid #ff0000;
-  color: #ff0000;
+  border-bottom: 3px solid #008170;
+  color: #008170;
 }
 
 .remove {
@@ -4591,7 +4591,7 @@ ul.options button span {
   width: 30px;
   height: 30px;
   color: #fff;
-  background: #ff0000;
+  background: #008170;
   border-radius: 50%;
   margin-left: 20px;
 }
@@ -4649,7 +4649,7 @@ ul.options button span {
   position: absolute;
   left: 25px;
   z-index: 300;
-  background: #ff0000;
+  background: #008170;
   border-radius: 50%;
   top: 10px;
   opacity: 0;
@@ -4667,10 +4667,10 @@ ul.options button span {
 }
 
 .profilecontent .alert-danger {
-  background: #ff0000;
+  background: #008170;
   padding: 20px 30px;
   font-size: 12px;
-  border-color: #ff0000;
+  border-color: #008170;
   color: #fff;
   line-height: 1.72;
   margin-bottom: 30px;
@@ -4717,7 +4717,7 @@ ul.options button span {
 }
 
 .editIt .goback:hover {
-  backgroud: #ff0000;
+  backgroud: #008170;
 }
 
 .editIt .pheader-cover {
@@ -4845,7 +4845,7 @@ ul.options button span {
 }
 
 .save-btn {
-  background: #ff0000;
+  background: #008170;
   color: #fff;
   cursor: pointer;
   outline: 0;
@@ -4886,7 +4886,7 @@ ul.options button span {
 }
 
 .openSwitch:checked + .checkLabel {
-  background: #ff0000;
+  background: #008170;
 }
 
 .openSwitch:checked + .checkLabel:after {
@@ -4943,7 +4943,7 @@ ul.options button span {
 }
 
 .collectionsheader-header__title h2 a {
-  color: #ff0000;
+  color: #008170;
   padding-left: 15px;
 }
 
@@ -4983,7 +4983,7 @@ ul.options button span {
   width: 20px;
   height: 20px;
   line-height: 22px;
-  background: #ff0000;
+  background: #008170;
   font-size: 13px;
   margin-left: 15px;
   border-radius: 5px;
@@ -5026,7 +5026,7 @@ ul.options button span {
 }
 
 .collectionsheader-header__options .change-status ul li a:hover {
-  color: #ff0000;
+  color: #008170;
 }
 
 .collectionsheader-header__name {
@@ -5073,7 +5073,7 @@ ul.options button span {
 }
 
 .collectionsheader-header__name .miniimage .ptitle span a {
-  color: #ff0000;
+  color: #008170;
 }
 
 .collectionsheader-header__name .status-one,
@@ -5084,7 +5084,7 @@ ul.options button span {
 }
 
 .collectionsheader-header__name .status-one {
-  background: #ff0000;
+  background: #008170;
 }
 
 .collectionsheader-header__name .status-one.active {
@@ -5125,7 +5125,7 @@ ul.options button span {
 }
 
 #collection_items .filter-radio:checked ~ .filter-custom-radio {
-  background-color: #ff0000;
+  background-color: #008170;
 }
 
 #collection_items .filter-custom-radio {
@@ -5198,7 +5198,7 @@ ul.options button span {
 .contact-list__item figure {
   width: 50px;
   height: 50px;
-  background: #ff0000;
+  background: #008170;
   border-radius: 50%;
   float: left;
 }
