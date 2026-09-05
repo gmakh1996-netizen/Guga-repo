@@ -72,6 +72,12 @@ GENRE_ALIAS = {
 # ახალი ჟანრების id-ები ამ ბაზიდან, TMDB id-ებთან შეჯახების გარეშე
 NEW_GENRE_ID_BASE = 900_000_000
 
+# წყაროებს (animeb.ge, animetv.ge და სხვ.), რომლებსაც საკუთარი ge.movie-id არ აქვთ,
+# ვნიშნავთ ამ უსაფრთხო დიაპაზონში — რომ არასდროს დაემთხვეს ge.movie-ს ნამდვილ id-ს
+# (რომელიც დროთა განმავლობაში იზრდება და "თავისუფალ" დიაპაზონებს იკავებს).
+NEW_MOVIE_ID_BASE = 900_000_000
+NEW_SERIES_ID_BASE = 900_500_000
+
 
 def normalize_title(title):
     """სათაურის ნორმალიზება დამთხვევისთვის (რეგისტრი/ზედმეტი ხარვეზები)."""
@@ -89,27 +95,29 @@ def extract_streams(entry):
     streams = []
     seen = set()
 
-    def add(url, label="ქართულად", language="ka", kind="embed"):
+    def add(url, label="ქართულად", language="ka", kind="embed", episode=None):
         url = (url or "").strip()
         if not url:
             return
         # პროტოკოლის გარეშე ბმულის ნორმალიზება (მაგ. //ok.ru/...)
         if url.startswith("//"):
             url = "https:" + url
-        if url in seen:
+        key = (episode, url)
+        if key in seen:
             return
-        seen.add(url)
+        seen.add(key)
         streams.append(
-            {"language": language, "label": label, "kind": kind, "url": url}
+            {"language": language, "label": label, "kind": kind, "url": url, "episode": episode}
         )
 
-    # 1) სრული ფორმატი — streams მასივი
+    # 1) სრული ფორმატი — streams მასივი (episode: None ან 1,2,3... სერიისთვის)
     for s in entry.get("streams", []) or []:
         add(
             s.get("url"),
             label=s.get("label", "ქართულად"),
             language=s.get("language", "ka"),
             kind=s.get("kind", "embed"),
+            episode=s.get("episode"),
         )
 
     # 2) kinomigma.json — players მასივი (რამდენიმე სარკე/წყარო)
@@ -195,6 +203,21 @@ def make_genre_resolver():
     return resolve
 
 
+def make_safe_id_resolver(Model, base):
+    """id-ების გენერატორი წყაროებისთვის, რომლებსაც ge.movie-ს საკუთარი id არ აქვთ
+    (მაგ. animeb.ge/animetv.ge) — არასდროს დაუშვას ge.movie-ს ნამდვილ id-ებთან
+    შეჯახება (რაც ადრე ხდებოდა plain auto-increment-ით)."""
+    current_max = db.session.query(db.func.max(Model.id)).filter(Model.id >= base).scalar()
+    counter = {"next": (current_max or base) + 1}
+
+    def resolve():
+        nid = counter["next"]
+        counter["next"] += 1
+        return nid
+
+    return resolve
+
+
 def import_file(path):
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -202,6 +225,8 @@ def import_file(path):
     movie_index = build_title_index(Movie)
     series_index = build_title_index(Series)
     resolve_genre = make_genre_resolver()
+    next_movie_id = make_safe_id_resolver(Movie, NEW_MOVIE_ID_BASE)
+    next_series_id = make_safe_id_resolver(Series, NEW_SERIES_ID_BASE)
 
     added = 0
     linked = 0          # არსებულ ჩანაწერს მიბმული
@@ -231,7 +256,12 @@ def import_file(path):
 
         rec = find_existing(Model, entry, index)
         if rec is None:
-            rec = Model(id=entry.get("id")) if entry.get("id") else Model()
+            if entry.get("id"):
+                rec = Model(id=entry.get("id"))
+            else:
+                # ge.movie-ს id არ აქვს (სხვა წყაროა, მაგ. ანიმე-საიტი) — უსაფრთხო,
+                # ge.movie-სგან იზოლირებულ დიაპაზონში ვანიჭებთ id-ს (იხ. NEW_MOVIE_ID_BASE)
+                rec = Model(id=(next_series_id() if is_tv else next_movie_id()))
             rec.title = title
             db.session.add(rec)
             db.session.flush()
@@ -313,6 +343,7 @@ def import_file(path):
                     kind=s["kind"],
                     url=s["url"],
                     sort=i,
+                    episode=s.get("episode"),
                 )
             )
             added_streams += 1

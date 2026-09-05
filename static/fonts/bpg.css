@@ -1,0 +1,12 @@
+@font-face {
+  font-family: "BPG Mrgvlovani";
+  font-style: normal;
+  font-display: swap;
+  src: url(/static/fonts/bpg/bpg-mrgvlovani-webfont.woff2) format("woff2");
+}
+@font-face {
+  font-family: "BPG Mrgvlovani Caps";
+  font-style: normal;
+  font-display: swap;
+  src: url(/static/fonts/bpg/bpg-mrgvlovani-caps-webfont.woff2) format("woff2");
+}

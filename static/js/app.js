@@ -65,6 +65,7 @@
     newtv: '<path d="M15.033 9.44a.647.647 0 0 1 0 1.12l-4.065 2.352a.645.645 0 0 1-.968-.56V7.648a.645.645 0 0 1 .967-.56z"/><path d="M12 17v4"/><path d="M8 21h8"/><rect x="2" y="3" width="20" height="14" rx="2"/>',
     sparkles: '<path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/>',
     premiere: '<path d="M18 8a2 2 0 0 0 0-4 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0 0 4"/><path d="M10 22 9 8"/><path d="m14 22 1-14"/><path d="M20 8c.5 0 .9.4.8 1l-2.6 12c-.1.5-.7 1-1.2 1H7c-.6 0-1.1-.4-1.2-1L3.2 9c-.1-.6.3-1 .8-1Z"/>',
+    top: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
   };
   function iconSvg(name) {
     if (!ICONS[name]) return "";
@@ -72,14 +73,20 @@
   }
 
   // ---- home rows ----
-  function buildRow(el) {
+  function buildRow(el, usedIds) {
     var type = el.dataset.type, sort = el.dataset.sort, title = el.dataset.title, icon = el.dataset.icon;
     var portrait = el.dataset.portrait === "1";
-    api({ type: type, sort: sort, per: 18, page: 1 }).then(function (data) {
+    var genre = el.dataset.genre || "";
+    var excludeGenre = el.dataset.excludeGenre || "";
+    var excludeIds = (usedIds && usedIds[type] && usedIds[type].size) ? Array.from(usedIds[type]).join(",") : "";
+    return api({ type: type, sort: sort, genre: genre, exclude_genre: excludeGenre, exclude_ids: excludeIds, per: 18, page: 1 }).then(function (data) {
       if (!data.items || !data.items.length) { el.remove(); return; }
-      var more = "/browse?type=" + type + "&sort=" + sort;
+      if (usedIds && usedIds[type]) { data.items.forEach(function (m) { usedIds[type].add(m.id); }); }
+      var more = "/browse?type=" + type + "&sort=" + sort + (genre ? "&genre=" + genre : "");
+      var isAnime = genre === "900000025";
+      var animeVariant = isAnime ? (type === "serial" ? " movies--abstract-bg-2" : " movies--abstract-bg") : "";
       el.innerHTML =
-        '<section class="movies' + (portrait ? " movies--portrait" : "") + '">' +
+        '<section class="movies' + (portrait ? " movies--portrait" : "") + animeVariant + '">' +
           (portrait ? '<div class="ge-prem-bg" id="premBg"></div><div class="ge-prem-shade"></div>' : "") +
           '<div class="container"><div class="row"><div class="col-md-12">' +
           '<div class="ge-row-head"><div class="ge-head-left">' + iconSvg(icon) +
@@ -94,7 +101,7 @@
         "</div></div></div></section>";
       if (window.Swiper) {
         var bp = portrait
-          ? { 576: { slidesPerView: 4 }, 768: { slidesPerView: 5 }, 1200: { slidesPerView: 7 } }
+          ? { 576: { slidesPerView: 4 }, 768: { slidesPerView: 5 }, 1200: { slidesPerView: 8 } }
           : { 576: { slidesPerView: 3 }, 768: { slidesPerView: 4 }, 1200: { slidesPerView: 5 } };
         new Swiper(el.querySelector(".swiper"), {
           slidesPerView: portrait ? 3 : 2, spaceBetween: 14, watchOverflow: true,
@@ -103,7 +110,9 @@
         });
       }
       // პრემიერა — ჰოვერზე ფონად დაჰოვერებული ფილმის backdrop
-      if (portrait) {
+      // (ანიმეს რიგებზე კი — საკუთარი, ორიგინალური აბსტრაქტული ფონია CSS-ით, არა პოსტერი,
+      // რადგან ანიმეს დაბალხარისხიანი პოსტერები დიდ ბექგრაუნდში დამახინჯებული ჩანდა)
+      if (portrait && !isAnime) {
         var bgEl = el.querySelector(".ge-prem-bg");
         var slides = el.querySelectorAll(".swiper-slide[data-bg]");
         function setBg(u) { if (bgEl && u) bgEl.style.backgroundImage = "url('" + u + "')"; }
@@ -115,8 +124,55 @@
     });
   }
 
+  // ---- „ტოპ 9" რიგი: 1 დიდი ქარდი მარცხნივ + 8 ჩვეულებრივი ზომის ბადეში მარჯვნივ ----
+  function topFeatureCard(m, rank) {
+    var rates = m.rating ? '<div class="rates"><div class="imdb"><span>IMDb ' + esc(m.rating) + "</span></div></div>" : "";
+    var en = m.title_en ? '<p class="ge-top9__en">' + esc(m.title_en) + "</p>" : "";
+    return (
+      '<a class="ge-top9__feature" href="' + esc(m.url) + '">' +
+        '<img src="' + esc(m.poster || PH) + '" alt="' + esc(m.title) + '" loading="lazy" onerror="this.onerror=null;geImgFail(this)">' +
+        '<span class="ge-top9__rank">' + rank + "</span>" +
+        rates +
+        '<div class="ge-top9__info"><h3>' + esc(m.title) + "</h3>" + en + "</div>" +
+      "</a>"
+    );
+  }
+  function topGridCell(m, rank) {
+    return (
+      '<div class="ge-top9__cell">' +
+        '<span class="ge-top9__cell-rank">' + rank + "</span>" +
+        cardInner(m) +
+      "</div>"
+    );
+  }
+  function buildTopRow(el, usedIds) {
+    var type = el.dataset.type, sort = el.dataset.sort, title = el.dataset.title, icon = el.dataset.icon;
+    var excludeGenre = el.dataset.excludeGenre || "";
+    var excludeIds = (usedIds && usedIds[type] && usedIds[type].size) ? Array.from(usedIds[type]).join(",") : "";
+    return api({ type: type, sort: sort, exclude_genre: excludeGenre, exclude_ids: excludeIds, per: 9, page: 1 }).then(function (data) {
+      if (!data.items || data.items.length < 2) { el.remove(); return; }
+      if (usedIds && usedIds[type]) { data.items.forEach(function (m) { usedIds[type].add(m.id); }); }
+      var more = "/browse?type=" + type + "&sort=" + sort;
+      var feature = data.items[0];
+      var rest = data.items.slice(1, 9);
+      el.innerHTML =
+        '<section class="movies">' +
+          '<div class="container"><div class="row"><div class="col-md-12">' +
+          '<div class="ge-row-head"><div class="ge-head-left">' + iconSvg(icon) +
+          '<h2 class="ge-section-title">' + esc(title) + "</h2></div>" +
+          '<a class="ge-more" href="' + more + '">ყველა →</a></div>' +
+          '<div class="ge-top9">' +
+            topFeatureCard(feature, 1) +
+            '<div class="ge-top9__grid">' +
+              rest.map(function (m, i) { return topGridCell(m, i + 2); }).join("") +
+            "</div>" +
+          "</div>" +
+        "</div></div></div></section>";
+    });
+  }
+
   // ---- hero (featured + 3x3 thumbs, ge.movie-style) ----
-  function buildHero(el) {
+  function buildHero(el, usedIds) {
     var bg = el.querySelector("#heroBg");
     var title = el.querySelector("#heroTitle");
     var genres = el.querySelector("#heroGenres");
@@ -124,6 +180,7 @@
     var featured = el.querySelector("#heroFeatured");
     var thumbs = el.querySelector("#heroThumbs");
     var items = [], idx = 0, timer = null;
+    var type = el.dataset.type || "movie";
 
     function show(i) {
       idx = i;
@@ -141,9 +198,10 @@
       timer = setInterval(function () { show((idx + 1) % items.length); }, 6000);
     }
 
-    api({ type: el.dataset.type || "movie", sort: el.dataset.sort || "popularity", per: 9, page: 1 }).then(function (data) {
+    return api({ type: type, sort: el.dataset.sort || "popularity", exclude_genre: el.dataset.excludeGenre || "", per: 9, page: 1 }).then(function (data) {
       items = (data.items || []).filter(function (m) { return m.poster; });
       if (!items.length) { el.style.display = "none"; return; }
+      if (usedIds && usedIds[type]) { items.forEach(function (m) { usedIds[type].add(m.id); }); }
       thumbs.innerHTML = items.map(function (m, i) {
         return '<div class="ge-hero__thumb" data-i="' + i + '">' +
           '<img src="' + esc(m.poster || PH) + '" alt="' + esc(m.title) + '" loading="lazy" onerror="this.onerror=null;this.src=\'' + PH + '\';this.classList.add(\'ge-ph\')">' +
@@ -308,12 +366,60 @@
     renderRow(el, el.dataset.title || "განაგრძე ყურება", el.dataset.icon || "resume", items.slice(0, 18), null);
   }
 
+  // ---- ბოლოს დამატებული ეპიზოდები (ცალკეული ეპიზოდები, არა მთლიანი სერიალი) ----
+  function episodeCard(it) {
+    var src = it.poster || PH;
+    var titleEn = it.title_en ? '<div class="ge-ep-title-en">' + esc(it.title_en) + "</div>" : "";
+    return (
+      '<a class="ge-ep-card" href="' + esc(it.url) + '">' +
+        '<div class="ge-ep-thumb">' +
+          '<img src="' + esc(src) + '" alt="' + esc(it.title) + '" loading="lazy" onerror="this.onerror=null;this.src=\'' + PH + '\';this.classList.add(\'ge-ph\')">' +
+          '<span class="ge-ep-lang">ქარ</span>' +
+        "</div>" +
+        '<div class="ge-ep-info">' +
+          '<div class="ge-ep-title">' + esc(it.title) + "</div>" +
+          titleEn +
+          '<div class="ge-ep-meta">SE' + esc(it.season) + " | EP" + esc(it.episode) + "</div>" +
+        "</div>" +
+      "</a>"
+    );
+  }
+  function buildRecentEpisodes(el, usedIds) {
+    var title = el.dataset.title || "ბოლოს დამატებული ეპიზოდები";
+    var icon = el.dataset.icon || "newtv";
+    var excludeIds = (usedIds && usedIds.serial && usedIds.serial.size) ? Array.from(usedIds.serial).join(",") : "";
+    fetch("/api/recent-episodes?per=18" + (excludeIds ? "&exclude_ids=" + encodeURIComponent(excludeIds) : "")).then(function (r) { return r.json(); }).then(function (data) {
+      if (!data.items || !data.items.length) { el.remove(); return; }
+      if (usedIds && usedIds.serial) { data.items.forEach(function (m) { usedIds.serial.add(m.id); }); }
+      el.innerHTML =
+        '<section class="movies"><div class="container"><div class="row"><div class="col-md-12">' +
+          '<div class="ge-row-head"><div class="ge-head-left">' + iconSvg(icon) +
+          '<h2 class="ge-section-title">' + esc(title) + "</h2></div></div>" +
+          '<div class="ge-ep-grid">' + data.items.map(episodeCard).join("") + "</div>" +
+        "</div></div></div></section>";
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
+    // მთავარ გვერდზე ერთი და იგივე ფილმი/სერიალი აღარ განმეორდეს სხვადასხვა
+    // რიგში — რიგები ჩაწერით (თანმიმდევრულად) იტვირთება, თითოეული გამორიცხავს
+    // წინა რიგებში უკვე ნაჩვენებ id-ებს (ცალკე set ფილმებისთვის/სერიალებისთვის).
+    var usedIds = { movie: new Set(), serial: new Set() };
     var hero = document.getElementById("HeroSlider");
-    if (hero) buildHero(hero);
+    var heroP = hero ? buildHero(hero, usedIds) : Promise.resolve();
     var cw = document.getElementById("cwRow");
     if (cw) initContinueWatching(cw);
-    document.querySelectorAll(".movies-row").forEach(buildRow);
+    var epRow = document.getElementById("recentEpisodesRow");
+    heroP.then(function () {
+      var rows = Array.prototype.slice.call(document.querySelectorAll(".movies-row"));
+      return rows.reduce(function (chain, el) {
+        return chain.then(function () {
+          return el.dataset.layout === "top9" ? buildTopRow(el, usedIds) : buildRow(el, usedIds);
+        });
+      }, Promise.resolve());
+    }).then(function () {
+      if (epRow) buildRecentEpisodes(epRow, usedIds);
+    });
     initFilter();
     initPersons();
     initSearch();

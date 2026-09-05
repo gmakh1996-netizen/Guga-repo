@@ -178,13 +178,14 @@ class Stream(db.Model):
     ან ლეგალური embed). ცხრილი მხოლოდ ბმულს ინახავს, არა ვიდეო-ფაილს.
     """
     id = db.Column(db.Integer, primary_key=True)
-    movie_id = db.Column(db.Integer, db.ForeignKey("movie.id"), nullable=True)
-    series_id = db.Column(db.Integer, db.ForeignKey("series.id"), nullable=True)
+    movie_id = db.Column(db.Integer, db.ForeignKey("movie.id"), nullable=True, index=True)
+    series_id = db.Column(db.Integer, db.ForeignKey("series.id"), nullable=True, index=True)
     language = db.Column(db.String(10))          # 'ka' | 'ru' | 'en' ...
     label = db.Column(db.String(60))             # ღილაკზე ჩვენებადი წარწერა
     kind = db.Column(db.String(10), default="embed")  # embed | mp4 | hls
     url = db.Column(db.String(600), nullable=False)
     sort = db.Column(db.Integer, default=0)
+    episode = db.Column(db.Integer, nullable=True, index=True)  # NULL = ერთეპიზოდიანი (ფილმი); 1,2,3... = სერიის ეპიზოდი
 
     def __repr__(self):
         return f"<Stream {self.label} ({self.kind})>"

@@ -1,24 +1,27 @@
 /* GEMOVIE custom layer — fills gaps around ge.movie theme classes */
-:root { --ge-red: #32e3e3; --ge-dark: #14161d; --ge-card: #1b1e27; }
+:root { --ge-red: #ff0000; --ge-dark: #000000; --ge-card: #3d0000; }
 
-/* premium ქართული ფონტი — ყველგან */
-html, body, .content, input, select, button, textarea,
-h1, h2, h3, h4, h5, .ge-section-title, .arial, .nav-link, .movie-card__title,
-.mf-titlebar h1, .SlidetTitle, .ge-hero__title {
-  font-family: "Noto Sans Georgian", "FiraGO", -apple-system, "Segoe UI", sans-serif !important;
+/* premium ქართული ფონტი — adjaranett.com-ის მიხედვით (BPG Mrgvlovani) */
+html, body, .content, input, select, button, textarea, a, p, li, .arial, .nav-link {
+  font-family: "BPG Mrgvlovani", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Georgian", sans-serif !important;
 }
-html, body { background: #0e0f14; color: #fff; overflow-x: hidden !important; max-width: 100%; }
+/* სათაურები/გამორჩეული ტექსტი — BPG Mrgvlovani Caps (adjaranett.com-ის h2/h3 შესაბამისად) */
+h1, h2, h3, h4, h5, .ge-section-title, .movie-card__title,
+.mf-titlebar h1, .SlidetTitle, .ge-hero__title {
+  font-family: "BPG Mrgvlovani Caps", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Georgian", sans-serif !important;
+}
+html, body { background: #000000; color: #fff; overflow-x: hidden !important; max-width: 100%; }
 .content { overflow-x: hidden !important; }
 .container { max-width: 100%; }
 /* scrollbar — ნეიტრალური მუქი (ცისფერი „ლურჯი ზოლი" მოხსნილია) */
 ::-webkit-scrollbar, body::-webkit-scrollbar { width: 8px !important; height: 8px !important; }
 ::-webkit-scrollbar-track, body::-webkit-scrollbar-track { background: transparent !important; }
-::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb { background: #2a2e3a !important; border-radius: 4px !important; }
-::-webkit-scrollbar-thumb:hover, body::-webkit-scrollbar-thumb:hover { background: #3a4152 !important; }
-html { scrollbar-width: thin; scrollbar-color: #2a2e3a transparent; }
+::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb { background: #950101 !important; border-radius: 4px !important; }
+::-webkit-scrollbar-thumb:hover, body::-webkit-scrollbar-thumb:hover { background: #ff0000 !important; }
+html { scrollbar-width: thin; scrollbar-color: #950101 transparent; }
 
 /* section titles / row heads */
-.ge-section-title { font-size: 22px; font-weight: 700; margin: 0; color: #fff; }
+.ge-section-title { font-size: 17px; font-weight: 700; margin: 0; color: #fff; }
 .ge-row-head { display: flex; align-items: center; justify-content: space-between; margin: 28px 0 14px; }
 .ge-more { color: #b3b3b3; font-size: 14px; }
 .ge-more:hover { color: var(--ge-red); }
@@ -47,7 +50,7 @@ html { scrollbar-width: thin; scrollbar-color: #2a2e3a transparent; }
 .ge-hero__featured::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,11,16,.9) 0%, rgba(10,11,16,.4) 40%, rgba(10,11,16,.05) 70%); }
 .ge-hero__info { position: absolute; left: 40px; bottom: 50px; z-index: 2; max-width: 80%; }
 .ge-hero__play { display: inline-block; background: var(--ge-red); color: #fff; padding: 12px 30px; border-radius: 8px; font-weight: 600; font-size: 15px; }
-.ge-hero__featured:hover .ge-hero__play { background: #32e3e3; }
+.ge-hero__featured:hover .ge-hero__play { background: #ff0000; }
 .ge-hero__title { font-size: 40px; font-weight: 800; color: #fff; margin: 22px 0 12px; text-shadow: 0 2px 12px rgba(0,0,0,.6); }
 .ge-hero__meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .ge-hero__genres span { color: #d7d7d7; font-size: 14px; }
@@ -55,7 +58,7 @@ html { scrollbar-width: thin; scrollbar-color: #2a2e3a transparent; }
 .imdb-badge { background: #f5c518; color: #000; font-weight: 700; padding: 4px 9px; border-radius: 4px; font-size: 13px; }
 
 .ge-hero__thumbs { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 14px; }
-.ge-hero__thumb { position: relative; border-radius: 10px; overflow: hidden; cursor: pointer; background: #10131a; transition: transform .2s, box-shadow .2s; }
+.ge-hero__thumb { position: relative; border-radius: 10px; overflow: hidden; cursor: pointer; background: #3d0000; transition: transform .2s, box-shadow .2s; }
 .ge-hero__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ge-hero__thumb.active { outline: 3px solid var(--ge-red); outline-offset: -3px; }
 .ge-hero__thumb:hover { transform: scale(1.04); z-index: 3; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
@@ -69,16 +72,20 @@ html { scrollbar-width: thin; scrollbar-color: #2a2e3a transparent; }
 }
 
 /* filter bar */
-.ge-filterbar { display: flex; flex-wrap: wrap; gap: 16px; padding: 22px 0 8px; align-items: flex-end; }
-.ge-filter__group { display: flex; flex-direction: column; gap: 6px; }
-.ge-filter__group label { font-size: 12px; color: #9aa0ac; }
-.ge-filterbar select {
-  background: var(--ge-card); color: #fff; border: 1px solid #2a2e3a;
-  border-radius: 8px; padding: 10px 14px; font-size: 14px; min-width: 160px; cursor: pointer;
+.filter.movie-list { padding-left: 26px; padding-right: 26px; }
+.ge-filterbar { display: flex; flex-wrap: wrap; gap: 20px; padding: 26px 0 14px; align-items: flex-end; }
+.ge-filter__group { display: flex; flex-direction: column; gap: 8px; }
+.ge-filter__group label {
+  font-family: "BPG Mrgvlovani Caps", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Georgian", sans-serif;
+  font-size: 12px; line-height: 1.6; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: #9aa0ac;
 }
+.ge-filterbar select {
+  background: var(--ge-card); color: #fff; border: 1px solid #950101;
+  border-radius: 10px; padding: 12px 16px; font-size: 14px; min-width: 170px; cursor: pointer;
+  transition: border-color .15s;
+}
+.ge-filterbar select:hover { border-color: #ff0000; }
 .ge-filterbar select:focus { outline: none; border-color: var(--ge-red); }
-
-#filterResults { margin-top: 10px; }
 .ge-loader { text-align: center; padding: 26px; color: #9aa0ac; }
 .ge-empty { text-align: center; padding: 40px; color: #9aa0ac; }
 
@@ -97,10 +104,10 @@ html { scrollbar-width: thin; scrollbar-color: #2a2e3a transparent; }
 /* detail — poster left + player right (ge.movie layout: ორივე ტოლ სიმაღლეზე) */
 /* !important-ები აჭარბებენ თემის მკაცრ height/width-ებს (580/702/280px) */
 .movies-full__content { display: flex !important; gap: 20px; align-items: stretch !important; height: 580px !important; padding: 0 !important; margin: 0 0 34px !important; float: none !important; }
-.movies-full__poster { flex: 0 0 386px !important; width: 386px !important; max-width: 386px; height: 100% !important; display: flex !important; flex-direction: column; float: none !important; border-radius: 12px; overflow: hidden; background: #10131a; }
-.movies-full__poster img { width: 100%; flex: 1 1 auto; min-height: 0; height: auto !important; object-fit: cover; display: block; background: #10131a; border-radius: 0; }
+.movies-full__poster { flex: 0 0 386px !important; width: 386px !important; max-width: 386px; height: 100% !important; display: flex !important; flex-direction: column; float: none !important; border-radius: 12px; overflow: hidden; background: #3d0000; }
+.movies-full__poster img { width: 100%; flex: 1 1 auto; min-height: 0; height: auto !important; object-fit: cover; display: block; background: #3d0000; border-radius: 0; }
 .mf-trailer { background: var(--ge-red); color: #fff; border: 0; padding: 16px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; flex: 0 0 auto; }
-.mf-trailer:hover { background: #32e3e3; }
+.mf-trailer:hover { background: #ff0000; }
 .movies-full__player { flex: 1 1 auto !important; width: auto !important; position: relative; aspect-ratio: auto !important; height: 100% !important; background: #000; border-radius: 12px; overflow: hidden; margin: 0 !important; float: none !important; font-size: 0 !important; }
 @media (max-width: 1200px) { .movies-full__content { height: 470px !important; } .movies-full__poster { flex-basis: 320px !important; width: 320px !important; } }
 @media (max-width: 860px) {
@@ -112,8 +119,17 @@ html { scrollbar-width: thin; scrollbar-color: #2a2e3a transparent; }
 .movies-full__player iframe { width: 100%; height: 100%; border: 0; display: block; }
 .ge-noplayer { display: flex; align-items: center; justify-content: center; height: 100%; color: #9aa0ac; }
 .mf-sources { position: absolute; top: 12px; left: 12px; z-index: 5; display: flex; gap: 8px; flex-wrap: wrap; }
-.mf-source { background: rgba(20,22,29,.85); color: #fff; border: 1px solid #2a2e3a; border-radius: 6px; padding: 7px 14px; cursor: pointer; font-size: 13px; }
+.mf-source { background: rgba(20,22,29,.85); color: #fff; border: 1px solid #950101; border-radius: 6px; padding: 7px 14px; cursor: pointer; font-size: 13px; }
 .mf-source.active, .mf-source:hover { background: var(--ge-red); border-color: var(--ge-red); }
+
+/* ეპიზოდის ღილაკები — სერიალის/ანიმეს დეტალურ გვერდზე, ფლეერის ქვემოთ, ჰორიზონტალური სქროლით */
+.mf-episodes { display: flex; gap: 8px; overflow-x: auto; scroll-behavior: smooth; padding: 16px 0 4px;
+  margin: 0 0 8px; scrollbar-width: none; }
+.mf-episodes::-webkit-scrollbar { display: none; }
+.mf-episode { flex: 0 0 auto; min-width: 42px; background: var(--ge-card); color: #cfd2d8; border: 1px solid #950101;
+  border-radius: 8px; padding: 9px 14px; cursor: pointer; font-size: 14px; font-weight: 600; text-align: center; }
+.mf-episode:hover { border-color: #4a516a; color: #fff; }
+.mf-episode.active { background: var(--ge-red); border-color: var(--ge-red); color: #fff; }
 
 /* ===== detail — info block (ge.movie style) ===== */
 :root { --ge-gold: #d7b15a; }
@@ -132,7 +148,7 @@ html { scrollbar-width: thin; scrollbar-color: #2a2e3a transparent; }
 .mf-help { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; border: 0; cursor: pointer;
   background: var(--ge-red); color: #fff; border-radius: 8px; font-size: 14px; font-weight: 600; }
 .mf-help svg { width: 18px; height: 18px; fill: currentColor; }
-.mf-help:hover { background: #32e3e3; }
+.mf-help:hover { background: #ff0000; }
 
 /* rating bar: IMDb (left) + stars/score/votes (right) */
 .mf-ratingbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 22px 0 24px; flex-wrap: wrap; }
@@ -172,10 +188,10 @@ html { scrollbar-width: thin; scrollbar-color: #2a2e3a transparent; }
 .mf-cast__row { display: flex; gap: 18px; overflow-x: auto; scroll-behavior: smooth; padding-bottom: 8px; scrollbar-width: none; }
 .mf-cast__row::-webkit-scrollbar { display: none; }
 .mf-actor { flex: 0 0 120px; text-align: center; }
-.mf-actor__photo { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; background: #1b1e27; margin: 0 auto 10px;
+.mf-actor__photo { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; background: #3d0000; margin: 0 auto 10px;
   display: flex; align-items: center; justify-content: center; }
 .mf-actor__photo img { width: 100%; height: 100%; object-fit: cover; }
-.mf-actor__ph::after { content: ""; width: 48px; height: 48px; border-radius: 50%; background: #2a2e3a; }
+.mf-actor__ph::after { content: ""; width: 48px; height: 48px; border-radius: 50%; background: #950101; }
 .mf-actor__initials { font-size: 34px; font-weight: 700; color: #4a516a; }
 .mf-actor__name { font-size: 13px; color: #cfd2d8; line-height: 1.3; }
 
@@ -210,10 +226,10 @@ html { scrollbar-width: thin; scrollbar-color: #2a2e3a transparent; }
 
 /* search autocomplete */
 .header-top__search { position: relative; }
-#search_autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: #1b1e27; border-radius: 0 0 10px 10px; overflow: hidden; z-index: 999; display: none; box-shadow: 0 12px 30px rgba(0,0,0,.5); max-height: 70vh; overflow-y: auto; }
+#search_autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: #3d0000; border-radius: 0 0 10px 10px; overflow: hidden; z-index: 999; display: none; box-shadow: 0 12px 30px rgba(0,0,0,.5); max-height: 70vh; overflow-y: auto; }
 #search_autocomplete.open { display: block; }
 .ac-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; color: #fff; }
-.ac-item:hover { background: #262a35; }
+.ac-item:hover { background: #950101; }
 .ac-item img { width: 38px; height: 54px; object-fit: cover; border-radius: 4px; }
 .ac-title { font-size: 14px; }
 
@@ -222,17 +238,67 @@ html { scrollbar-width: thin; scrollbar-color: #2a2e3a transparent; }
 /* sidebar Lucide icons — stroke-based, არა fill */
 .sidebar .nav-link svg { fill: none !important; stroke: currentColor !important; width: 24px !important; height: 24px !important; }
 .sidebar .nav-link svg path, .sidebar .nav-link svg rect, .sidebar .nav-link svg circle { fill: none !important; stroke: currentColor !important; }
+/* sidebar ღილაკები — ოთხკუთხედის ნაცვლად მრგვალი hover/active ფონი */
+.sidebar ul li a, .sidebar ul li a:hover, .sidebar ul li a.active { border-radius: 16px !important; }
+
+/* დესკტოპზე (≥1025px) — ნავიგაცია ჩაშენებულია header-ში, ლოგოსა და ძებნას შორის
+   (ლოგო + ღილაკები + ძებნა ერთ ზოლში). ≤1024px-ზე არსებული ქვედა tab-bar
+   (@media max-width:1024px, ზემოთ) უცვლელად რჩება — .sidebar იქ position:fixed-ით
+   მთელი DOM-ნესთინგისგან დამოუკიდებლად მუშაობს. */
+@media (min-width: 1025px) {
+  .content { width: 100% !important; margin-left: 0 !important; float: none !important; }
+  .header { background: #242731 !important; }
+  .header-top { justify-content: space-between !important; gap: 18px; }
+  .header-top__logo { flex: 0 0 auto; }
+  .header-top__search { flex: 0 0 auto; width: 340px !important; }
+  .header-top__search button {
+    background: #a0b4e8 !important; color: #1c1f2b !important;
+  }
+  .sidebar {
+    position: static !important; left: auto !important; top: auto !important;
+    width: auto !important; height: auto !important; float: none !important;
+    display: flex !important; align-items: center; flex: 1 1 auto; min-width: 0;
+    background: transparent !important; border: 0 !important;
+  }
+  .sidebar .navbar-nav {
+    display: flex; flex-direction: row; align-items: stretch; justify-content: center;
+    flex-wrap: nowrap; width: 100%; margin: 0; padding: 0; gap: 6px; list-style: none;
+  }
+  .sidebar .nav-item { flex: 1 1 0; min-width: 0; margin: 0 !important; float: none !important; }
+  .sidebar .nav-link {
+    display: flex !important; flex-direction: row; align-items: center; justify-content: center; gap: 6px;
+    height: 56px; width: 100%; padding: 0 8px !important; margin: 0 !important; border-radius: 0 !important;
+    background: #1d1d1d; border: none; cursor: pointer; text-decoration: none;
+    color: #ffffff; transition: .18s ease;
+  }
+  .sidebar .nav-link svg { width: 18px !important; height: 18px !important; flex: 0 0 auto; transition: .18s ease; }
+  .sidebar .nav-link .pt-xl-2 {
+    padding: 0 !important; margin: 0 !important; font-size: 12.5px; font-weight: 500;
+    line-height: 1.4 !important; height: auto !important; overflow: visible !important;
+    white-space: nowrap;
+  }
+  .sidebar .nav-link:hover {
+    background: #101010; color: #fff; border-radius: 0 !important;
+  }
+  .sidebar .nav-link.active { background: #101010 !important; color: #fff !important; border-radius: 0 !important; }
+  .sidebar .nav-link:hover svg, .sidebar .nav-link:hover svg path,
+  .sidebar .nav-link:hover svg rect, .sidebar .nav-link:hover svg circle,
+  .sidebar .nav-link.active svg, .sidebar .nav-link.active svg path,
+  .sidebar .nav-link.active svg rect, .sidebar .nav-link.active svg circle {
+    stroke: #ffffff !important;
+  }
+}
 .header { position: relative; z-index: 500; }
 
 .movie-card { position: relative; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
 .movie-card__img {
   width: 100%; height: auto !important; aspect-ratio: 16 / 9;
-  border-radius: 10px; overflow: hidden; position: relative; background: #10131a;
+  border-radius: 10px; overflow: hidden; position: relative; background: #3d0000;
 }
 .movie-card__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .movie-card__img img.ge-broken { display: none; }
 /* გატეხილი/ცარიელი პოსტერის placeholder — ჩამჯდარი, არა ცარიელი */
-img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; opacity: .5; }
+img.ge-ph { object-fit: contain !important; background: #3d0000; padding: 14%; opacity: .5; }
 .ge-hero__thumb img.ge-ph { padding: 20%; }
 .movies-full__poster img.ge-ph { padding: 24%; }
 
@@ -276,7 +342,7 @@ img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; o
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 /* results grid — 5 columns on desktop (ge.movie-style landscape cards) */
-#filterResults { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 16px; margin-top: 18px; }
+#filterResults { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 22px; margin-top: 18px; }
 @media (min-width: 576px) { #filterResults { grid-template-columns: repeat(3, 1fr); } }
 @media (min-width: 768px) { #filterResults { grid-template-columns: repeat(4, 1fr); } }
 @media (min-width: 1200px) { #filterResults { grid-template-columns: repeat(5, 1fr); } }
@@ -284,7 +350,10 @@ img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; o
 .movies-slider .swiper { overflow: hidden; padding: 4px 0; }
 .movies-slider .swiper-slide { height: auto; }
 /* პრემიერა — პორტრეტ-პოსტერების კარუსელი (ge.movie-ვით) */
-.movies--portrait { position: relative; overflow: hidden; padding: 10px 0 30px; }
+.movies--portrait { position: relative; overflow: hidden; padding: 22px 0 28px; }
+/* ბექგრაუნდიანი რიგი — შემცირებული ქარდები, უფრო ცენტრირებული/ვიწრო კონტენტი
+   და მეტი სივრცე ბექგრაუნდისთვის გვერდებზე/ზემოთ/ქვემოთ */
+@media (min-width: 1200px) { .movies--portrait { min-height: 420px; } }
 .movies--portrait .movie-card__img { aspect-ratio: 2 / 3; }
 .movies--portrait .movie-card__title h2 a p { display: none; }
 /* ჰოვერზე ცვალებადი ფონი (backdrop) */
@@ -295,7 +364,20 @@ img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; o
 }
 .ge-prem-shade { position: absolute; inset: 0; z-index: 0;
   background: linear-gradient(180deg, rgba(10,11,16,.45) 0%, rgba(10,11,16,.3) 45%, rgba(10,11,16,.75) 100%); }
+/* ანიმეს რიგები — ნამდვილი, თავისუფალი ლიცენზიის ფოტო (Pexels/Unsplash License,
+   კომერციული გამოყენებაც უფასოა, ატრიბუციის გარეშე) — არა კონკრეტული ანიმეს/ფილმის
+   საავტორო ნახატი/პოსტერი, რომელიც დიდ ბექგრაუნდში დაბალხარისხიანიც გამოჩნდებოდა */
+.movies--abstract-bg .ge-prem-bg {
+  background-image: url('/static/img/anime-bg/tokyo-street.jpg');
+  background-size: cover; background-position: center;
+}
+/* ანიმე სერიალების რიგი — სხვა ფოტო, რომ ვიზუალურად გამოირჩეოდეს */
+.movies--abstract-bg-2 .ge-prem-bg {
+  background-image: url('/static/img/anime-bg/sakura-night.jpg');
+  background-size: cover; background-position: center;
+}
 .movies--portrait .container { position: relative; z-index: 1; }
+@media (min-width: 1200px) { .movies--portrait .movies-slider { max-width: 1315px; margin: 0 auto; } }
 .movies--portrait .movie-card { transition: transform .2s; }
 .movies--portrait .swiper-slide:hover .movie-card { transform: translateY(-6px); }
 
@@ -305,24 +387,23 @@ img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; o
 @media (min-width: 768px) { #personsResults { grid-template-columns: repeat(6, 1fr); } }
 @media (min-width: 1200px) { #personsResults { grid-template-columns: repeat(7, 1fr); } }
 .ge-person { text-align: center; min-width: 0; }
-.ge-person__photo { width: 130px; height: 130px; border-radius: 50%; overflow: hidden; background: #1b1e27; margin: 0 auto 12px; position: relative; }
+.ge-person__photo { width: 130px; height: 130px; border-radius: 50%; overflow: hidden; background: #3d0000; margin: 0 auto 12px; position: relative; }
 .ge-person__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ge-person__ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #1b1e27; }
-.ge-person__ph::after { content: ""; width: 54px; height: 54px; border-radius: 50%; background: #2a2e3a; }
+.ge-person__ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #3d0000; }
+.ge-person__ph::after { content: ""; width: 54px; height: 54px; border-radius: 50%; background: #950101; }
 .ge-person__name { font-size: 14px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ge-person__en { font-size: 12px; color: #8a8f9a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* category row icon */
-.ge-row-head { gap: 10px; }
-.ge-row-head .ge-head-left { display: flex; align-items: center; gap: 10px; }
-/* premium category icon — თეთრი აიქონი ღილაკის ფერის (აქცენტი) ფონზე */
-.ge-row-head .ge-head-left { display: flex; align-items: center; gap: 12px; }
+.ge-row-head { gap: 8px; }
+/* premium category icon — თეთრი აიქონი ღილაკის ფერის (აქცენტი) ფონზე, სათაურთან შერწყმულად პატარა */
+.ge-row-head .ge-head-left { display: flex; align-items: center; gap: 8px; }
 .ge-ico-badge {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 40px; height: 40px; border-radius: 50%; flex: 0 0 40px;
+  width: 28px; height: 28px; border-radius: 50%; flex: 0 0 28px;
   background: var(--ge-red);
 }
-.ge-row-head .ge-ico { width: 21px; height: 21px; color: #fff; fill: none; stroke: currentColor; }
+.ge-row-head .ge-ico { width: 15px; height: 15px; color: #fff; fill: none; stroke: currentColor; }
 
 /* ============================================================
    MOBILE / RESPONSIVE LAYER  (≤1024px)
@@ -337,7 +418,7 @@ img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; o
 
   /* --- header + hero: თემა მათ ≤1024px-ზე მალავს (.mob-header-ს ელოდება,
          რომელიც ჩვენს markup-ში არ არის) — ვაბრუნებთ --- */
-  .header { display: block !important; position: sticky; top: 0; z-index: 900; background: #0e0f14; border-bottom: 1px solid #1b1e27; }
+  .header { display: block !important; position: sticky; top: 0; z-index: 900; background: #000000; border-bottom: 1px solid #3d0000; }
   .hero { display: block !important; }
   /* browse/trailers გვერდის ფილტრი — თემა `.filter`-ს მობილურზე მალავს
      (.filter-btn toggle-ს ელოდება); ვაბრუნებთ */
@@ -349,7 +430,7 @@ img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; o
   .header-top__actions { display: none !important; }
   /* ძებნა თემა მალავს — ვაბრუნებთ, სრული სიგანის pill --- */
   .header-top__search { display: block !important; width: 100%; }
-  .header-top__search form { display: flex !important; align-items: stretch; width: 100%; height: auto !important; background: #1b1e27; border: 1px solid #2a2e3a; border-radius: 10px; overflow: hidden; }
+  .header-top__search form { display: flex !important; align-items: stretch; width: 100%; height: auto !important; background: #3d0000; border: 1px solid #950101; border-radius: 10px; overflow: hidden; }
   .header-top__search input { display: block !important; flex: 1 1 auto; width: auto !important; min-width: 0; height: auto !important; line-height: 1.3 !important; background: transparent !important; border: 0 !important; color: #fff !important; padding: 12px 14px !important; font-size: 14px; }
   .header-top__search button { flex: 0 0 auto; width: auto !important; height: auto !important; display: inline-flex !important; align-items: center; gap: 6px; border: 0; background: var(--ge-red) !important; color: #fff !important; padding: 0 18px !important; font-size: 14px; white-space: nowrap; }
   #search_autocomplete { border-radius: 0 0 10px 10px; }
@@ -359,7 +440,7 @@ img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; o
     position: fixed !important; bottom: 0; left: 0; right: 0; top: auto !important;
     width: 100% !important; height: 60px !important; float: none !important;
     display: block !important; z-index: 1000; margin: 0 !important; padding: 0 !important;
-    background: #14161d !important; border-top: 1px solid #242731; border-radius: 0;
+    background: #000000 !important; border-top: 1px solid #950101; border-radius: 0;
     box-shadow: 0 -4px 20px rgba(0,0,0,.45);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
@@ -388,10 +469,11 @@ img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; o
   }
 
   /* --- row heads / section titles — უფრო კომპაქტური --- */
-  .ge-row-head { margin: 22px 0 12px; }
-  .ge-section-title { font-size: 18px; }
-  .ge-ico-badge { width: 34px; height: 34px; flex: 0 0 34px; }
-  .ge-row-head .ge-ico { width: 18px; height: 18px; }
+  .ge-row-head { margin: 22px 0 12px; gap: 6px; }
+  .ge-row-head .ge-head-left { gap: 6px; }
+  .ge-section-title { font-size: 14px; }
+  .ge-ico-badge { width: 22px; height: 22px; flex: 0 0 22px; }
+  .ge-row-head .ge-ico { width: 12px; height: 12px; }
 
   /* მსახიობის ფოტო — ფიქსირებული 130px ტაბლეტის (768px) 6-სვეტიან ბადეზე
      საკუთარ უჯრას სცდება და მთელ grid-ს გარეთ სწევს; ვხდით ფლუიდურს */
@@ -425,10 +507,10 @@ img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; o
    ============================================================ */
 .ge-btn { display: inline-block; background: var(--ge-red); color: #fff; padding: 12px 28px;
   border-radius: 8px; font-weight: 600; font-size: 15px; }
-.ge-btn:hover { background: #32e3e3; }
+.ge-btn:hover { background: #ff0000; }
 
 .ge-pager { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 32px 0; flex-wrap: wrap; }
-.ge-pager__btn { background: var(--ge-card); border: 1px solid #2a2e3a; color: #fff; padding: 9px 18px;
+.ge-pager__btn { background: var(--ge-card); border: 1px solid #950101; color: #fff; padding: 9px 18px;
   border-radius: 8px; font-size: 14px; }
 .ge-pager__btn:hover { border-color: var(--ge-red); color: var(--ge-red); }
 .ge-pager__info { color: #9aa0ac; font-size: 14px; }
@@ -438,3 +520,102 @@ img.ge-ph { object-fit: contain !important; background: #10131a; padding: 14%; o
   border-radius: 50%; border: 0; background: rgba(0,0,0,.65); color: #fff; font-size: 15px;
   display: flex; align-items: center; justify-content: center; cursor: pointer; transition: .15s; }
 .wl-remove:hover { background: var(--ge-red); }
+
+/* „ბოლოს დამატებული ეპიზოდები" — croconet.cam-ის სტილის ბადე (grid, არა კარუსელი) */
+.ge-ep-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 22px 20px;
+  margin: 6px 0 36px;
+}
+.ge-ep-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  text-decoration: none;
+  min-width: 0;
+}
+.ge-ep-thumb {
+  position: relative;
+  flex: 0 0 128px;
+  width: 128px;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--ge-card);
+}
+.ge-ep-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .2s; }
+.ge-ep-card:hover .ge-ep-thumb img { transform: scale(1.06); }
+.ge-ep-lang {
+  position: absolute; top: 6px; left: 6px;
+  background: #1cb15c; color: #fff;
+  font-size: 10px; font-weight: 700; letter-spacing: .3px;
+  padding: 2px 7px; border-radius: 4px; line-height: 1.5;
+}
+.ge-ep-info { min-width: 0; padding-top: 2px; }
+.ge-ep-title {
+  font-family: "BPG Mrgvlovani Caps", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Georgian", sans-serif;
+  color: #fff; font-weight: 700; font-size: 14px; line-height: 1.35;
+  text-transform: uppercase;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.ge-ep-card:hover .ge-ep-title { color: var(--ge-red); }
+.ge-ep-title-en {
+  color: #8b909c; font-size: 12px; margin-top: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ge-ep-meta { color: var(--ge-red); font-size: 12px; font-weight: 700; margin-top: 8px; }
+
+@media (max-width: 680px) {
+  .ge-ep-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px 14px; margin: 6px 0 28px; }
+  .ge-ep-thumb { flex-basis: 108px; width: 108px; }
+}
+
+/* „ტოპ 9" — 1 დიდი ქარდი მარცხნივ + 8 ჩვეულებრივი ბადეში მარჯვნივ */
+.ge-top9 { display: flex; align-items: stretch; gap: 16px; margin-top: 4px; }
+.ge-top9__feature {
+  position: relative; flex: 0 0 30%; max-width: 30%; min-width: 0;
+  border-radius: 12px; overflow: hidden; display: block; background: var(--ge-card);
+}
+.ge-top9__feature img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.ge-top9__rank {
+  position: absolute; top: 8px; left: 16px; z-index: 2;
+  font-family: "BPG Mrgvlovani Caps", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Georgian", sans-serif;
+  font-weight: 800; font-size: 40px; color: #fff;
+  text-shadow: 0 2px 14px rgba(0,0,0,.9), 0 0 3px rgba(0,0,0,.7); line-height: 1;
+}
+.ge-top9__feature .rates { position: absolute; top: 12px; right: 12px; z-index: 2; left: auto; bottom: auto; width: auto; padding: 0; background: none; }
+.ge-top9__feature .rates .imdb span { background: #f5c518; color: #000; font-weight: 700; padding: 3px 7px; border-radius: 4px; font-size: 12px; }
+.ge-top9__info {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 40px 16px 16px;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.88) 70%);
+}
+.ge-top9__info h3 {
+  margin: 0; font-size: 18px; color: #fff; line-height: 1.3;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.ge-top9__en { margin: 4px 0 0; font-size: 13px; color: #c7c9cf; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.ge-top9__grid {
+  flex: 1; min-width: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr);
+  gap: 12px 14px;
+}
+.ge-top9__cell { position: relative; }
+.ge-top9__cell-rank {
+  position: absolute; top: 6px; left: 6px; z-index: 4;
+  background: rgba(0,0,0,.65); color: #fff; font-weight: 700; font-size: 12px;
+  min-width: 20px; height: 20px; padding: 0 4px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+@media (max-width: 992px) {
+  .ge-top9 { flex-direction: column; }
+  .ge-top9__feature { flex: none; max-width: 100%; width: 100%; aspect-ratio: 16 / 9; }
+  .ge-top9__grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 560px) {
+  .ge-top9__grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, 1fr); }
+  .ge-top9__rank { font-size: 30px; }
+  .ge-top9__info h3 { font-size: 15px; }
+}

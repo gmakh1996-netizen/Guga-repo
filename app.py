@@ -5,13 +5,14 @@
 import atexit
 import json
 import os
+from datetime import datetime, timedelta
 from functools import wraps
 
 from flask import Flask, render_template, request, abort, jsonify, redirect, url_for
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from config import Config
-from models import db, Movie, Series, Genre, Person
+from models import db, Movie, Series, Genre, Person, Stream
 import tmdb
 from sync import sync_all
 
@@ -163,6 +164,58 @@ def register_routes(app):
             ),
         )
 
+    WEEKLY_TOP_CACHE_PATH = os.path.join(os.path.dirname(__file__), "data", "weekly_top_cache.json")
+    WEEKLY_TOP_YEARS = ("2025", "2026")
+    WEEKLY_TOP_LIMIT = 50
+    # ჰერო-ს (მთავარი გვერდის ზედა 9 ფილმი) კონკრეტულად სთხოვილი "ფიქსირებული" ფილმები —
+    # ყოველთვის ჩნდება სიაში, დანარჩენს ავსებს 2026-ის ყველაზე მაღალრეიტინგული ფილმებით.
+    HERO_PINNED_MOVIE_IDS = [49764]  # სპაიდერმენი: ახალი დღე (Spider-Man: Brand New Day, 2026)
+
+    def _load_weekly_top_cache():
+        try:
+            with open(WEEKLY_TOP_CACHE_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return {}
+
+    def _save_weekly_top_cache(cache):
+        with open(WEEKLY_TOP_CACHE_PATH, "w", encoding="utf-8") as f:
+            json.dump(cache, f, ensure_ascii=False)
+
+    def _weekly_top_ids(media_key, Model, years=WEEKLY_TOP_YEARS):
+        """მოცემულ წლებში ყველაზე მაღალრეიტინგული (ჩვენს ბაზაში — რეალური ინტერნეტ
+        ნახვადობის მონაცემი არ გვაქვს, IMDb-რეიტინგი ვიყენებთ პროქსად) ფილმები/სერიალები.
+        სია გამოითვლება მაქსიმუმ კვირაში ერთხელ და ინახება ფაილში — ამ დროში
+        ხელახლა არ გამოითვლება, თუნდაც ბაზა შეიცვალოს."""
+        cache = _load_weekly_top_cache()
+        entry = cache.get(media_key)
+        now = datetime.utcnow()
+        stale = True
+        if entry and entry.get("computed_at"):
+            try:
+                computed_at = datetime.fromisoformat(entry["computed_at"])
+                stale = (now - computed_at) > timedelta(days=7)
+            except (ValueError, TypeError):
+                stale = True
+        if entry and not stale:
+            return entry["ids"]
+
+        rows = (
+            Model.query.filter(
+                db.or_(*[Model.release_date.like(f"{y}%") for y in years]),
+                Model.vote_average > 0,
+                Model.streams.any(),
+                _has_poster(Model),
+            )
+            .order_by(Model.vote_average.desc(), Model.popularity.desc())
+            .limit(WEEKLY_TOP_LIMIT)
+            .all()
+        )
+        ids = [r.id for r in rows]
+        cache[media_key] = {"computed_at": now.isoformat(), "ids": ids}
+        _save_weekly_top_cache(cache)
+        return ids
+
     def _serialize(rec):
         return {
             "id": rec.id,
@@ -210,10 +263,59 @@ def register_routes(app):
             query = Movie.query.filter(Movie.trailer_key.isnot(None))
         if genre_id:
             query = query.filter(Model.genres.any(Genre.id == genre_id))
+        exclude_genre_id = request.args.get("exclude_genre", type=int)
+        if exclude_genre_id:
+            query = query.filter(~Model.genres.any(Genre.id == exclude_genre_id))
+        exclude_ids_raw = request.args.get("exclude_ids", "").strip()
+        if exclude_ids_raw:
+            exclude_ids = [int(x) for x in exclude_ids_raw.split(",") if x.strip().isdigit()]
+            if exclude_ids:
+                query = query.filter(~Model.id.in_(exclude_ids))
         if year.isdigit():
             query = query.filter(Model.release_date.like(f"{year}%"))
         if q:
             query = query.filter(Model.title.ilike(f"%{q}%"))
+        if sort == "weekly_top":
+            # „ტოპ ფილმები/სერიალები" — 2025-2026, კვირაში ერთხელ გამოთვლილი/დაცული სია
+            # (იხ. _weekly_top_ids) — რიგითობა დაცული უნდა იყოს id-ების სიის მიხედვით,
+            # არა SQL-ის ჩვეულებრივი ORDER BY-ით.
+            media_key = "serial" if Model is Series else "movie"
+            weekly_ids = _weekly_top_ids(media_key, Model)
+            query = query.filter(Model.id.in_(weekly_ids), _has_poster(Model))
+            rows = query.all()
+            rank = {rid: i for i, rid in enumerate(weekly_ids)}
+            rows.sort(key=lambda r: rank.get(r.id, len(weekly_ids)))
+            total = len(rows)
+            items = rows[(page - 1) * per: page * per]
+            return jsonify(
+                items=[_serialize(x) for x in items],
+                page=page,
+                per=per,
+                has_more=page * per < total,
+                total=total,
+            )
+
+        if sort == "hero_top":
+            # მთავარი გვერდის ჰერო — კონკრეტულად მოთხოვნილი ფილმ(ებ)ი ყოველთვის შედის,
+            # დანარჩენს ავსებს 2026-ის ყველაზე მაღალრეიტინგული ფილმებით (კვირაში ერთხელ
+            # განახლებადი). დუბლირება არასდროს — pinned ID-ები გამორიცხულია top-ის სიიდან.
+            pinned_ids = [i for i in HERO_PINNED_MOVIE_IDS if Model is Movie]
+            top_ids = _weekly_top_ids("movie_2026_hero" if Model is Movie else "serial_2026_hero", Model, years=("2026",))
+            ordered_ids = pinned_ids + [i for i in top_ids if i not in pinned_ids]
+            query = query.filter(Model.id.in_(ordered_ids), _has_poster(Model))
+            rows = query.all()
+            rank = {rid: i for i, rid in enumerate(ordered_ids)}
+            rows.sort(key=lambda r: rank.get(r.id, len(ordered_ids)))
+            total = len(rows)
+            items = rows[(page - 1) * per: page * per]
+            return jsonify(
+                items=[_serialize(x) for x in items],
+                page=page,
+                per=per,
+                has_more=page * per < total,
+                total=total,
+            )
+
         if sort == "rating":
             query = query.order_by(Model.vote_average.desc())
         elif sort == "newest":
@@ -244,6 +346,56 @@ def register_routes(app):
             has_more=page * per < total,
             total=total,
         )
+
+    @app.route("/api/recent-episodes")
+    def api_recent_episodes():
+        """ბოლოს დამატებული ეპიზოდები — ერთი (ბოლო) ეპიზოდი თითო სერიალზე,
+        რომ ლენტა მრავალფეროვანი იყოს და არა ერთი სერიალის ყველა ეპიზოდი ზედიზედ."""
+        import re
+
+        page = max(request.args.get("page", 1, type=int), 1)
+        per = min(request.args.get("per", 20, type=int), 40)
+
+        latest_per_series = (
+            db.session.query(
+                Stream.series_id.label("series_id"),
+                db.func.max(Stream.id).label("max_id"),
+            )
+            .filter(Stream.episode.isnot(None), Stream.series_id.isnot(None))
+            .group_by(Stream.series_id)
+            .subquery()
+        )
+
+        query = (
+            db.session.query(Stream, Series)
+            .join(latest_per_series, Stream.id == latest_per_series.c.max_id)
+            .join(Series, Stream.series_id == Series.id)
+            .filter(_has_poster(Series))
+            .order_by(Stream.id.desc())
+        )
+        exclude_ids_raw = request.args.get("exclude_ids", "").strip()
+        if exclude_ids_raw:
+            exclude_ids = [int(x) for x in exclude_ids_raw.split(",") if x.strip().isdigit()]
+            if exclude_ids:
+                query = query.filter(~Series.id.in_(exclude_ids))
+        total = query.count()
+        rows = query.offset((page - 1) * per).limit(per).all()
+
+        items = []
+        for s, series in rows:
+            m = re.search(r"სეზონი\s*(\d+)", series.title or "")
+            season = int(m.group(1)) if m else 1
+            items.append({
+                "id": series.id,
+                "title": series.title,
+                "title_en": series.original_title or "",
+                "poster": series.poster_url or "",
+                "season": season,
+                "episode": s.episode,
+                "url": f"/series/{series.id}",
+            })
+
+        return jsonify(items=items, page=page, per=per, has_more=page * per < total, total=total)
 
     @app.route("/api/search")
     def api_search():
