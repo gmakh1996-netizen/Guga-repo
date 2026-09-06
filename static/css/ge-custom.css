@@ -522,7 +522,11 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
   .header-top__search form { display: flex !important; align-items: stretch; width: 100%; height: 36px; background: #232d3f; border: 1px solid #005b41; border-radius: 18px; overflow: hidden; }
   .header-top__search input { display: block !important; flex: 1 1 auto; width: auto !important; min-width: 0; height: auto !important; line-height: 1.1 !important; background: transparent !important; border: 0 !important; color: #fff !important; padding: 0 0 0 14px !important; font-size: 12px; }
   /* ღილაკის ტექსტს ("ძებნა") ვშლით ვიზუალურად (font-size:0) — მხოლოდ ხატულა რჩება */
-  .header-top__search button { flex: 0 0 32px; width: 32px !important; height: 32px !important; margin: 2px !important; border-radius: 50% !important; display: flex !important; align-items: center; justify-content: center; border: 0; background: var(--ge-red) !important; color: #fff !important; padding: 0 !important; font-size: 0; line-height: 0; }
+  /* pill-ის content-box სიმაღლე = 36px (form) - 2px (border) = 34px ზუსტად;
+     ღილაკი 30px + 2px მარჯინი ორივე მხრიდან = 34px — ზუსტად ერგება,
+     overflow:hidden-ით მოჭრის გარეშე (30+4=34px, არა 32+4=36px, რაც წინა
+     ვერსიაში 1px-ით იჭრებოდა ზემოთ/ქვემოთ) */
+  .header-top__search button { flex: 0 0 30px; width: 30px !important; height: 30px !important; margin: 2px !important; border-radius: 50% !important; display: flex !important; align-items: center; justify-content: center; border: 0; background: var(--ge-red) !important; color: #fff !important; padding: 0 !important; font-size: 0; line-height: 0; }
   .header-top__search button i { font-size: 13px; line-height: 1; display: flex; align-items: center; justify-content: center; margin: 0 !important; }
   #search_autocomplete { border-radius: 0 0 10px 10px; }
 
