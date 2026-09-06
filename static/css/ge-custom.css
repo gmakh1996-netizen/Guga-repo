@@ -130,14 +130,24 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 .ge-empty { text-align: center; padding: 40px; color: #9aa0ac; }
 
 /* detail page */
-.movies-full { position: relative; padding: 30px 0 50px; z-index: 0; float: none !important; width: 100% !important; }
+/* თემა float:left-ს აძლევს .movies-full-საც, .movies-full .container-საც და
+   .movies-full__inside-საც (საერთო სელექტორის სიაში) — float-ს არავინ ასუფთავებდა,
+   ამიტომ .movies-full-ის სიმაღლე მხოლოდ ზედა (პოსტერი+ფლეერი) ნაწილს ითვლიდა და
+   სათაური/ინფო/სიუჟეტი/მსახიობები მის გარეთ, მიუწვდომლად „გადმოსდიოდა" — ამის გამო
+   ჩაბნელებული ბექგრაუნდიც ვერ სწვდებოდა იმ ტექსტის ბოლომდე. flow-root თავად
+   აკავებს ყველა შვილ float-ს ჩაბუდებულობის მიუხედავად */
+.movies-full { position: relative; display: flow-root; padding: 30px 0 50px; z-index: 0; float: none !important; width: 100% !important; }
 .movies.related { clear: both; }
 /* თემის დეკორატიული overlay — კლიკები არ დაიჭიროს */
 .movies-full::after, .movies-full:after { pointer-events: none !important; z-index: 1 !important; }
-.movies-full .bg-image { position: absolute; top: 0; left: 0; right: 0; height: 720px !important; background-size: cover; background-position: center 18%;
+/* ჩაბნელებული პოსტერი — ge.movie-ს მსგავსად მთელ .movies-full-ს (პოსტერი+ფლეერი
+   +სათაური/ინფო/სიუჟეტი/მსახიობები) უნდა მისდევდეს, არა მხოლოდ ზედა 720px-ს —
+   height:100% პარენტის (.movies-full) სრულ სიმაღლეს იღებს, ასე რომ ჩამოსქროლვისას
+   ბექგრაუნდი ზუსტად იმ წერტილამდე გრძელდება, სადაც „მსგავსი ფილმების" სექცია იწყება */
+.movies-full .bg-image { position: absolute; top: 0; left: 0; right: 0; height: 100% !important; background-size: cover; background-position: center 18%;
   filter: blur(6px) brightness(.42); opacity: .6; z-index: 0 !important; pointer-events: none; transform: scale(1.05);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.95) 0%, rgba(0,0,0,.55) 52%, rgba(0,0,0,0) 100%);
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,.95) 0%, rgba(0,0,0,.55) 52%, rgba(0,0,0,0) 100%); }
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.95) 0%, rgba(0,0,0,.85) 20%, rgba(0,0,0,.85) 88%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.95) 0%, rgba(0,0,0,.85) 20%, rgba(0,0,0,.85) 88%, rgba(0,0,0,0) 100%); }
 .movies-full .container { position: relative; z-index: 300; }
 .movies-full__content, .movies-full__player, #movie_embed { position: relative; z-index: 300 !important; }
 .movies-full__player { pointer-events: auto; }
