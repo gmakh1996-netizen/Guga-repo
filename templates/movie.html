@@ -161,15 +161,23 @@
     var tb = document.querySelector('.mf-trailer');
     if (tb) tb.addEventListener('click', function () { if (frame) frame.src = this.dataset.trailer; });
 
-    // ბექგრაუნდის ჩაბნელება ჩამოსქროლვის დოზაზეა მიბმული — რაც მეტს ჩამოვსქროლავთ,
-    // მით უფრო შავდება (ნაცრისფერი → შავი), ავსქროლვისას იმავე დოზით უბრუნდება
+    // შავი ფარდა (viewport-ის ზედა კიდეზე fixed) ფარავს ბექგრაუნდის სურათს
+    // ზუსტად იმ დოზით, რასაც ვსქროლავთ (1px სქროლი = 1px დაფარვა); ავსქროლვისას
+    // იმავე დოზით იხსნება. .movies-full-ის მთლიან სიმაღლეზე მეტად აღარ იზრდება
+    // და საერთოდ იმალება, როცა hero-სექცია უკვე მთლიანად ზემოთ გადახვეულია.
     var mf = document.getElementById('movies-full');
-    if (mf && mf.querySelector('.mf-scroll-fade')) {
-      var fadeDist = Math.max(300, window.innerHeight * 0.6);
+    var fadeEl = mf && mf.querySelector('.mf-scroll-fade');
+    if (mf && fadeEl) {
       var ticking = false;
       var updateFade = function () {
-        var t = Math.min(Math.max(window.scrollY / fadeDist, 0), 1);
-        mf.style.setProperty('--mf-fade', t.toFixed(3));
+        var maxCover = mf.offsetHeight;
+        var y = window.scrollY;
+        if (y >= maxCover) {
+          fadeEl.classList.remove('is-active');
+        } else {
+          fadeEl.classList.add('is-active');
+          mf.style.setProperty('--mf-fade', Math.max(y, 0) + 'px');
+        }
         ticking = false;
       };
       window.addEventListener('scroll', function () {
