@@ -303,6 +303,41 @@ def register_routes(app):
                 has_more=page * per < total, total=total,
             )
 
+        # ანიმეები/ანიმაციები — არა ცალკე "ტიპი", არამედ ჟანრი, რომელიც ორივე
+        # მოდელში გვხვდება (ფილმიც და სერიალიც) — search-ის იგივე კომბინირების
+        # ლოგიკით ვმართავთ, რომ ორივე ერთად, გვერდობრივად დაითვალიერო
+        GENRE_GROUP_TYPES = {"anime": 900000025, "animation": 900000009}
+        if media in GENRE_GROUP_TYPES:
+            gid = GENRE_GROUP_TYPES[media]
+            combined = []
+            for M in (Movie, Series):
+                gq = M.query.filter(M.genres.any(Genre.id == gid), _has_poster(M))
+                if genre_id and genre_id != gid:
+                    gq = gq.filter(M.genres.any(Genre.id == genre_id))
+                if year.isdigit():
+                    gq = gq.filter(M.release_date.like(f"{year}%"))
+                if q:
+                    gq = gq.filter(_title_match(M, q))
+                if sort == "rating":
+                    gq = gq.order_by(M.vote_average.desc())
+                elif sort == "newest":
+                    gq = gq.order_by(M.release_date.desc())
+                else:
+                    gq = gq.order_by(M.popularity.desc())
+                combined += gq.limit(300).all()
+            if sort == "rating":
+                combined.sort(key=lambda x: x.vote_average or 0, reverse=True)
+            elif sort == "newest":
+                combined.sort(key=lambda x: x.release_date or "", reverse=True)
+            else:
+                combined.sort(key=lambda x: x.popularity or 0, reverse=True)
+            total = len(combined)
+            items = combined[(page - 1) * per: page * per]
+            return jsonify(
+                items=[_serialize(x) for x in items], page=page, per=per,
+                has_more=page * per < total, total=total,
+            )
+
         Model = _model_for(media)
         query = Model.query
         if media == "trailer":  # თრეილერების გვერდი — ფილმები, რომლებსაც აქვთ თრეილერი

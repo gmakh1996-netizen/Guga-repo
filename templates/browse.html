@@ -18,6 +18,8 @@
             <select id="fType">
               <option value="movie" {{ 'selected' if media=='movie' }}>ფილმები</option>
               <option value="serial" {{ 'selected' if media in ['tv','serial'] }}>სერიალები</option>
+              <option value="anime" {{ 'selected' if media=='anime' }}>ანიმეები</option>
+              <option value="animation" {{ 'selected' if media=='animation' }}>ანიმაციები</option>
               <option value="trailer" {{ 'selected' if media=='trailer' }}>თრეილერები</option>
             </select>
           </div>
