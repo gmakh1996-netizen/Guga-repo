@@ -209,8 +209,10 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
    პლეერის დონეზე, ნაცვლად იმისა, რომ ქვემოთ ჩამომდგარიყო */
 .movies-full__inside { margin-top: 30px; float: none !important; width: 100% !important; }
 
-/* titlebar: titles + tool buttons */
-.mf-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+/* titlebar: titles + tool buttons — ისევე დავაფარგლოთ 980px-ზე, როგორც .mf-plot (ქვემოთ),
+   თორემ ფართო ეკრანზე ტიტული/ღილაკები/რეიტინგი მთელ (>1800px) სიგანეზე იშლებოდა და ერთმანეთისგან
+   უაზროდ შორს, „შუაში მიყრილს" ჰგავდა, სანამ სიუჟეტი კი ვიწრო, კითხვად სვეტში იყო მოქცეული */
+.mf-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; max-width: 980px; }
 .mf-head__titles h1 { font-size: 30px; font-weight: 700; margin: 0; color: #fff; line-height: 1.2; }
 .mf-orig { color: #9096a2; margin-top: 8px; font-size: 13px; letter-spacing: .5px; text-transform: uppercase; }
 .mf-tools { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
@@ -225,7 +227,7 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 .mf-help:hover { background: #008170; }
 
 /* rating bar: IMDb (left) + stars/score/votes (right) */
-.mf-ratingbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 22px 0 24px; flex-wrap: wrap; }
+.mf-ratingbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 22px 0 24px; flex-wrap: wrap; max-width: 980px; }
 .mf-imdb { display: inline-flex; align-items: center; gap: 12px; }
 .mf-imdb__logo { background: #f5c518; color: #000; font-weight: 800; font-size: 13px; letter-spacing: -.5px;
   padding: 5px 8px; border-radius: 5px; font-family: Arial, sans-serif; }
@@ -240,7 +242,7 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 .mf-votes svg { width: 18px; height: 18px; fill: #9096a2; }
 
 /* info list: label: value */
-.mf-info { list-style: none; margin: 0 0 26px; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.mf-info { list-style: none; margin: 0 0 26px; padding: 0; display: flex; flex-direction: column; gap: 12px; max-width: 980px; }
 .mf-info li { font-size: 15px; line-height: 1.5; }
 .mf-info__k { color: #8a8f9a; margin-right: 8px; }
 .mf-info__v, .mf-info__v a { color: var(--ge-gold); }
