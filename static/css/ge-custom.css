@@ -582,8 +582,9 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
 .ge-ep-meta { color: var(--ge-red); font-size: 12px; font-weight: 700; margin-top: 8px; }
 
 @media (max-width: 680px) {
-  .ge-ep-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px 14px; margin: 6px 0 28px; }
-  .ge-ep-thumb { flex-basis: 108px; width: 108px; }
+  .ge-ep-grid { grid-template-columns: repeat(2, 1fr); gap: 16px 10px; margin: 6px 0 28px; }
+  .ge-ep-card { flex-direction: column; }
+  .ge-ep-thumb { flex-basis: auto; width: 100%; }
 }
 
 /* „ტოპ 9" — 1 დიდი ქარდი მარცხნივ + 8 ჩვეულებრივი ბადეში მარჯვნივ */
@@ -629,7 +630,7 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
   .ge-top9__feature { flex: none; max-width: 100%; width: 100%; aspect-ratio: 16 / 9; }
   .ge-top9__grid { grid-template-columns: repeat(4, 1fr); }
 }
-@media (max-width: 560px) {
+@media (max-width: 768px) {
   .ge-top9__grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, 1fr); }
   .ge-top9__rank { font-size: 30px; }
   .ge-top9__info h3 { font-size: 15px; }
