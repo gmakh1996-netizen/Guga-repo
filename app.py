@@ -3,6 +3,7 @@
 გაშვება:  python app.py   →  http://127.0.0.1:5000
 """
 import atexit
+import difflib
 import json
 import os
 from datetime import datetime, timedelta
@@ -164,6 +165,46 @@ def register_routes(app):
             ),
         )
 
+    def _title_match(Model, q):
+        """ქართულ (title) და ინგლისურ (original_title) სათაურშიც ეძებს, სიტყვების
+        მიხედვით (ნებისმიერი მიმდევრობა/ველი) — რომ "Spider" აღმოაჩინოს
+        "Spider-Man"-ში, თუნდაც ქართული title-ში ეს სიტყვა საერთოდ არ იყოს."""
+        words = [w for w in q.split() if w]
+        if not words:
+            return db.false()
+        conds = [db.or_(Model.title.ilike(f"%{w}%"), Model.original_title.ilike(f"%{w}%")) for w in words]
+        return db.and_(*conds)
+
+    def _fuzzy_search(Model, q, limit=24):
+        """სუსტი/არაზუსტი დამთხვევებისთვის (ერთი ასო/სიმბოლო რომ არასწორად აწერო) —
+        ბოლო საშუალება, მხოლოდ მაშინ ვრთავთ, როცა ზუსტმა ძებნამ არაფერი იპოვა.
+        ყველა სათაურს ადარებს difflib-ით და საუკეთესო მსგავსობის მიხედვით ალაგებს."""
+        rows = (
+            Model.query.filter(_has_poster(Model))
+            .with_entities(Model.id, Model.title, Model.original_title, Model.release_date)
+            .all()
+        )
+        q_low = q.lower()
+        scored = []
+        for rid, title, title_en, rdate in rows:
+            best = 0.0
+            for candidate in (title, title_en):
+                if not candidate:
+                    continue
+                c_low = candidate.lower()
+                ratio = difflib.SequenceMatcher(None, q_low, c_low).ratio()
+                if q_low in c_low:
+                    ratio = max(ratio, 0.9)
+                best = max(best, ratio)
+            if best >= 0.55:
+                scored.append((rid, best, rdate or ""))
+        scored.sort(key=lambda x: (x[1], x[2]), reverse=True)
+        ordered_ids = [rid for rid, _, _ in scored[:limit]]
+        if not ordered_ids:
+            return []
+        found = {r.id: r for r in Model.query.filter(Model.id.in_(ordered_ids)).all()}
+        return [found[rid] for rid in ordered_ids if rid in found]
+
     WEEKLY_TOP_CACHE_PATH = os.path.join(os.path.dirname(__file__), "data", "weekly_top_cache.json")
     WEEKLY_TOP_YEARS = ("2025", "2026")
     WEEKLY_TOP_LIMIT = 50
@@ -241,14 +282,20 @@ def register_routes(app):
         page = max(request.args.get("page", 1, type=int), 1)
         per = min(request.args.get("per", 24, type=int), 60)
 
-        # ძებნა — ორივე მოდელში (ფილმი + სერიალი)
+        # ძებნა — ორივე მოდელში (ფილმი + სერიალი), ქართული და ინგლისური სათაურით,
+        # პრიორიტეტი უახლეს წლებს (release_date desc); თუ ზუსტმა ვერაფერი იპოვა —
+        # სუსტი/არაზუსტი დამთხვევის fallback (_fuzzy_search)
         if media == "search" and q:
             combined = []
             for M in (Movie, Series):
-                combined += M.query.filter(M.title.ilike(f"%{q}%"), _has_poster(M)).order_by(
-                    M.popularity.desc()
+                combined += M.query.filter(_title_match(M, q), _has_poster(M)).order_by(
+                    M.release_date.desc()
                 ).limit(300).all()
-            combined.sort(key=lambda x: x.popularity or 0, reverse=True)
+            if not combined:
+                for M in (Movie, Series):
+                    combined += _fuzzy_search(M, q, limit=60)
+            else:
+                combined.sort(key=lambda x: x.release_date or "", reverse=True)
             total = len(combined)
             items = combined[(page - 1) * per: page * per]
             return jsonify(
@@ -274,7 +321,7 @@ def register_routes(app):
         if year.isdigit():
             query = query.filter(Model.release_date.like(f"{year}%"))
         if q:
-            query = query.filter(Model.title.ilike(f"%{q}%"))
+            query = query.filter(_title_match(Model, q))
         if sort == "weekly_top":
             # „ტოპ ფილმები/სერიალები" — 2025-2026, კვირაში ერთხელ გამოთვლილი/დაცული სია
             # (იხ. _weekly_top_ids) — რიგითობა დაცული უნდა იყოს id-ების სიის მიხედვით,
@@ -402,13 +449,17 @@ def register_routes(app):
         q = request.args.get("q", "").strip()
         if len(q) < 2:
             return jsonify(items=[])
-        movies = Movie.query.filter(Movie.title.ilike(f"%{q}%"), _has_poster(Movie)).order_by(
-            Movie.popularity.desc()
-        ).limit(6).all()
-        series = Series.query.filter(Series.title.ilike(f"%{q}%"), _has_poster(Series)).order_by(
-            Series.popularity.desc()
-        ).limit(4).all()
-        return jsonify(items=[_serialize(x) for x in movies + series])
+        movies = Movie.query.filter(_title_match(Movie, q), _has_poster(Movie)).order_by(
+            Movie.release_date.desc()
+        ).limit(10).all()
+        series = Series.query.filter(_title_match(Series, q), _has_poster(Series)).order_by(
+            Series.release_date.desc()
+        ).limit(10).all()
+        if not movies and not series:
+            movies = _fuzzy_search(Movie, q, limit=10)
+            series = _fuzzy_search(Series, q, limit=10)
+        combined = sorted(movies + series, key=lambda x: x.release_date or "", reverse=True)[:10]
+        return jsonify(items=[_serialize(x) for x in combined])
 
     def _similar_by_genre(Model, rec, limit=12):
         """მსგავსი ჩანაწერები იმავე ჟანრით (kinomigma-ს მიხედვით, TMDB-ს გარეშე)."""
