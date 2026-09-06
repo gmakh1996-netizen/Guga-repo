@@ -507,18 +507,23 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
      (.filter-btn toggle-ს ელოდება); ვაბრუნებთ */
   .filter.movie-list { display: block !important; }
   .header .row, .header .col-md-12 { width: 100% !important; }
-  .header-top { display: flex !important; flex-direction: column; align-items: stretch; gap: 12px; height: auto !important; padding: 12px 0; }
-  .header-top__logo { text-align: center; }
-  .header-top__logo img { height: 42px !important; margin: 0 auto; }
+  /* ლოგო და ძებნა ერთ მწკრივში (არა სვეტურად) — ძებნა კომპაქტური, ლოგოს გასწვრივ */
+  .header-top { display: flex !important; flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; height: auto !important; padding: 10px 0; }
+  .header-top__logo { text-align: left; flex: 0 0 auto; }
+  .header-top__logo img { height: 30px !important; margin: 0; }
   .header-top__actions { display: none !important; }
-  /* ძებნა თემა მალავს — ვაბრუნებთ, სრული სიგანის pill --- */
-  .header-top__search { display: block !important; width: 100%; }
-  .header-top__search form { display: flex !important; align-items: stretch; width: 100%; height: auto !important; background: #232d3f; border: 1px solid #005b41; border-radius: 10px; overflow: hidden; }
-  .header-top__search input { display: block !important; flex: 1 1 auto; width: auto !important; min-width: 0; height: auto !important; line-height: 1.3 !important; background: transparent !important; border: 0 !important; color: #fff !important; padding: 12px 14px !important; font-size: 14px; }
-  .header-top__search button { flex: 0 0 auto; width: auto !important; height: auto !important; display: inline-flex !important; align-items: center; gap: 6px; border: 0; background: var(--ge-red) !important; color: #fff !important; padding: 0 18px !important; font-size: 14px; white-space: nowrap; }
+  /* ძებნა თემა მალავს — ვაბრუნებთ, კომპაქტური pill, ლოგოს გვერდით --- */
+  .header-top__search { display: block !important; flex: 1 1 auto; min-width: 0; max-width: 190px; margin-left: auto; }
+  .header-top__search form { display: flex !important; align-items: stretch; width: 100%; height: 34px; background: #232d3f; border: 1px solid #005b41; border-radius: 17px; overflow: hidden; }
+  .header-top__search input { display: block !important; flex: 1 1 auto; width: auto !important; min-width: 0; height: auto !important; line-height: 1.2 !important; background: transparent !important; border: 0 !important; color: #fff !important; padding: 0 0 0 12px !important; font-size: 12px; }
+  .header-top__search button { flex: 0 0 auto; width: auto !important; height: auto !important; display: inline-flex !important; align-items: center; gap: 4px; border: 0; background: var(--ge-red) !important; color: #fff !important; padding: 0 12px !important; font-size: 11px; white-space: nowrap; }
   #search_autocomplete { border-radius: 0 0 10px 10px; }
 
-  /* --- ქვედა ნავიგაცია (bottom tab bar) --- */
+  /* --- ქვედა ნავიგაცია (bottom tab bar) ---
+     რეალურ მობილურებზე (განსხვავებით დესკტოპის headless ტესტისგან) fixed
+     ელემენტები ხანდახან "იტეხება"/თრთის აქტიური სქროლვისას, თუ ბრაუზერს არ
+     უბიძგებ ცალკე GPU-ფენაზე გადაიტანოს — translateZ/will-change აიძულებს
+     ცალკე კომპოზიტ-ფენას, რაც სტანდარტული გამოსავალია ამ პრობლემისთვის */
   .sidebar {
     position: fixed !important; bottom: 0; left: 0; right: 0; top: auto !important;
     width: 100% !important; height: 60px !important; float: none !important;
@@ -526,6 +531,8 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
     background: #0f0f0f !important; border-top: 1px solid #005b41; border-radius: 0;
     box-shadow: 0 -4px 20px rgba(0,0,0,.45);
     padding-bottom: env(safe-area-inset-bottom, 0px);
+    transform: translateZ(0); -webkit-transform: translateZ(0); will-change: transform;
+    backface-visibility: hidden;
   }
   .sidebar .navbar-nav {
     display: flex !important; flex-direction: row !important; align-items: stretch;
