@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_moviecard.html" import movie_card %}
+{% from "_moviecard.html" import movie_card with context %}
 {% block title %}ძებნა: {{ q }} — {{ site_name }}{% endblock %}
 
 {% block content %}
