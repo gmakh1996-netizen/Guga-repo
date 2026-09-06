@@ -138,8 +138,11 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
    აკავებს ყველა შვილ float-ს ჩაბუდებულობის მიუხედავად */
 .movies-full { position: relative; display: flow-root; padding: 30px 0 50px; z-index: 0; float: none !important; width: 100% !important; }
 .movies.related { clear: both; }
-/* თემის დეკორატიული overlay — კლიკები არ დაიჭიროს */
-.movies-full::after, .movies-full:after { pointer-events: none !important; z-index: 1 !important; }
+/* თემის დეკორატიული overlay (680px-მდე მუქდება მყარ ფერამდე #1a1c22) — ეს ჩვენს
+   გახანგრძლივებულ ჩაბნელებულ ბექგრაუნდს ზუსტად სათაურთან ერთ ბრტყელ ნაცრისფერ
+   ზოლად კვეთდა; საერთოდ ვშლით — ბექგრაუნდის საკუთარი mask-გრადიენტი უკვე
+   საკმარისად აბნელებს */
+.movies-full::after, .movies-full:after { display: none !important; }
 /* ჩაბნელებული პოსტერი — ge.movie-ს მსგავსად მთელ .movies-full-ს (პოსტერი+ფლეერი
    +სათაური/ინფო/სიუჟეტი/მსახიობები) უნდა მისდევდეს, არა მხოლოდ ზედა 720px-ს —
    height:100% პარენტის (.movies-full) სრულ სიმაღლეს იღებს, ასე რომ ჩამოსქროლვისას
