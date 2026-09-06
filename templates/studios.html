@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}კინოსტუდიები — {{ site_name }}{% endblock %}
+{% block content %}
+<div class="filter movie-list filter-redesign">
+  <div class="container">
+    <div class="ge-row-head" style="margin-top:24px">
+      <div class="ge-head-left">
+        <svg class="ge-ico" viewBox="0 0 24 24"><path d="M18 3a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1h12zm-2 4H8v2h8V7zm0 4H8v2h8v-2zm-3 4H8v2h5v-2z"/></svg>
+        <h2 class="ge-section-title">კინოსტუდიები</h2>
+      </div>
+    </div>
+    {% if studios %}
+    <div class="ge-studio-grid">
+      {% for name, count in studios %}
+        <a class="ge-studio-card" href="/browse?type=studio&studio={{ name|urlencode }}">
+          <span class="ge-studio-card__name">{{ name }}</span>
+          <span class="ge-studio-card__count">{{ count }} სათაური</span>
+        </a>
+      {% endfor %}
+    </div>
+    {% else %}
+      <p class="ge-empty">კინოსტუდიების მონაცემი ჯერ არ არის ხელმისაწვდომი.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -231,11 +231,12 @@
       year: bar.dataset.year || "",
       sort: bar.dataset.sort || "popularity",
       q: bar.dataset.q || "",
+      studio: bar.dataset.studio || "",
       page: 1, loading: false,
     };
 
     function params() {
-      return { type: state.type, genre: state.genre, year: state.year, sort: state.sort, q: state.q, page: state.page, per: FILTER_PER };
+      return { type: state.type, genre: state.genre, year: state.year, sort: state.sort, q: state.q, studio: state.studio, page: state.page, per: FILTER_PER };
     }
     // 1 … cur-1 cur cur+1 … last — რომ ბევრი გვერდის შემთხვევაშიც (100+) კომპაქტური დარჩეს
     function pageList(cur, total) {
@@ -307,7 +308,7 @@
     var fGenre = document.getElementById("fGenre");
     var fYear = document.getElementById("fYear");
     var fSort = document.getElementById("fSort");
-    if (fType) fType.addEventListener("change", function () { state.type = this.value; state.q = ""; reset(); });
+    if (fType) fType.addEventListener("change", function () { state.type = this.value; state.q = ""; state.studio = ""; reset(); });
     if (fGenre) fGenre.addEventListener("change", function () { state.genre = this.value; reset(); });
     if (fYear) fYear.addEventListener("change", function () { state.year = this.value; reset(); });
     if (fSort) fSort.addEventListener("change", function () { state.sort = this.value; reset(); });

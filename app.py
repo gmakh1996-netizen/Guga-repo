@@ -6,6 +6,7 @@ import atexit
 import difflib
 import json
 import os
+from collections import Counter
 from datetime import datetime, timedelta
 from functools import wraps
 
@@ -257,6 +258,24 @@ def register_routes(app):
         _save_weekly_top_cache(cache)
         return ids
 
+    def _studio_counts(limit=30):
+        """ყველაზე ხშირი კინოსტუდიები (studio ველი მძიმით გამოყოფილი კომპანიების
+        სია) — ორივე მოდელში ერთად დათვლილი. ჯერჯერობით cache არ სჭირდება
+        (სწრაფია, ~11k მოკლე სტრიქონზე), დამატება მარტივია მერე, თუ დაგჭირდება."""
+        counts = Counter()
+        for Model in (Movie, Series):
+            rows = (
+                Model.query.filter(Model.studio.isnot(None), Model.studio != "")
+                .with_entities(Model.studio)
+                .all()
+            )
+            for (s,) in rows:
+                for name in s.split(","):
+                    name = name.strip()
+                    if name:
+                        counts[name] += 1
+        return counts.most_common(limit)
+
     def _serialize(rec):
         return {
             "id": rec.id,
@@ -325,6 +344,37 @@ def register_routes(app):
                 else:
                     gq = gq.order_by(M.popularity.desc())
                 combined += gq.limit(300).all()
+            if sort == "rating":
+                combined.sort(key=lambda x: x.vote_average or 0, reverse=True)
+            elif sort == "newest":
+                combined.sort(key=lambda x: x.release_date or "", reverse=True)
+            else:
+                combined.sort(key=lambda x: x.popularity or 0, reverse=True)
+            total = len(combined)
+            items = combined[(page - 1) * per: page * per]
+            return jsonify(
+                items=[_serialize(x) for x in items], page=page, per=per,
+                has_more=page * per < total, total=total,
+            )
+
+        # კინოსტუდიები — /studios გვერდიდან დაკლიკვისას, ისევ ორივე მოდელს
+        # ერთად ვამოწმებთ (HBO-ს, მაგ., ძირითადად სერიალები აქვს, არა ფილმები)
+        studio_name = request.args.get("studio", "").strip()
+        if media == "studio" and studio_name:
+            combined = []
+            for M in (Movie, Series):
+                sq = M.query.filter(M.studio.ilike(f"%{studio_name}%"), _has_poster(M))
+                if year.isdigit():
+                    sq = sq.filter(M.release_date.like(f"{year}%"))
+                if q:
+                    sq = sq.filter(_title_match(M, q))
+                if sort == "rating":
+                    sq = sq.order_by(M.vote_average.desc())
+                elif sort == "newest":
+                    sq = sq.order_by(M.release_date.desc())
+                else:
+                    sq = sq.order_by(M.popularity.desc())
+                combined += sq.limit(500).all()
             if sort == "rating":
                 combined.sort(key=lambda x: x.vote_average or 0, reverse=True)
             elif sort == "newest":
@@ -577,8 +627,15 @@ def register_routes(app):
             year=request.args.get("year", "").strip(),
             sort=request.args.get("sort", "popularity"),
             q=request.args.get("search", "").strip(),
+            studio=request.args.get("studio", "").strip(),
             years=list(range(2026, 1950, -1)),
         )
+
+    @app.route("/studios")
+    def studios_page():
+        """კინოსტუდიები — ყველაზე ხშირი სტუდიების სია, თითოეულზე დაკლიკვით
+        იმ სტუდიის ფილმები/სერიალები ჩანს (/browse?type=studio&studio=...)."""
+        return render_template("studios.html", studios=_studio_counts(limit=30))
 
     @app.route("/persons")
     def persons():
