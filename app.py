@@ -6,7 +6,6 @@ import atexit
 import difflib
 import json
 import os
-import random
 from datetime import datetime, timedelta
 from functools import wraps
 
@@ -258,40 +257,6 @@ def register_routes(app):
         _save_weekly_top_cache(cache)
         return ids
 
-    GEORGIAN_PREMIERE_POOL = 60
-
-    def _weekly_georgian_ids(limit=GEORGIAN_PREMIERE_POOL):
-        """„ქართული ფილმები" (მთავარი გვერდის ყოფილი „პრემიერა") — მხოლოდ ნამდვილად
-        ქართული წარმოების ფილმები (country == 'Georgia', არა უბრალოდ ქართულად
-        გახმოვანებული). კვირაში ერთხელ ხდება შემთხვევითი გადარჩევა (რომ ერთი და
-        იგივე ნაკრები სამუდამოდ არ ჩერდეს), საჩვენებლად კი წლის/რეიტინგის მიხედვით
-        ვალაგებთ (ცალკე, sort='georgian' branch-ში), ეს ფუნქცია მხოლოდ ამ კვირის
-        ნაკრებს ირჩევს."""
-        cache = _load_weekly_top_cache()
-        media_key = "georgian_movies"
-        entry = cache.get(media_key)
-        now = datetime.utcnow()
-        stale = True
-        if entry and entry.get("computed_at"):
-            try:
-                computed_at = datetime.fromisoformat(entry["computed_at"])
-                stale = (now - computed_at) > timedelta(days=7)
-            except (ValueError, TypeError):
-                stale = True
-        if entry and not stale:
-            return entry["ids"]
-
-        rows = (
-            Movie.query.filter(Movie.country == "Georgia", _has_poster(Movie), Movie.streams.any())
-            .with_entities(Movie.id)
-            .all()
-        )
-        pool = [r.id for r in rows]
-        ids = random.sample(pool, min(limit, len(pool)))
-        cache[media_key] = {"computed_at": now.isoformat(), "ids": ids}
-        _save_weekly_top_cache(cache)
-        return ids
-
     def _serialize(rec):
         return {
             "id": rec.id,
@@ -392,25 +357,6 @@ def register_routes(app):
             query = query.filter(Model.release_date.like(f"{year}%"))
         if q:
             query = query.filter(_title_match(Model, q))
-        if sort == "georgian":
-            # „ქართული ფილმები" — მხოლოდ Movie (არა სერიალი), კვირაში ერთხელ შემთხვევით
-            # გადარჩეული ნაკრები (იხ. _weekly_georgian_ids), საჩვენებლად კი წლის
-            # (უახლესი წინ) და შემდეგ რეიტინგის (მაღალი წინ) მიხედვით დალაგებული.
-            ids = _weekly_georgian_ids()
-            query = Movie.query.filter(Movie.id.in_(ids)).order_by(
-                Movie.release_date.desc(), Movie.vote_average.desc()
-            )
-            rows = query.all()
-            total = len(rows)
-            items = rows[(page - 1) * per: page * per]
-            return jsonify(
-                items=[_serialize(x) for x in items],
-                page=page,
-                per=per,
-                has_more=page * per < total,
-                total=total,
-            )
-
         if sort == "weekly_top":
             # „ტოპ ფილმები/სერიალები" — 2025-2026, კვირაში ერთხელ გამოთვლილი/დაცული სია
             # (იხ. _weekly_top_ids) — რიგითობა დაცული უნდა იყოს id-ების სიის მიხედვით,
