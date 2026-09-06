@@ -10,8 +10,17 @@ h1, h2, h3, h4, h5, .ge-section-title, .movie-card__title,
 .mf-titlebar h1, .SlidetTitle, .ge-hero__title {
   font-family: "BPG Mrgvlovani Caps", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Georgian", sans-serif !important;
 }
-html, body { background: #0f0f0f; color: #fff; overflow-x: hidden !important; max-width: 100%; }
-.content { overflow-x: hidden !important; }
+html, body { background: #0f0f0f; color: #fff; max-width: 100%; }
+/* overflow-x:hidden მხოლოდ html-ზეა (არა body-ზეც და არა .content-ზეც) — თუ ორივეს
+   (ან .content-საც) ცალკე overflow ედება, body/​.content თავად ხდება sticky-ს
+   containing block, რომელიც არასდროს სქროლავს დამოუკიდებლად → header-ის
+   position:sticky მუშაობას წყვეტს. html-ის ერთი წესი საკმარისია გვერდითი
+   overflow-ის დასაფარად (viewport-ზე ვრცელდება). */
+html { overflow-x: hidden !important; }
+/* თემის style.min.css აყენებს body{overflow-x:hidden}-ს — ეს body-საც აქცევს sticky-ს
+   containing block-ად და header-ს "აწებებას" ტეხავს; ვაბრუნებთ visible-ზე, html-ის
+   overflow საკმარისია გვერდითი overflow-ის დასაფარად. */
+body { overflow-x: visible !important; }
 .container { max-width: 100%; }
 /* scrollbar — ნეიტრალური მუქი (ცისფერი „ლურჯი ზოლი" მოხსნილია) */
 ::-webkit-scrollbar, body::-webkit-scrollbar { width: 8px !important; height: 8px !important; }
@@ -240,7 +249,12 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 .header-top__logo img { height: 52px !important; width: auto; display: block; }
 
 /* search autocomplete */
-.header-top__search { position: relative; }
+/* თემის საკუთარი pill-ფონი (#242731, ძველი პალიტრიდან) ჩანდა ჩვენი
+   ძებნის ჩარჩოს გარშემო თხელ, არშესაბამის რგოლად — ვშლით, ფორმა თავად
+   ხატავს საკუთარ ჩარჩოს/ფონს */
+.header-top__search { position: relative; background: transparent !important; padding: 0 !important; }
+.header-top__search form { background: var(--ge-card) !important; border-radius: 35px; }
+.header-top__search button { background: var(--ge-red) !important; }
 #search_autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: #232d3f; border-radius: 0 0 10px 10px; overflow: hidden; z-index: 999; display: none; box-shadow: 0 12px 30px rgba(0,0,0,.5); max-height: 70vh; overflow-y: auto; }
 #search_autocomplete.open { display: block; }
 .ac-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; color: #fff; }
@@ -262,7 +276,7 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
    მთელი DOM-ნესთინგისგან დამოუკიდებლად მუშაობს. */
 @media (min-width: 1025px) {
   .content { width: 100% !important; margin-left: 0 !important; float: none !important; }
-  .header { background: #232d3f !important; }
+  .header { background: #232d3f !important; position: sticky !important; top: 0; z-index: 900; width: 100%; }
   .header-top { justify-content: space-between !important; gap: 18px; }
   .header-top__logo { flex: 0 0 auto; }
   .header-top__search { flex: 0 0 auto; width: 340px !important; }
@@ -427,8 +441,11 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
    ============================================================ */
 @media (max-width: 1024px) {
   /* --- master fix: მოვხსნათ თემის ფიქსირებული სიგანე --- */
-  html, body { min-width: 0 !important; width: auto !important; max-width: 100% !important; overflow-x: hidden !important; }
-  .content { width: 100% !important; float: none !important; margin: 0 !important; overflow-x: hidden !important; padding-bottom: 76px !important; }
+  html, body { min-width: 0 !important; width: auto !important; max-width: 100% !important; }
+  html { overflow-x: hidden !important; }
+  /* თემის styles.css აყენებს .content{overflow:hidden}-ს ამ სიგანეზე — ეს header-ის
+     sticky-ს ატყდენდა (იხ. შენიშვნა ზემოთ body-სთვის); ვაბრუნებთ visible-ზე */
+  .content { width: 100% !important; float: none !important; margin: 0 !important; padding-bottom: 76px !important; overflow: visible !important; }
   .container { width: 100% !important; padding-left: 15px; padding-right: 15px; }
 
   /* --- header + hero: თემა მათ ≤1024px-ზე მალავს (.mob-header-ს ელოდება,
@@ -636,7 +653,7 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
     flex-direction: row; overflow-x: auto; overflow-y: hidden;
     -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; padding-bottom: 4px;
   }
-  .ge-top9__feature { flex: 0 0 220px; width: 220px; aspect-ratio: 2 / 3; scroll-snap-align: start; }
+  .ge-top9__feature { flex: 0 0 220px; width: 220px; scroll-snap-align: start; }
   .ge-top9__grid {
     flex: 0 0 auto; min-width: 0;
     display: grid; grid-template-columns: none; grid-template-rows: repeat(2, 1fr);

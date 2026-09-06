@@ -216,54 +216,59 @@
     });
   }
 
-  // ---- filter page + infinite scroll ----
+  // ---- filter page + numbered pagination ----
+  var FILTER_PER = 24;
   function initFilter() {
     var bar = document.querySelector(".ge-filterbar");
     if (!bar) return;
     var results = document.getElementById("filterResults");
     var loader = document.getElementById("filterLoader");
     var empty = document.getElementById("filterEmpty");
-    var sentinel = document.getElementById("filterSentinel");
+    var pager = document.getElementById("filterPager");
     var state = {
       type: bar.dataset.type || "movie",
       genre: bar.dataset.genre || "",
       year: bar.dataset.year || "",
       sort: bar.dataset.sort || "popularity",
       q: bar.dataset.q || "",
-      page: 1, hasMore: true, loading: false,
+      page: 1, loading: false,
     };
 
     function params() {
-      return { type: state.type, genre: state.genre, year: state.year, sort: state.sort, q: state.q, page: state.page, per: 24 };
+      return { type: state.type, genre: state.genre, year: state.year, sort: state.sort, q: state.q, page: state.page, per: FILTER_PER };
     }
-    function nearBottom() {
-      return sentinel.getBoundingClientRect().top < window.innerHeight + 700;
+    function renderPager(total) {
+      var pages = Math.max(Math.ceil(total / FILTER_PER), 1);
+      if (pages <= 1) { pager.innerHTML = ""; pager.hidden = true; return; }
+      var html = "";
+      if (state.page > 1) html += '<button type="button" class="ge-pager__btn" data-go="' + (state.page - 1) + '">← წინა</button>';
+      html += '<span class="ge-pager__info">გვ. ' + state.page + " / " + pages + "</span>";
+      if (state.page < pages) html += '<button type="button" class="ge-pager__btn" data-go="' + (state.page + 1) + '">შემდეგი →</button>';
+      pager.innerHTML = html;
+      pager.hidden = false;
     }
-    function load() {
-      if (state.loading || !state.hasMore) return;
-      state.loading = true; loader.hidden = false;
+    function load(scrollUp) {
+      if (state.loading) return;
+      state.loading = true; loader.hidden = false; empty.hidden = true;
       api(params()).then(function (data) {
         state.loading = false; loader.hidden = true;
-        state.hasMore = data.has_more;
-        if (state.page === 1 && (!data.items || !data.items.length)) { empty.hidden = false; return; }
-        empty.hidden = true;
-        results.insertAdjacentHTML("beforeend", data.items.map(cardCol).join(""));
-        state.page += 1;
-        // თუ გვერდი ჯერ კიდევ ბოლოს ახლოა — ჩავტვირთოთ შემდეგიც
-        if (nearBottom()) setTimeout(load, 60);
+        if (!data.items || !data.items.length) {
+          results.innerHTML = ""; pager.innerHTML = ""; pager.hidden = true;
+          empty.hidden = false; return;
+        }
+        results.innerHTML = data.items.map(cardCol).join("");
+        renderPager(data.total || 0);
+        if (scrollUp) results.scrollIntoView({ behavior: "smooth", block: "start" });
       }).catch(function () { state.loading = false; loader.hidden = true; });
     }
-    function maybeLoad() { if (nearBottom()) load(); }
-    function reset() {
-      state.page = 1; state.hasMore = true; results.innerHTML = ""; empty.hidden = true; load();
-    }
-    window.addEventListener("scroll", maybeLoad, { passive: true });
-    window.addEventListener("resize", maybeLoad);
-    if ("IntersectionObserver" in window) {
-      new IntersectionObserver(function (entries) {
-        if (entries[0].isIntersecting) load();
-      }, { rootMargin: "700px 0px" }).observe(sentinel);
-    }
+    function reset() { state.page = 1; load(false); }
+
+    pager.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-go]");
+      if (!btn) return;
+      state.page = +btn.dataset.go;
+      load(true);
+    });
 
     var fType = document.getElementById("fType");
     var fGenre = document.getElementById("fGenre");
@@ -274,7 +279,7 @@
     if (fYear) fYear.addEventListener("change", function () { state.year = this.value; reset(); });
     if (fSort) fSort.addEventListener("change", function () { state.sort = this.value; reset(); });
 
-    load();
+    load(false);
   }
 
   // ---- search autocomplete ----
