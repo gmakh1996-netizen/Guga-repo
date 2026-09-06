@@ -274,7 +274,7 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 .movies.related { display: block !important; float: none !important; width: 100% !important; }
 .related { margin-top: 48px; }
 .ge-rec-title { font-size: 24px; font-weight: 700; color: #fff;
-  letter-spacing: .3px; margin: 0 0 22px; position: relative; padding-left: 15px;
+  letter-spacing: .3px; margin: 0 0 32px; position: relative; padding-left: 15px;
   display: block; height: 30px !important; line-height: 30px !important; min-height: 0 !important; }
 .ge-rec-title::before { content: ""; position: absolute; left: 0; top: 2px; height: 24px; width: 5px;
   border-radius: 3px; background: var(--ge-red); }
