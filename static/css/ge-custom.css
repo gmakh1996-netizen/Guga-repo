@@ -585,6 +585,9 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
     overflow: visible !important; white-space: normal !important; list-style: none;
   }
   .sidebar .nav-item { flex: 1 1 0; min-width: 0; margin: 0 !important; float: none !important; }
+  /* მობაილის ქვედა ბარში მხოლოდ 5 ძირითადი კატეგორია — მთავარი (ლოგო ისედაც
+     მიდის იქ), თრეილერები და სტუდიები აქ არ ჩანს, დესკტოპზე კი ყველა ჩანს */
+  .sidebar .nav-item--desktop-only { display: none !important; }
   .sidebar .nav-link {
     display: flex !important; flex-direction: column; align-items: center; justify-content: center;
     gap: 3px; height: 60px; padding: 6px 1px !important; margin: 0 !important;
@@ -592,10 +595,12 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
     overflow: hidden;
   }
   .sidebar .nav-link::before, .sidebar .nav-link::after { display: none !important; }
-  .sidebar .nav-link svg { width: 18px !important; height: 18px !important; margin: 0 !important; flex: 0 0 auto; }
+  /* მხოლოდ 5 item რჩება ხილული (nav-item--desktop-only დამალულია) — მეტი
+     ადგილია თითოეულზე, ასო/ხატულა შეგვიძლია დავაბრუნოთ უფრო წაკითხვად ზომაზე */
+  .sidebar .nav-link svg { width: 21px !important; height: 21px !important; margin: 0 !important; flex: 0 0 auto; }
   .sidebar .nav-link div, .sidebar .nav-link .pt-xl-2 {
-    font-size: 6.6px; line-height: 1; margin: 0 !important; padding: 0 !important;
-    letter-spacing: -.4px; width: 100%; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 9.5px; line-height: 1; margin: 0 !important; padding: 0 !important;
+    letter-spacing: -.2px; width: 100%; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .sidebar .nav-link.active { color: var(--ge-red) !important; }
   .sidebar .nav-link.active svg, .sidebar .nav-link.active svg path,
