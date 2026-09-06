@@ -507,19 +507,23 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
      (.filter-btn toggle-ს ელოდება); ვაბრუნებთ */
   .filter.movie-list { display: block !important; }
   .header .row, .header .col-md-12 { width: 100% !important; }
-  /* ლოგო და ძებნა ერთ მწკრივში (არა სვეტურად) — ძებნა კომპაქტური, ლოგოს გასწვრივ */
-  /* ლოგო ცენტრში (absolute, flex-სგან დამოუკიდებლად), ძებნა სულ მარჯვნივ */
-  .header-top { display: flex !important; flex-direction: row; align-items: center; position: relative; gap: 10px; height: auto !important; padding: 10px 0; }
-  .header-top__logo { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: left; flex: none; }
-  .header-top__logo img { height: 30px !important; margin: 0; }
+  /* ტოპ პანელი — ლოგო მარცხნივ (ბრენდის სტანდარტული, ბალანსირებული პოზიცია),
+     ძებნა მარჯვნივ, საკმარისი tap-target ზომით (Apple/Google HIG-ის მინიმუმთან
+     ახლოს, ~36-40px) და ხილული placeholder-ით დისკავერაბილითისთვის.
+     ცენტრში ლოგო + მარტო ერთი ხატულა მარჯვნივ, საწონასწორო ელემენტის გარეშე
+     მარცხნივ, ვიზუალურად ასიმეტრიულია — კლასიკური ორნაწილიანი header-ის
+     კონვენცია (ლოგო↔ძებნა) სჯობს. */
+  .header-top { display: flex !important; flex-direction: row; align-items: center; justify-content: space-between; gap: 14px; height: auto !important; padding: 13px 0; }
+  .header-top__logo { flex: 0 0 auto; text-align: left; }
+  .header-top__logo img { height: 28px !important; margin: 0; }
   .header-top__actions { display: none !important; }
-  /* ძებნა თემა მალავს — ვაბრუნებთ, კომპაქტური pill, სულ მარჯვნივ --- */
-  .header-top__search { display: block !important; flex: 0 0 auto; min-width: 0; max-width: 95px; margin-left: auto; }
-  .header-top__search form { display: flex !important; align-items: stretch; width: 100%; height: 28px; background: #232d3f; border: 1px solid #005b41; border-radius: 14px; overflow: hidden; }
-  .header-top__search input { display: block !important; flex: 1 1 auto; width: auto !important; min-width: 0; height: auto !important; line-height: 1.1 !important; background: transparent !important; border: 0 !important; color: #fff !important; padding: 0 0 0 10px !important; font-size: 11px; }
-  /* ღილაკის ტექსტს ("ძებნა") ვშლით ვიზუალურად (font-size:0) — მხოლოდ ხატულა რჩება, კომპაქტურობისთვის */
-  .header-top__search button { flex: 0 0 26px; width: 26px !important; height: 26px !important; margin: 1px !important; border-radius: 50% !important; display: flex !important; align-items: center; justify-content: center; border: 0; background: var(--ge-red) !important; color: #fff !important; padding: 0 !important; font-size: 0; line-height: 0; }
-  .header-top__search button i { font-size: 10px; line-height: 1; display: flex; align-items: center; justify-content: center; margin: 0 !important; }
+  /* ძებნა თემა მალავს — ვაბრუნებთ, კომპაქტური მაგრამ ადვილად სამიზნე pill */
+  .header-top__search { display: block !important; flex: 1 1 auto; min-width: 0; max-width: 158px; }
+  .header-top__search form { display: flex !important; align-items: stretch; width: 100%; height: 36px; background: #232d3f; border: 1px solid #005b41; border-radius: 18px; overflow: hidden; }
+  .header-top__search input { display: block !important; flex: 1 1 auto; width: auto !important; min-width: 0; height: auto !important; line-height: 1.1 !important; background: transparent !important; border: 0 !important; color: #fff !important; padding: 0 0 0 14px !important; font-size: 12px; }
+  /* ღილაკის ტექსტს ("ძებნა") ვშლით ვიზუალურად (font-size:0) — მხოლოდ ხატულა რჩება */
+  .header-top__search button { flex: 0 0 32px; width: 32px !important; height: 32px !important; margin: 2px !important; border-radius: 50% !important; display: flex !important; align-items: center; justify-content: center; border: 0; background: var(--ge-red) !important; color: #fff !important; padding: 0 !important; font-size: 0; line-height: 0; }
+  .header-top__search button i { font-size: 13px; line-height: 1; display: flex; align-items: center; justify-content: center; margin: 0 !important; }
   #search_autocomplete { border-radius: 0 0 10px 10px; }
 
   /* --- ქვედა ნავიგაცია (bottom tab bar) ---
