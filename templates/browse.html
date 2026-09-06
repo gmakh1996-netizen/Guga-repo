@@ -10,16 +10,9 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        {% if media == 'studio' and studio %}
-          <div class="ge-row-head" style="margin:0 0 16px">
-            <div class="ge-head-left">
-              <h2 class="ge-section-title">კინოსტუდია: {{ studio }}</h2>
-            </div>
-          </div>
-        {% endif %}
         <div class="ge-filterbar"
              data-type="{{ media }}" data-genre="{{ genre_id or '' }}"
-             data-year="{{ year }}" data-sort="{{ sort }}" data-q="{{ q }}" data-studio="{{ studio }}">
+             data-year="{{ year }}" data-sort="{{ sort }}" data-q="{{ q }}">
           <div class="ge-filter__group">
             <label>კატეგორია</label>
             <select id="fType">
@@ -28,7 +21,6 @@
               <option value="anime" {{ 'selected' if media=='anime' }}>ანიმეები</option>
               <option value="animation" {{ 'selected' if media=='animation' }}>ანიმაციები</option>
               <option value="trailer" {{ 'selected' if media=='trailer' }}>თრეილერები</option>
-              {% if media == 'studio' %}<option value="studio" selected hidden>{{ studio }}</option>{% endif %}
             </select>
           </div>
           <div class="ge-filter__group">

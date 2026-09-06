@@ -10,7 +10,7 @@
 {% set is_episodic = streams and streams[0].episode is not none %}
 {% set score5 = ((movie.rating or 0) / 2) %}
 <div class="movies-full" id="movies-full">
-  {% if poster %}<div class="bg-image" style="background-image:url('{{ poster }}')"></div>{% endif %}
+  {% if poster %}<div class="bg-image" style="background-image:url('{{ poster }}')"></div><div class="mf-scroll-fade"></div>{% endif %}
   <div class="container">
 
     <div class="movies-full__content">
@@ -160,6 +160,23 @@
     });
     var tb = document.querySelector('.mf-trailer');
     if (tb) tb.addEventListener('click', function () { if (frame) frame.src = this.dataset.trailer; });
+
+    // ბექგრაუნდის ჩაბნელება ჩამოსქროლვის დოზაზეა მიბმული — რაც მეტს ჩამოვსქროლავთ,
+    // მით უფრო შავდება (ნაცრისფერი → შავი), ავსქროლვისას იმავე დოზით უბრუნდება
+    var mf = document.getElementById('movies-full');
+    if (mf && mf.querySelector('.mf-scroll-fade')) {
+      var fadeDist = Math.max(300, window.innerHeight * 0.6);
+      var ticking = false;
+      var updateFade = function () {
+        var t = Math.min(Math.max(window.scrollY / fadeDist, 0), 1);
+        mf.style.setProperty('--mf-fade', t.toFixed(3));
+        ticking = false;
+      };
+      window.addEventListener('scroll', function () {
+        if (!ticking) { window.requestAnimationFrame(updateFade); ticking = true; }
+      }, { passive: true });
+      updateFade();
+    }
 
     // „განაგრძე ყურება" — ვინახავთ ნანახ ფილმს localStorage-ში
     try {

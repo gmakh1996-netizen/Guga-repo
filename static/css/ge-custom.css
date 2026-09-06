@@ -129,21 +129,6 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 .ge-loader { text-align: center; padding: 26px; color: #9aa0ac; }
 .ge-empty { text-align: center; padding: 40px; color: #9aa0ac; }
 
-/* კინოსტუდიების გვერდი */
-.ge-studio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin: 24px 0 40px; }
-.ge-studio-card {
-  display: flex; flex-direction: column; gap: 6px; padding: 22px 20px; border-radius: 12px;
-  background: var(--ge-card); border: 1px solid #005b41; transition: border-color .15s, transform .15s;
-}
-.ge-studio-card:hover { border-color: var(--ge-red); transform: translateY(-2px); }
-.ge-studio-card__name { color: #fff; font-size: 16px; font-weight: 700; }
-.ge-studio-card__count { color: #9aa0ac; font-size: 13px; }
-@media (max-width: 560px) {
-  .ge-studio-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .ge-studio-card { padding: 16px 14px; }
-  .ge-studio-card__name { font-size: 14px; }
-}
-
 /* detail page */
 /* თემა float:left-ს აძლევს .movies-full-საც, .movies-full .container-საც და
    .movies-full__inside-საც (საერთო სელექტორის სიაში) — float-ს არავინ ასუფთავებდა,
@@ -166,6 +151,13 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
   filter: blur(3px) brightness(.65); opacity: 1; z-index: 0 !important; pointer-events: none; transform: scale(1.05);
   -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%);
   mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%); }
+/* ჩამოსქროლვის დოზაზე მიბმული ჩაბნელება — ჩამოსქროლვისას ბექგრაუნდი თანდათან
+   შავდება (scrollY-ის პროპორციულად), ავსქროლვისას იმავე დოზით უბრუნდება
+   ნაცრისფერს; JS (movie.html) აყენებს --mf-fade ცვლადს scroll listener-ით */
+.mf-scroll-fade {
+  position: absolute; inset: 0; background: #0f0f0f;
+  opacity: var(--mf-fade, 0); pointer-events: none; z-index: 1;
+}
 .movies-full .container { position: relative; z-index: 300; }
 .movies-full__content, .movies-full__player, #movie_embed { position: relative; z-index: 300 !important; }
 .movies-full__player { pointer-events: auto; }
