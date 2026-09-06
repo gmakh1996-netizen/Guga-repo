@@ -151,17 +151,13 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
   filter: blur(3px) brightness(.65); opacity: 1; z-index: 0 !important; pointer-events: none; transform: scale(1.05);
   -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%);
   mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%); }
-/* ჩამოსქროლვის დოზაზე მიბმული შავი ფარდა — viewport-ის ნამდვილ ზედა კიდეზეა
-   მიმაგრებული (position:fixed, .movies-full-ის overflow:hidden-ს გვერდს უვლის)
-   და იზრდება ქვემოთ ზუსტად scrollY-ის პროპორციულად — ისე, თითქოს სურათი თავად
-   ეშვება ქვემოთ ამ ფარდის მიღმა; ავსქროლვისას იმავე დოზით პატარავდება უკან;
-   JS (movie.html) აყენებს --mf-fade ცვლადს (px) და მალავს, როცა .movies-full
-   საერთოდ აღარ ჩანს ეკრანზე */
+/* ჩამოსქროლვის დოზაზე მიბმული ჩაბნელება — ჩამოსქროლვისას ბექგრაუნდი თანდათან
+   შავდება (scrollY-ის პროპორციულად), ავსქროლვისას იმავე დოზით უბრუნდება
+   ნაცრისფერს; JS (movie.html) აყენებს --mf-fade ცვლადს scroll listener-ით */
 .mf-scroll-fade {
-  position: fixed; top: 0; left: 0; right: 0; height: var(--mf-fade, 0px);
-  background: #0f0f0f; pointer-events: none; z-index: 850; display: none;
+  position: absolute; inset: 0; background: #0f0f0f;
+  opacity: var(--mf-fade, 0); pointer-events: none; z-index: 1;
 }
-.mf-scroll-fade.is-active { display: block; }
 .movies-full .container { position: relative; z-index: 300; }
 .movies-full__content, .movies-full__player, #movie_embed { position: relative; z-index: 300 !important; }
 .movies-full__player { pointer-events: auto; }
