@@ -4,6 +4,7 @@
 
 {% block content %}
 {% set poster = movie.poster_url or img(movie.poster_path) %}
+{% set portrait_poster = movie.poster_portrait or poster %}
 {% set is_tv = movie.media_type == 'tv' %}
 {% set streams = movie.streams|sort(attribute='sort') if movie.streams else [] %}
 {% set is_episodic = streams and streams[0].episode is not none %}
@@ -14,7 +15,7 @@
 
     <div class="movies-full__content">
       <div class="movies-full__poster">
-        <img src="{{ poster or '/static/theme/web/img/poster.svg' }}" alt="{{ movie.title }}" onerror="this.onerror=null;this.src='/static/theme/web/img/poster.svg';this.classList.add('ge-ph')">
+        <img src="{{ portrait_poster or '/static/theme/web/img/poster.svg' }}" alt="{{ movie.title }}" onerror="this.onerror=null;this.src='/static/theme/web/img/poster.svg';this.classList.add('ge-ph')">
         {% if movie.trailer_key %}
           <button class="mf-trailer" data-trailer="https://www.youtube.com/embed/{{ movie.trailer_key }}?autoplay=1">
             {{ 'სერიალის თრეილერი' if is_tv else 'ფილმის თრეილერი' }}
