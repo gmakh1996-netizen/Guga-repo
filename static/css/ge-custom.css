@@ -281,6 +281,14 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
   .mf-ratingbar { gap: 12px; }
   /* ვიწრო ტელეფონებზე (≤360px) 4 ღილაკი ერთ მწკრივში აღარ ეტევა — ვახვევთ */
   .mf-tools { flex-wrap: wrap; row-gap: 10px; }
+  /* თემა .movies-full__inside-ს 40px გვერდით padding-ს აძლევს (style.min.css) —
+     390px ეკრანზე ეს მარტო 80px-ს (~20%) ჭამდა; ვპატარავებთ, რომ სათაური/აიქონები
+     მარცხნივ დაიწიოს და მეტი სივრცე დარჩეს. ანალოგიურად .related-ს თემიდან აქვს
+     padding:30px + styles.css-იდან ცალკე padding-right:45px (ჯამში 30/45
+     ასიმეტრიული!) — ვშლით მთლიანად, .container-ის 15px უკვე საკმარისია, რომ
+     "რეკომენდირებული" ბარათები არ ჩაცუცქულიყო ცარიელ არეში */
+  .movies-full__inside { padding: 0 16px !important; }
+  .related { padding: 0 !important; }
 }
 
 /* header logo — MW shield emblem (square), larger than the old wordmark */
