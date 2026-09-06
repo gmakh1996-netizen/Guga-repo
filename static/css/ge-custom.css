@@ -11,6 +11,12 @@ h1, h2, h3, h4, h5, .ge-section-title, .movie-card__title,
   font-family: "BPG Mrgvlovani Caps", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Georgian", sans-serif !important;
 }
 html, body { background: #0f0f0f; color: #fff; max-width: 100%; }
+/* თემა `.filter`-ს (browse/persons გვერდის root wrapper) აძლევს float:left-ს
+   (style.min.css-ის საერთო სელექტორში) — float-ს არავინ არ ასუფთავებდა, ამიტომ
+   .content თავად კოლაფსდებოდა height:0-მდე იმ გვერდებზე, რაც header-ის
+   sticky-ს პირდაპირ ტეხავდა (containing block-ის სიმაღლე 0 იყო). flow-root
+   ავტომატურად აკავებს float-ებს, overflow:hidden საჭირო აღარაა. */
+.content { display: flow-root; }
 /* overflow-x:hidden მხოლოდ html-ზეა (არა body-ზეც და არა .content-ზეც) — თუ ორივეს
    (ან .content-საც) ცალკე overflow ედება, body/​.content თავად ხდება sticky-ს
    containing block, რომელიც არასდროს სქროლავს დამოუკიდებლად → header-ის
@@ -236,7 +242,17 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 @media (max-width: 1500px) { .ge-rec-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 @media (max-width: 1200px) { .ge-rec-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 860px)  { .ge-rec-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 12px; } }
-@media (max-width: 560px)  { .ge-rec-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* მობაილზე — ვერტიკალურად დაწყობილი 2 სვეტის ნაცვლად (რაც მიწებებულად გამოიყურებოდა),
+   ჰორიზონტალურად სქროლვადი 2-მწკრივიანი ბადე, top9/ბოლო-ეპიზოდების იგივე ნიმუშით */
+@media (max-width: 560px) {
+  .ge-rec-grid {
+    display: grid; grid-template-columns: none; grid-template-rows: repeat(2, auto);
+    grid-auto-flow: column; grid-auto-columns: 148px;
+    gap: 22px 14px; overflow-x: auto; overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; padding-bottom: 6px;
+  }
+  .ge-rec-grid > [class*="col-"] { scroll-snap-align: start; }
+}
 @media (max-width: 680px) {
   .mf-head { flex-direction: column; }
   .mf-head__titles h1 { font-size: 24px; }
@@ -384,6 +400,10 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
    და მეტი სივრცე ბექგრაუნდისთვის გვერდებზე/ზემოთ/ქვემოთ */
 @media (min-width: 1200px) { .movies--portrait { min-height: 420px; } }
 .movies--portrait .movie-card__img { aspect-ratio: 2 / 3; }
+/* პორტრეტულ (ვიწრო) ქარდზე bottom-left IMDb და bottom-right წელი ერთმანეთს
+   ეხურებოდა (ვიწრო სიგანეზე ორივე ბოლო-ზოლში ვეღარ ეტეოდა) — წელს ზედა-მარჯვენა
+   კუთხეში გადავიტანთ, IMDb კი ისევ ბოლო-მარცხნივ რჩება */
+.movies--portrait .movie-card__img .actions { bottom: auto; top: 8px; }
 .movies--portrait .movie-card__title h2 a p { display: none; }
 /* ჰოვერზე ცვალებადი ფონი (backdrop) */
 .ge-prem-bg {
@@ -445,12 +465,17 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
   html { overflow-x: hidden !important; }
   /* თემის styles.css აყენებს .content{overflow:hidden}-ს ამ სიგანეზე — ეს header-ის
      sticky-ს ატყდენდა (იხ. შენიშვნა ზემოთ body-სთვის); ვაბრუნებთ visible-ზე */
-  .content { width: 100% !important; float: none !important; margin: 0 !important; padding-bottom: 76px !important; overflow: visible !important; }
+  /* padding-bottom-ს ემატება env(safe-area-inset-bottom) — ქვედა ტაბ-ბარს (60px + home-indicator-ის
+     უსაფრთხო ზონა ზოგ ტელეფონზე) რომ არაფერი დაუფაროს გვერდის ბოლოში (მაგ. pager-ის ღილაკები) */
+  .content { width: 100% !important; float: none !important; margin: 0 !important; padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important; overflow: visible !important; }
   .container { width: 100% !important; padding-left: 15px; padding-right: 15px; }
 
   /* --- header + hero: თემა მათ ≤1024px-ზე მალავს (.mob-header-ს ელოდება,
          რომელიც ჩვენს markup-ში არ არის) — ვაბრუნებთ --- */
-  .header { display: block !important; position: sticky; top: 0; z-index: 900; background: #0f0f0f; border-bottom: 1px solid #232d3f; }
+  /* თემა აყენებს .header{height:100px}-ს (style.min.css) — ჩვენი ლოგო+ძებნის
+     column-განლაგება ამაზე მაღალია, ამიტომ ძებნა ყუთს გარეთ „გადმოდიოდა" ქვემოთ;
+     height:auto საჭიროა თვითონ .header-ზეც, არა მხოლოდ .header-top-ზე */
+  .header { display: block !important; height: auto !important; position: sticky; top: 0; z-index: 900; background: #0f0f0f; border-bottom: 1px solid #232d3f; }
   .hero { display: block !important; }
   /* browse/trailers გვერდის ფილტრი — თემა `.filter`-ს მობილურზე მალავს
      (.filter-btn toggle-ს ელოდება); ვაბრუნებთ */
@@ -500,6 +525,15 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
     stroke: var(--ge-red) !important;
   }
 
+  /* --- browse ფილტრი — მობილურზე ბევრად დიდი/მოუხერხებელი გამოიყურებოდა
+     (26px გვერდითი padding .filter-ზე + კიდევ 15px .container-ზე ერთად ჭამდა
+     სივრცეს, ხოლო select-ების font/padding დესკტოპისთვის ბუნებრივი ზომისა იყო) --- */
+  .filter.movie-list { padding-left: 0; padding-right: 0; }
+  .ge-filterbar { gap: 8px; padding: 14px 0 4px; }
+  .ge-filter__group { gap: 4px; }
+  .ge-filter__group label { font-size: 10px; letter-spacing: .2px; }
+  .ge-filterbar select { font-size: 12.5px; padding: 9px 10px; border-radius: 8px; }
+
   /* --- row heads / section titles — უფრო კომპაქტური --- */
   .ge-row-head { margin: 22px 0 12px; gap: 6px; }
   .ge-row-head .ge-head-left { gap: 6px; }
@@ -546,6 +580,28 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
   border-radius: 8px; font-size: 14px; }
 .ge-pager__btn:hover { border-color: var(--ge-red); color: var(--ge-red); }
 .ge-pager__info { color: #9aa0ac; font-size: 14px; }
+
+/* ნომრებიანი pagination (browse/persons) — გვერდის ნომრები + „…" + jump-to-page */
+.ge-pager__nums { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.ge-pager__num, .ge-pager__arrow {
+  min-width: 38px; height: 38px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--ge-card); border: 1px solid #005b41; color: #fff; border-radius: 8px; font-size: 14px; cursor: pointer;
+}
+.ge-pager__num:hover, .ge-pager__arrow:hover { border-color: var(--ge-red); color: var(--ge-red); }
+.ge-pager__num.is-active { background: var(--ge-red); border-color: var(--ge-red); color: #fff; cursor: default; font-weight: 700; }
+.ge-pager__arrow { font-size: 18px; font-weight: 700; }
+.ge-pager__dots { color: #6b7078; padding: 0 2px; }
+.ge-pager__jump { display: flex; align-items: center; gap: 8px; color: #9aa0ac; font-size: 13px; }
+.ge-pager__jump input {
+  width: 60px; height: 38px; text-align: center; background: var(--ge-card); border: 1px solid #005b41;
+  border-radius: 8px; color: #fff; font-size: 14px;
+}
+.ge-pager__jump input:focus { outline: none; border-color: var(--ge-red); }
+@media (max-width: 560px) {
+  .ge-pager { gap: 10px; margin: 24px 0; }
+  .ge-pager__num, .ge-pager__arrow { min-width: 32px; height: 32px; font-size: 12.5px; }
+  .ge-pager__jump { width: 100%; justify-content: center; font-size: 12px; }
+}
 
 /* watchlist — ამოშლის ღილაკი ბარათის პოსტერზე */
 .wl-remove { position: absolute; top: 8px; right: 8px; z-index: 5; width: 32px; height: 32px;

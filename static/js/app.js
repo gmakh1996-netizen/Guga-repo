@@ -237,15 +237,48 @@
     function params() {
       return { type: state.type, genre: state.genre, year: state.year, sort: state.sort, q: state.q, page: state.page, per: FILTER_PER };
     }
+    // 1 … cur-1 cur cur+1 … last — რომ ბევრი გვერდის შემთხვევაშიც (100+) კომპაქტური დარჩეს
+    function pageList(cur, total) {
+      var keep = {}; keep[1] = true; keep[total] = true;
+      for (var i = cur - 1; i <= cur + 1; i++) if (i >= 1 && i <= total) keep[i] = true;
+      var out = [], prev = 0;
+      Object.keys(keep).map(Number).sort(function (a, b) { return a - b; }).forEach(function (i) {
+        if (prev && i - prev > 1) out.push("…");
+        out.push(i); prev = i;
+      });
+      return out;
+    }
     function renderPager(total) {
       var pages = Math.max(Math.ceil(total / FILTER_PER), 1);
       if (pages <= 1) { pager.innerHTML = ""; pager.hidden = true; return; }
-      var html = "";
-      if (state.page > 1) html += '<button type="button" class="ge-pager__btn" data-go="' + (state.page - 1) + '">← წინა</button>';
-      html += '<span class="ge-pager__info">გვ. ' + state.page + " / " + pages + "</span>";
-      if (state.page < pages) html += '<button type="button" class="ge-pager__btn" data-go="' + (state.page + 1) + '">შემდეგი →</button>';
+      var html = '<div class="ge-pager__nums">';
+      if (state.page > 1) html += '<button type="button" class="ge-pager__btn ge-pager__arrow" data-go="' + (state.page - 1) + '">‹</button>';
+      pageList(state.page, pages).forEach(function (p) {
+        if (p === "…") { html += '<span class="ge-pager__dots">…</span>'; return; }
+        html += p === state.page
+          ? '<span class="ge-pager__num is-active">' + p + "</span>"
+          : '<button type="button" class="ge-pager__num" data-go="' + p + '">' + p + "</button>";
+      });
+      if (state.page < pages) html += '<button type="button" class="ge-pager__btn ge-pager__arrow" data-go="' + (state.page + 1) + '">›</button>';
+      html += "</div>";
+      if (pages > 7) {
+        html +=
+          '<form class="ge-pager__jump" id="pagerJumpForm">' +
+            "<span>გვერდზე გადასვლა</span>" +
+            '<input type="number" min="1" max="' + pages + '" value="' + state.page + '" id="pagerJumpInput">' +
+            '<button type="submit" class="ge-pager__btn">გადასვლა</button>' +
+          "</form>";
+      }
       pager.innerHTML = html;
       pager.hidden = false;
+      var jumpForm = document.getElementById("pagerJumpForm");
+      if (jumpForm) {
+        jumpForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var v = +document.getElementById("pagerJumpInput").value;
+          if (v >= 1 && v <= pages && v !== state.page) { state.page = v; load(true); }
+        });
+      }
     }
     function load(scrollUp) {
       if (state.loading) return;
