@@ -151,7 +151,7 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
    სათაური/ინფო/სიუჟეტი/მსახიობები მის გარეთ, მიუწვდომლად „გადმოსდიოდა" — ამის გამო
    ჩაბნელებული ბექგრაუნდიც ვერ სწვდებოდა იმ ტექსტის ბოლომდე. flow-root თავად
    აკავებს ყველა შვილ float-ს ჩაბუდებულობის მიუხედავად */
-.movies-full { position: relative; display: flow-root; padding: 30px 0 50px; z-index: 0; float: none !important; width: 100% !important; }
+.movies-full { position: relative; display: flow-root; padding: 30px 0 50px; z-index: 0; float: none !important; width: 100% !important; overflow: hidden; }
 .movies.related { clear: both; }
 /* თემის დეკორატიული overlay (680px-მდე მუქდება მყარ ფერამდე #1a1c22) — ეს ჩვენს
    გახანგრძლივებულ ჩაბნელებულ ბექგრაუნდს ზუსტად სათაურთან ერთ ბრტყელ ნაცრისფერ
@@ -204,7 +204,10 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 
 /* ===== detail — info block (ge.movie style) ===== */
 :root { --ge-gold: #d7b15a; }
-.movies-full__inside { margin-top: 30px; }
+/* თემა float:left-ს .movies-full__inside-საც აძლევს (იხ. კომენტარი ზემოთ .movies-full-ზე) —
+   float:none არეს გარეშე შემდეგი და-ძმა (.mf-cast) მის გვერდით, ზედა კიდესთან ბრუნდებოდა
+   პლეერის დონეზე, ნაცვლად იმისა, რომ ქვემოთ ჩამომდგარიყო */
+.movies-full__inside { margin-top: 30px; float: none !important; width: 100% !important; }
 
 /* titlebar: titles + tool buttons */
 .mf-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
@@ -250,7 +253,7 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 .mf-plot p { line-height: 1.8; color: #c3c7d0; margin: 0; }
 
 /* actors */
-.mf-cast { margin-top: 40px; }
+.mf-cast { margin-top: 40px; clear: both; }
 .mf-cast__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .mf-cast__nav { display: flex; gap: 8px; }
 .mf-cast__btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid #33384a; background: transparent;
@@ -288,7 +291,7 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 @media (max-width: 560px) {
   .ge-rec-grid {
     display: grid; grid-template-columns: none; grid-template-rows: repeat(2, auto);
-    grid-auto-flow: column; grid-auto-columns: 148px;
+    grid-auto-flow: column; grid-auto-columns: minmax(120px, 42%);
     gap: 22px 14px; overflow-x: auto; overflow-y: hidden;
     -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; padding-bottom: 6px;
   }
@@ -362,8 +365,8 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
   .sidebar .nav-link svg { width: 18px !important; height: 18px !important; flex: 0 0 auto; transition: .18s ease; }
   .sidebar .nav-link .pt-xl-2 {
     padding: 0 !important; margin: 0 !important; font-size: 12.5px; font-weight: 500;
-    line-height: 1.4 !important; height: auto !important; overflow: visible !important;
-    white-space: nowrap;
+    line-height: 1.4 !important; height: auto !important;
+    white-space: nowrap; overflow: hidden !important; text-overflow: ellipsis; max-width: 100%;
   }
   .sidebar .nav-link:hover {
     background: #05070a; color: #fff; border-radius: 0 !important;
@@ -375,6 +378,17 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
   .sidebar .nav-link.active svg rect, .sidebar .nav-link.active svg circle {
     stroke: #ffffff !important;
   }
+}
+/* ვიწრო დესკტოპი (1025–1360px): 8 nav-item + 340px ძებნა ერთ ხაზზე ფიზიკურად ვერ ეტევა —
+   ეპოვნეს ~66px-იან ყუთებში ტექსტი მეზობელ item-ებზე გადადიოდა და ერწყმოდა. აქ ვამცირებთ
+   ძებნის სიგანეს (მეტი სივრცე nav-ისთვის) და ვმალავთ ტექსტურ ლეიბლებს — მხოლოდ აიქონები +
+   title-tooltip რჩება, სანამ ეკრანი ისევ არ გაფართოვდება ლეიბლების დასატევად. */
+@media (min-width: 1025px) and (max-width: 1360px) {
+  .header-top__search { width: 210px !important; }
+  .sidebar .navbar-nav { gap: 2px; }
+  .sidebar .nav-link { gap: 0; padding: 0 4px !important; }
+  .sidebar .nav-link svg { width: 20px !important; height: 20px !important; }
+  .sidebar .nav-link .pt-xl-2 { display: none; }
 }
 .header { position: relative; z-index: 500; }
 
@@ -427,6 +441,7 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
 }
 .movie-card__title h2 a p {
   display: block; float: none; width: 100%; color: #8a8f9a; font-size: 12px; margin: 2px 0 0;
+  min-height: 15px; line-height: 15px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 /* results grid — 5 columns on desktop (ge.movie-style landscape cards) */
@@ -776,7 +791,7 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
 
 .ge-top9__grid {
   flex: 1; min-width: 0;
-  display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr);
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, 1fr);
   gap: 12px 14px;
 }
 .ge-top9__cell { position: relative; }
