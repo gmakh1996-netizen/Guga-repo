@@ -315,6 +315,24 @@
     load(false);
   }
 
+  // ---- სარეკლამო popup (ქვედა toast, croconet.cam-ის მსგავსი) ----
+  function initAdPopup() {
+    var popup = document.getElementById("adPopup");
+    if (!popup) return;
+    var closeBtn = document.getElementById("adPopupClose");
+    var dismissed = false;
+    try { dismissed = sessionStorage.getItem("ge_ad_popup_dismissed") === "1"; } catch (e) {}
+    if (dismissed) return;
+    var timer = setTimeout(function () { popup.classList.add("is-visible"); }, 2000);
+    if (closeBtn) {
+      closeBtn.addEventListener("click", function () {
+        clearTimeout(timer);
+        popup.classList.remove("is-visible");
+        try { sessionStorage.setItem("ge_ad_popup_dismissed", "1"); } catch (e) {}
+      });
+    }
+  }
+
   // ---- search autocomplete ----
   function initSearch() {
     var input = document.getElementById("search");
@@ -461,5 +479,6 @@
     initFilter();
     initPersons();
     initSearch();
+    initAdPopup();
   });
 })();

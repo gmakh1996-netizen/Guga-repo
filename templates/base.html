@@ -45,6 +45,14 @@
   {% block content %}{% endblock %}
 </section>
 
+<div class="ge-popup-ad" id="adPopup">
+  <button type="button" class="ge-popup-ad__close" id="adPopupClose" aria-label="დახურვა">&times;</button>
+  <div class="ge-popup-ad__content">
+    <div class="ge-popup-ad__text">შენი რეკლამის ადგილი</div>
+    <a href="#" class="ge-popup-ad__cta">დაგვიკავშირდით</a>
+  </div>
+</div>
+
 <script src="{{ url_for('static', filename='theme/web/js/int.js') }}"></script>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% block scripts %}{% endblock %}
