@@ -340,6 +340,8 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
   .header-top__search button {
     background: #008170 !important; color: #fff !important;
   }
+  /* დესკტოპზე toggle/close ღილაკები საჭირო არაა — ძებნა ისედაც მუდმივად ჩანს */
+  .header-search-toggle, .header-search-close { display: none !important; }
   .sidebar {
     position: static !important; left: auto !important; top: auto !important;
     width: auto !important; height: auto !important; float: none !important;
@@ -522,28 +524,45 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
      (.filter-btn toggle-ს ელოდება); ვაბრუნებთ */
   .filter.movie-list { display: block !important; }
   .header .row, .header .col-md-12 { width: 100% !important; }
-  /* ტოპ პანელი — ლოგო მარცხნივ (ბრენდის სტანდარტული, ბალანსირებული პოზიცია),
-     ძებნა მარჯვნივ, საკმარისი tap-target ზომით (Apple/Google HIG-ის მინიმუმთან
-     ახლოს, ~36-40px) და ხილული placeholder-ით დისკავერაბილითისთვის.
-     ცენტრში ლოგო + მარტო ერთი ხატულა მარჯვნივ, საწონასწორო ელემენტის გარეშე
-     მარცხნივ, ვიზუალურად ასიმეტრიულია — კლასიკური ორნაწილიანი header-ის
-     კონვენცია (ლოგო↔ძებნა) სჯობს. */
-  .header-top { display: flex !important; flex-direction: row; align-items: center; justify-content: space-between; gap: 14px; height: auto !important; padding: 13px 0; }
-  .header-top__logo { flex: 0 0 auto; text-align: left; }
+  /* ტოპ პანელი — ლოგო ცენტრში, ძებნა მხოლოდ ხატულაა ჩვეულებრივ მდგომარეობაში
+     (ადგილს არ იკავებს), დაჭერისას სრულ სიგანეზე იშლება (position:absolute
+     overlay .header-top-ს თავზე), ტექსტის შეყვანა-საძებნად, X-ით დახურვა */
+  .header-top { display: flex !important; flex-direction: row; align-items: center; position: relative; height: auto !important; padding: 13px 0; }
+  .header-top__logo { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: left; flex: none; }
   .header-top__logo img { height: 28px !important; margin: 0; }
   .header-top__actions { display: none !important; }
-  /* ძებნა თემა მალავს — ვაბრუნებთ, კომპაქტური მაგრამ ადვილად სამიზნე pill */
-  .header-top__search { display: block !important; flex: 1 1 auto; min-width: 0; max-width: 158px; }
-  .header-top__search form { display: flex !important; align-items: stretch; width: 100%; height: 36px; background: #232d3f; border: 1px solid #005b41; border-radius: 18px; overflow: hidden; }
-  .header-top__search input { display: block !important; flex: 1 1 auto; width: auto !important; min-width: 0; height: auto !important; line-height: 1.1 !important; background: transparent !important; border: 0 !important; color: #fff !important; padding: 0 0 0 14px !important; font-size: 12px; }
-  /* ღილაკის ტექსტს ("ძებნა") ვშლით ვიზუალურად (font-size:0) — მხოლოდ ხატულა რჩება */
-  /* pill-ის content-box სიმაღლე = 36px (form) - 2px (border) = 34px ზუსტად;
-     ღილაკი 30px + 2px მარჯინი ორივე მხრიდან = 34px — ზუსტად ერგება,
-     overflow:hidden-ით მოჭრის გარეშე (30+4=34px, არა 32+4=36px, რაც წინა
-     ვერსიაში 1px-ით იჭრებოდა ზემოთ/ქვემოთ) */
-  .header-top__search button { flex: 0 0 30px; width: 30px !important; height: 30px !important; margin: 2px !important; border-radius: 50% !important; display: flex !important; align-items: center; justify-content: center; border: 0; background: var(--ge-red) !important; color: #fff !important; padding: 0 !important; font-size: 0; line-height: 0; }
-  .header-top__search button i { font-size: 13px; line-height: 1; display: flex; align-items: center; justify-content: center; margin: 0 !important; }
-  #search_autocomplete { border-radius: 0 0 10px 10px; }
+
+  /* ხატულა-ღილაკი — ჩვეულებრივ მდგომარეობაში მხოლოდ ეს ჩანს, სულ მარჯვნივ */
+  .header-search-toggle {
+    display: flex !important; align-items: center; justify-content: center;
+    width: 34px; height: 34px; margin-left: auto; flex: 0 0 auto;
+    border-radius: 50%; background: var(--ge-card); border: 1px solid #005b41;
+    color: #fff; padding: 0; position: relative; z-index: 2; cursor: pointer;
+  }
+  .header-search-toggle i { font-size: 15px; line-height: 1; }
+  .header-search-toggle:hover { border-color: var(--ge-red); }
+
+  /* ძებნის სრული ველი — ჩვეულებრივ დამალულია (opacity/pointer-events), დაჭერისას
+     .is-active ფარავს მთელ .header-top-ს (position:absolute inset:0) */
+  .header-top__search {
+    display: flex !important; align-items: center; gap: 8px;
+    position: absolute !important; inset: 0; width: auto !important; height: auto !important; z-index: 5;
+    background: #0f0f0f; opacity: 0; pointer-events: none;
+    transform: scale(.97); transition: opacity .18s ease, transform .18s ease;
+  }
+  .header-top__search.is-active { opacity: 1; pointer-events: auto; transform: scale(1); }
+  .header-search-close {
+    display: flex !important; align-items: center; justify-content: center; flex: 0 0 34px !important;
+    width: 34px !important; height: 34px !important; border: 0; background: none !important; color: #fff;
+    font-size: 22px; line-height: 1; padding: 0 !important; margin: 0 !important; float: none !important; cursor: pointer;
+  }
+  .header-top__search form { display: flex !important; align-items: stretch; flex: 1 1 auto; min-width: 0; height: 36px; background: #232d3f; border: 1px solid #005b41; border-radius: 18px; overflow: hidden; }
+  .header-top__search input { display: block !important; flex: 1 1 auto; width: auto !important; min-width: 0; height: auto !important; line-height: 1.1 !important; background: transparent !important; border: 0 !important; color: #fff !important; padding: 0 0 0 14px !important; font-size: 13px; }
+  /* ღილაკის ტექსტს ("ძებნა") ვშლით ვიზუალურად (font-size:0) — მხოლოდ ხატულა რჩება;
+     pill content-box = 36-2(border)=34px; ღილაკი 30px+2px მარჯინი = 34px ზუსტად */
+  .header-top__search form button { flex: 0 0 30px; width: 30px !important; height: 30px !important; margin: 2px !important; border-radius: 50% !important; display: flex !important; align-items: center; justify-content: center; border: 0; background: var(--ge-red) !important; color: #fff !important; padding: 0 !important; font-size: 0; line-height: 0; }
+  .header-top__search form button i { font-size: 13px; line-height: 1; display: flex; align-items: center; justify-content: center; margin: 0 !important; }
+  #search_autocomplete { position: absolute; top: 100%; left: 42px; right: 0; border-radius: 0 0 10px 10px; }
 
   /* --- ქვედა ნავიგაცია (bottom tab bar) ---
      რეალურ მობილურებზე (განსხვავებით დესკტოპის headless ტესტისგან) fixed

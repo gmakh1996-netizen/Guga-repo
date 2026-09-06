@@ -361,6 +361,27 @@
     });
   }
 
+  // ---- მობილურის ძებნის toggle (მხოლოდ ხატულა → დაჭერისას იშლება სრულ ველად) ----
+  function initMobileSearchToggle() {
+    var toggle = document.getElementById("headerSearchToggle");
+    var box = document.getElementById("headerTopSearch");
+    var closeBtn = document.getElementById("headerSearchClose");
+    var input = document.getElementById("search");
+    if (!toggle || !box) return;
+    function open() {
+      box.classList.add("is-active");
+      if (input) setTimeout(function () { input.focus(); }, 50);
+    }
+    function close() {
+      box.classList.remove("is-active");
+    }
+    toggle.addEventListener("click", open);
+    if (closeBtn) closeBtn.addEventListener("click", close);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") close();
+    });
+  }
+
   // ---- persons page ----
   function initPersons() {
     var results = document.getElementById("personsResults");
@@ -481,5 +502,6 @@
     initPersons();
     initSearch();
     initAdPopup();
+    initMobileSearchToggle();
   });
 })();

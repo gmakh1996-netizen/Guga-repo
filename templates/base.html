@@ -28,7 +28,11 @@
               <a href="/"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="{{ site_name }}"></a>
             </div>
             {% include "_navbar.html" %}
-            <div class="header-top__search">
+            <button type="button" class="header-search-toggle" id="headerSearchToggle" aria-label="ძებნა">
+              <i class="icofont-search"></i>
+            </button>
+            <div class="header-top__search" id="headerTopSearch">
+              <button type="button" class="header-search-close" id="headerSearchClose" aria-label="დახურვა">&times;</button>
               <form id="SearchMovie" action="/browse" autocomplete="off">
                 <input type="hidden" name="type" value="search">
                 <input type="text" id="search" name="search" autocomplete="off" placeholder="საძიებო სიტყვა...">
