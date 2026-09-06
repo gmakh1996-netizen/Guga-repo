@@ -88,15 +88,10 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 
 /* სარეკლამო ბანერი — 9 ფილმსა და „განაგრძე ყურება"-ს შორის, მთელ სიგანეზე */
 .ge-ad-banner { margin: 0 0 6px; }
-.ge-ad-banner__inner {
-  width: 100%; min-height: 110px; border-radius: 10px;
-  border: 1px dashed #363a4a; background: var(--ge-card);
-  display: flex; align-items: center; justify-content: center;
-  color: #8a8f9a; font-size: 16px; font-weight: 600; text-align: center;
-  padding: 16px;
-}
+.ge-ad-banner__inner { width: 100%; height: 110px; border-radius: 10px; overflow: hidden; background: var(--ge-card); }
+.ge-ad-banner__inner img { width: 100%; height: 100%; object-fit: contain; display: block; }
 @media (max-width: 680px) {
-  .ge-ad-banner__inner { min-height: 80px; font-size: 13px; padding: 12px; }
+  .ge-ad-banner__inner { height: 80px; }
 }
 /* რიგის სათაურის ჩვეული ზედა margin (28px) აჭარბებდა — ბანერის ქვემოთ პირველ რიგს ვხდით მჭიდროდ */
 .ge-ad-banner + #rows > *:first-child .ge-row-head { margin-top: 6px !important; }
