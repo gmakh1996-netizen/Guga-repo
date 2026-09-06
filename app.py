@@ -558,28 +558,6 @@ def register_routes(app):
             .all()
         )
 
-    def _cast_with_photos(rec):
-        """მსახიობები → [{name, photo}]. cast_json შეიძლ. იყოს {name,photo} ობიექტების სია
-        (scraper/enrich-იდან) ან უბრალო სახელების სია (ფოტო Person-ის ბაზიდან მოინახება)."""
-        raw = rec.cast[:18] if rec.cast else []
-        if not raw:
-            return []
-        # უკვე ობიექტებია (name+photo) → პირდაპირ
-        if isinstance(raw[0], dict):
-            return [{"name": c.get("name", ""), "photo": c.get("photo")}
-                    for c in raw if c.get("name")]
-        # უბრალო სახელები → ფოტო Person-იდან
-        lookup = {}
-        rows = Person.query.filter(
-            db.or_(Person.name.in_(raw), Person.name_en.in_(raw))
-        ).all()
-        for p in rows:
-            if p.name:
-                lookup.setdefault(p.name, p.photo)
-            if p.name_en:
-                lookup.setdefault(p.name_en, p.photo)
-        return [{"name": n, "photo": lookup.get(n)} for n in raw]
-
     @app.route("/movie/<int:movie_id>")
     def movie_detail(movie_id):
         movie = db.session.get(Movie, movie_id)
@@ -588,7 +566,6 @@ def register_routes(app):
         similar = _similar_by_genre(Movie, movie)
         return render_template(
             "movie.html", movie=movie, providers=None, similar=similar,
-            cast=_cast_with_photos(movie),
         )
 
     @app.route("/series/<int:series_id>")
@@ -599,7 +576,6 @@ def register_routes(app):
         similar = _similar_by_genre(Series, series)
         return render_template(
             "movie.html", movie=series, providers=None, similar=similar,
-            cast=_cast_with_photos(series),
         )
 
     @app.route("/genre/<int:genre_id>")

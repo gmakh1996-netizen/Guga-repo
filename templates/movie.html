@@ -123,29 +123,6 @@
       {% endif %}
     </div>
 
-    {% if cast %}
-    <section class="mf-cast">
-      <div class="mf-cast__head">
-        <h2 class="ge-section-title">მსახიობები</h2>
-        <div class="mf-cast__nav">
-          <button type="button" class="mf-cast__btn" data-dir="-1">‹</button>
-          <button type="button" class="mf-cast__btn" data-dir="1">›</button>
-        </div>
-      </div>
-      <div class="mf-cast__row" id="castRow">
-        {% for a in cast %}
-        <div class="mf-actor">
-          <div class="mf-actor__photo">
-            {% if a.photo %}<img src="{{ a.photo }}" alt="{{ a.name }}" loading="lazy" onerror="this.style.display='none';this.parentNode.classList.add('mf-actor__ph')">
-            {% else %}<span class="mf-actor__initials">{{ a.name[:1] }}</span>{% endif %}
-          </div>
-          <div class="mf-actor__name">{{ a.name }}</div>
-        </div>
-        {% endfor %}
-      </div>
-    </section>
-    {% endif %}
-
   </div>
 </div>
 
@@ -183,14 +160,6 @@
     });
     var tb = document.querySelector('.mf-trailer');
     if (tb) tb.addEventListener('click', function () { if (frame) frame.src = this.dataset.trailer; });
-
-    // მსახიობების ჰორიზონტალური სქროლი
-    var row = document.getElementById('castRow');
-    document.querySelectorAll('.mf-cast__btn').forEach(function (b) {
-      b.addEventListener('click', function () {
-        if (row) row.scrollBy({ left: this.dataset.dir * row.clientWidth * 0.8, behavior: 'smooth' });
-      });
-    });
 
     // „განაგრძე ყურება" — ვინახავთ ნანახ ფილმს localStorage-ში
     try {
