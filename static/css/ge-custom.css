@@ -145,9 +145,9 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
    height:100% პარენტის (.movies-full) სრულ სიმაღლეს იღებს, ასე რომ ჩამოსქროლვისას
    ბექგრაუნდი ზუსტად იმ წერტილამდე გრძელდება, სადაც „მსგავსი ფილმების" სექცია იწყება */
 .movies-full .bg-image { position: absolute; top: 0; left: 0; right: 0; height: 100% !important; background-size: cover; background-position: center 18%;
-  filter: blur(6px) brightness(.42); opacity: .6; z-index: 0 !important; pointer-events: none; transform: scale(1.05);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.95) 0%, rgba(0,0,0,.85) 20%, rgba(0,0,0,.85) 88%, rgba(0,0,0,0) 100%);
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,.95) 0%, rgba(0,0,0,.85) 20%, rgba(0,0,0,.85) 88%, rgba(0,0,0,0) 100%); }
+  filter: blur(3px) brightness(.65); opacity: 1; z-index: 0 !important; pointer-events: none; transform: scale(1.05);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%); }
 .movies-full .container { position: relative; z-index: 300; }
 .movies-full__content, .movies-full__player, #movie_embed { position: relative; z-index: 300 !important; }
 .movies-full__player { pointer-events: auto; }
