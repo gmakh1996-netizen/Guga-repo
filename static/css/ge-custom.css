@@ -508,17 +508,18 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
   .filter.movie-list { display: block !important; }
   .header .row, .header .col-md-12 { width: 100% !important; }
   /* ლოგო და ძებნა ერთ მწკრივში (არა სვეტურად) — ძებნა კომპაქტური, ლოგოს გასწვრივ */
-  .header-top { display: flex !important; flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; height: auto !important; padding: 10px 0; }
-  .header-top__logo { text-align: left; flex: 0 0 auto; }
+  /* ლოგო ცენტრში (absolute, flex-სგან დამოუკიდებლად), ძებნა სულ მარჯვნივ */
+  .header-top { display: flex !important; flex-direction: row; align-items: center; position: relative; gap: 10px; height: auto !important; padding: 10px 0; }
+  .header-top__logo { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: left; flex: none; }
   .header-top__logo img { height: 30px !important; margin: 0; }
   .header-top__actions { display: none !important; }
-  /* ძებნა თემა მალავს — ვაბრუნებთ, კომპაქტური pill, ლოგოს გვერდით --- */
-  .header-top__search { display: block !important; flex: 1 1 auto; min-width: 0; max-width: 120px; margin-left: auto; }
+  /* ძებნა თემა მალავს — ვაბრუნებთ, კომპაქტური pill, სულ მარჯვნივ --- */
+  .header-top__search { display: block !important; flex: 0 0 auto; min-width: 0; max-width: 95px; margin-left: auto; }
   .header-top__search form { display: flex !important; align-items: stretch; width: 100%; height: 28px; background: #232d3f; border: 1px solid #005b41; border-radius: 14px; overflow: hidden; }
   .header-top__search input { display: block !important; flex: 1 1 auto; width: auto !important; min-width: 0; height: auto !important; line-height: 1.1 !important; background: transparent !important; border: 0 !important; color: #fff !important; padding: 0 0 0 10px !important; font-size: 11px; }
   /* ღილაკის ტექსტს ("ძებნა") ვშლით ვიზუალურად (font-size:0) — მხოლოდ ხატულა რჩება, კომპაქტურობისთვის */
-  .header-top__search button { flex: 0 0 26px; width: 26px !important; height: 26px !important; margin: 1px !important; border-radius: 50% !important; display: inline-flex !important; align-items: center; justify-content: center; border: 0; background: var(--ge-red) !important; color: #fff !important; padding: 0 !important; font-size: 0; }
-  .header-top__search button i { font-size: 10px; }
+  .header-top__search button { flex: 0 0 26px; width: 26px !important; height: 26px !important; margin: 1px !important; border-radius: 50% !important; display: flex !important; align-items: center; justify-content: center; border: 0; background: var(--ge-red) !important; color: #fff !important; padding: 0 !important; font-size: 0; line-height: 0; }
+  .header-top__search button i { font-size: 10px; line-height: 1; display: flex; align-items: center; justify-content: center; margin: 0 !important; }
   #search_autocomplete { border-radius: 0 0 10px 10px; }
 
   /* --- ქვედა ნავიგაცია (bottom tab bar) ---
