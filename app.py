@@ -7,9 +7,8 @@ import difflib
 import json
 import os
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import wraps
-from zoneinfo import ZoneInfo
 
 from flask import Flask, render_template, request, abort, jsonify, redirect, url_for
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -259,7 +258,10 @@ def register_routes(app):
         _save_weekly_top_cache(cache)
         return ids
 
-    TBILISI_TZ = ZoneInfo("Asia/Tbilisi")
+    # საქართველოს დროის სარტყელი 2017 წლიდან ფიქსირებულია UTC+4, DST არ აქვს —
+    # ამიტომ timedelta საკმარისია, ZoneInfo/tzdata საერთოდ არ სჭირდება (მსუბუქი და
+    # დამოკიდებული არაა იმაზე, აქვს თუ არა deploy-გარემოს სისტემური timezone-ბაზა)
+    TBILISI_TZ = timezone(timedelta(hours=4))
     DAILY_SHUFFLE_HOUR = 10  # ყოველ დღეს 10:00-ზე (თბილისის დროით) ახალი წყობა
 
     def _daily_shuffle_day_key(now=None):
