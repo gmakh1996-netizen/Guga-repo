@@ -274,12 +274,16 @@ def register_routes(app):
             day = day - timedelta(days=1)
         return day.isoformat()
 
-    def _daily_shuffle_ids(media_key, Model):
-        """კატალოგის მთლიანი (პოსტერიანი) წყობა შერეული — დღეში ერთხელ, 10:00-ზე
-        (თბილისის დროით) იცვლება, დღის განმავლობაში სტაბილურია (ინახება ფაილში).
+    DAILY_SHUFFLE_POOL = 500
+
+    def _daily_shuffle_ids(media_key, Model, pool_size=DAILY_SHUFFLE_POOL):
+        """„კარგი რეიტინგებით, რაც შეიძლება ახალი" ფონდიდან (რეიტინგით/წლით
+        დალაგებული საუკეთესო pool_size ჩანაწერი) დღეში ერთხელ, 10:00-ზე (თბილისის
+        დროით) შემთხვევით შერეული ქვესია — დღის განმავლობაში სტაბილურია (ინახება
+        ფაილში), მეორე დღეს სულ სხვა ნაწილი ამოტივტივდება იმავე ფონდიდან.
         ეს არის default/„პოპულარობით" დათვალიერების წყობა ყველა კატეგორიაში
-        (ფილმები/სერიალები/ანიმეები/ანიმაციები/თრეილერები) — ფილტრები (ჟანრი/წელი)
-        უბრალოდ ავიწროებენ ამ უკვე შერეულ სიას, ცალკე შერევა არ სჭირდებათ."""
+        (ფილმები/სერიალები/ანიმეები/ანიმაციები/თრეილერები/ჰერო-ს ტოპ 9) — ფილტრები
+        (ჟანრი/წელი) უბრალოდ ავიწროებენ ამ უკვე შერეულ სიას."""
         cache = _load_weekly_top_cache()
         key = f"shuffle_{media_key}"
         entry = cache.get(key)
@@ -287,7 +291,13 @@ def register_routes(app):
         if entry and entry.get("day_key") == day_key:
             return entry["ids"]
 
-        rows = Model.query.filter(_has_poster(Model)).with_entities(Model.id).all()
+        rows = (
+            Model.query.filter(_has_poster(Model), Model.vote_average > 0)
+            .order_by(Model.vote_average.desc(), Model.release_date.desc())
+            .limit(pool_size)
+            .with_entities(Model.id)
+            .all()
+        )
         ids = [r.id for r in rows]
         random.shuffle(ids)
         cache[key] = {"day_key": day_key, "ids": ids}
@@ -426,10 +436,12 @@ def register_routes(app):
 
         if sort == "hero_top":
             # მთავარი გვერდის ჰერო — კონკრეტულად მოთხოვნილი ფილმ(ებ)ი ყოველთვის შედის,
-            # დანარჩენს ავსებს 2026-ის ყველაზე მაღალრეიტინგული ფილმებით (კვირაში ერთხელ
-            # განახლებადი). დუბლირება არასდროს — pinned ID-ები გამორიცხულია top-ის სიიდან.
+            # დანარჩენს ავსებს იმავე დღიური „კარგი რეიტინგი + ახალი" შერეული ფონდიდან,
+            # რასაც დანარჩენი კატეგორიებიც იყენებენ (იხ. _daily_shuffle_ids) — რომ
+            # ჰეროც დღეში ერთხელ იცვლებოდეს, არა მხოლოდ კვირაში და მხოლოდ 2026-ზე.
+            # დუბლირება არასდროს — pinned ID-ები გამორიცხულია top-ის სიიდან.
             pinned_ids = [i for i in HERO_PINNED_MOVIE_IDS if Model is Movie]
-            top_ids = _weekly_top_ids("movie_2026_hero" if Model is Movie else "serial_2026_hero", Model, years=("2026",))
+            top_ids = _daily_shuffle_ids("tv" if Model is Series else "movie", Model)
             ordered_ids = pinned_ids + [i for i in top_ids if i not in pinned_ids]
             query = query.filter(Model.id.in_(ordered_ids), _has_poster(Model))
             rows = query.all()
