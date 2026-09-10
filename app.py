@@ -6,8 +6,7 @@ import atexit
 import difflib
 import json
 import os
-import random
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from functools import wraps
 
 from flask import Flask, render_template, request, abort, jsonify, redirect, url_for
@@ -258,52 +257,6 @@ def register_routes(app):
         _save_weekly_top_cache(cache)
         return ids
 
-    # საქართველოს დროის სარტყელი 2017 წლიდან ფიქსირებულია UTC+4, DST არ აქვს —
-    # ამიტომ timedelta საკმარისია, ZoneInfo/tzdata საერთოდ არ სჭირდება (მსუბუქი და
-    # დამოკიდებული არაა იმაზე, აქვს თუ არა deploy-გარემოს სისტემური timezone-ბაზა)
-    TBILISI_TZ = timezone(timedelta(hours=4))
-    DAILY_SHUFFLE_HOUR = 10  # ყოველ დღეს 10:00-ზე (თბილისის დროით) ახალი წყობა
-
-    def _daily_shuffle_day_key(now=None):
-        """დღის იდენტიფიკატორი, რომელიც ზუსტად 10:00-ზე იცვლება (თბილისის დროით) —
-        არა UTC/server-local შუაღამეზე. სერვერი Railway-ზეც ნებისმიერ ტაიმზონაში
-        რომ იყოს გაშვებული, შერევა ყოველთვის თბილისის დილის 10-ზე ხდება."""
-        now = now or datetime.now(TBILISI_TZ)
-        day = now.date()
-        if now.hour < DAILY_SHUFFLE_HOUR:
-            day = day - timedelta(days=1)
-        return day.isoformat()
-
-    DAILY_SHUFFLE_POOL = 500
-
-    def _daily_shuffle_ids(media_key, Model, pool_size=DAILY_SHUFFLE_POOL):
-        """„კარგი რეიტინგებით, რაც შეიძლება ახალი" ფონდიდან (რეიტინგით/წლით
-        დალაგებული საუკეთესო pool_size ჩანაწერი) დღეში ერთხელ, 10:00-ზე (თბილისის
-        დროით) შემთხვევით შერეული ქვესია — დღის განმავლობაში სტაბილურია (ინახება
-        ფაილში), მეორე დღეს სულ სხვა ნაწილი ამოტივტივდება იმავე ფონდიდან.
-        ეს არის default/„პოპულარობით" დათვალიერების წყობა ყველა კატეგორიაში
-        (ფილმები/სერიალები/ანიმეები/ანიმაციები/თრეილერები/ჰერო-ს ტოპ 9) — ფილტრები
-        (ჟანრი/წელი) უბრალოდ ავიწროებენ ამ უკვე შერეულ სიას."""
-        cache = _load_weekly_top_cache()
-        key = f"shuffle_{media_key}"
-        entry = cache.get(key)
-        day_key = _daily_shuffle_day_key()
-        if entry and entry.get("day_key") == day_key:
-            return entry["ids"]
-
-        rows = (
-            Model.query.filter(_has_poster(Model), Model.vote_average > 0)
-            .order_by(Model.vote_average.desc(), Model.release_date.desc())
-            .limit(pool_size)
-            .with_entities(Model.id)
-            .all()
-        )
-        ids = [r.id for r in rows]
-        random.shuffle(ids)
-        cache[key] = {"day_key": day_key, "ids": ids}
-        _save_weekly_top_cache(cache)
-        return ids
-
     def _serialize(rec):
         return {
             "id": rec.id,
@@ -357,9 +310,7 @@ def register_routes(app):
         if media in GENRE_GROUP_TYPES:
             gid = GENRE_GROUP_TYPES[media]
             combined = []
-            rank_by_type = {"movie": {}, "tv": {}}
             for M in (Movie, Series):
-                type_key = "tv" if M is Series else "movie"
                 gq = M.query.filter(M.genres.any(Genre.id == gid), _has_poster(M))
                 if genre_id and genre_id != gid:
                     gq = gq.filter(M.genres.any(Genre.id == genre_id))
@@ -371,12 +322,6 @@ def register_routes(app):
                     gq = gq.order_by(M.vote_average.desc())
                 elif sort == "newest":
                     gq = gq.order_by(M.release_date.desc())
-                elif sort in ("popularity", "", None):
-                    # იგივე დღიური შერევა, რაც ჩვეულებრივ ფილმებში/სერიალებში —
-                    # ანიმეც/ანიმაციაც "ყველა კატეგორიაშია"
-                    shuffled_ids = _daily_shuffle_ids(type_key, M)
-                    rank_by_type[type_key] = {rid: i for i, rid in enumerate(shuffled_ids)}
-                    gq = gq.filter(M.id.in_(shuffled_ids))
                 else:
                     gq = gq.order_by(M.popularity.desc())
                 combined += gq.limit(300).all()
@@ -384,8 +329,6 @@ def register_routes(app):
                 combined.sort(key=lambda x: x.vote_average or 0, reverse=True)
             elif sort == "newest":
                 combined.sort(key=lambda x: x.release_date or "", reverse=True)
-            elif sort in ("popularity", "", None):
-                combined.sort(key=lambda x: rank_by_type["tv" if isinstance(x, Series) else "movie"].get(x.id, 10**9))
             else:
                 combined.sort(key=lambda x: x.popularity or 0, reverse=True)
             total = len(combined)
@@ -436,37 +379,15 @@ def register_routes(app):
 
         if sort == "hero_top":
             # მთავარი გვერდის ჰერო — კონკრეტულად მოთხოვნილი ფილმ(ებ)ი ყოველთვის შედის,
-            # დანარჩენს ავსებს იმავე დღიური „კარგი რეიტინგი + ახალი" შერეული ფონდიდან,
-            # რასაც დანარჩენი კატეგორიებიც იყენებენ (იხ. _daily_shuffle_ids) — რომ
-            # ჰეროც დღეში ერთხელ იცვლებოდეს, არა მხოლოდ კვირაში და მხოლოდ 2026-ზე.
-            # დუბლირება არასდროს — pinned ID-ები გამორიცხულია top-ის სიიდან.
+            # დანარჩენს ავსებს 2026-ის ყველაზე მაღალრეიტინგული ფილმებით (კვირაში ერთხელ
+            # განახლებადი). დუბლირება არასდროს — pinned ID-ები გამორიცხულია top-ის სიიდან.
             pinned_ids = [i for i in HERO_PINNED_MOVIE_IDS if Model is Movie]
-            top_ids = _daily_shuffle_ids("tv" if Model is Series else "movie", Model)
+            top_ids = _weekly_top_ids("movie_2026_hero" if Model is Movie else "serial_2026_hero", Model, years=("2026",))
             ordered_ids = pinned_ids + [i for i in top_ids if i not in pinned_ids]
             query = query.filter(Model.id.in_(ordered_ids), _has_poster(Model))
             rows = query.all()
             rank = {rid: i for i, rid in enumerate(ordered_ids)}
             rows.sort(key=lambda r: rank.get(r.id, len(ordered_ids)))
-            total = len(rows)
-            items = rows[(page - 1) * per: page * per]
-            return jsonify(
-                items=[_serialize(x) for x in items],
-                page=page,
-                per=per,
-                has_more=page * per < total,
-                total=total,
-            )
-
-        if sort in ("popularity", "", None):
-            # ნაგულისხმევი/„პოპულარობით" ნახვა — დღეში ერთხელ, 10:00-ზე (თბილისის
-            # დროით) შერეული წყობა ყველა კატეგორიაში (იხ. _daily_shuffle_ids).
-            # ჟანრი/წელი/საძებნი ფილტრები ამ უკვე შერეულ სიას ავიწროებენ.
-            media_key = "tv" if Model is Series else "movie"
-            shuffled_ids = _daily_shuffle_ids(media_key, Model)
-            query = query.filter(Model.id.in_(shuffled_ids))
-            rows = query.all()
-            rank = {rid: i for i, rid in enumerate(shuffled_ids)}
-            rows.sort(key=lambda r: rank.get(r.id, len(shuffled_ids)))
             total = len(rows)
             items = rows[(page - 1) * per: page * per]
             return jsonify(
