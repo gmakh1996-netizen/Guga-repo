@@ -1,0 +1,84 @@
+{% extends "admin/base.html" %}
+{% block title %}მედია-ბიბლიოთეკა{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <form method="post" action="{{ url_for('admin.media_upload') }}"
+        enctype="multipart/form-data" class="bar">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <input type="file" name="files" accept="image/*" multiple required
+           id="lib-files" class="upload__input">
+    <label for="lib-files" class="btn btn--ghost btn--sm">ფაილების არჩევა</label>
+    <span class="upload__name" data-for="lib-files"></span>
+    <select name="profile" class="sel">
+      <option value="art">ფილმის სურათი (320-1920px)</option>
+      <option value="portrait">ვერტიკალური პოსტერი</option>
+      <option value="logo">ლოგო (გამჭვირვალე)</option>
+      <option value="banner">ბანერი</option>
+      <option value="raw">მხოლოდ ორიგინალი</option>
+    </select>
+    <button type="submit" class="btn btn--primary btn--sm">ატვირთვა</button>
+  </form>
+
+  <form method="get" class="bar bar--filter">
+    <input type="search" name="q" value="{{ q }}" placeholder="ფაილის სახელით ძებნა" class="inp">
+    <select name="only" class="sel">
+      <option value="">ყველა</option>
+      <option value="site" {{ 'selected' if only == 'site' }}>ბრენდინგში გამოყენებული</option>
+      <option value="orphan" {{ 'selected' if only == 'orphan' }}>ობოლი (არსად არ არის)</option>
+    </select>
+    <button type="submit" class="btn btn--ghost btn--sm">ფილტრი</button>
+    <span class="muted">სულ {{ total }}</span>
+  </form>
+</section>
+
+{% if items %}
+<div class="grid">
+  {% for item in items %}
+  <figure class="tile">
+    <a href="{{ item.url }}" target="_blank" rel="noopener">
+      <img src="{{ item.url }}" alt="{{ item.asset.alt_text or item.asset.original_filename }}" loading="lazy">
+    </a>
+    <figcaption>
+      <b title="{{ item.asset.original_filename }}">{{ item.asset.original_filename or ('#' ~ item.asset.id) }}</b>
+      <span class="muted">{{ item.asset.width }}×{{ item.asset.height }} · {{ item.size }}</span>
+      <span class="muted">{{ item.uses }} ადგილას</span>
+      <form method="post" action="{{ url_for('admin.media_delete', asset_id=item.asset.id) }}"
+            onsubmit="return confirm('წაიშალოს ეს ფაილი{% if item.uses %} და მოიხსნას {{ item.uses }} ადგილიდან{% endif %}?');">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn--danger btn--xs">წაშლა</button>
+      </form>
+    </figcaption>
+  </figure>
+  {% endfor %}
+</div>
+
+<nav class="pager">
+  {% if page > 1 %}
+    <a class="btn btn--ghost btn--sm" href="{{ url_for('admin.media_library', page=page-1, q=q, only=only) }}">წინა</a>
+  {% endif %}
+  <span class="muted">გვერდი {{ page }}</span>
+  {% if has_more %}
+    <a class="btn btn--ghost btn--sm" href="{{ url_for('admin.media_library', page=page+1, q=q, only=only) }}">შემდეგი</a>
+  {% endif %}
+</nav>
+{% else %}
+<section class="panel">
+  <p class="muted">ჯერ არცერთი ფაილი არ არის. ატვირთეთ ზემოთ, ან დაიწყეთ ბრენდინგის ეკრანიდან.</p>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.upload__input').forEach(function (input) {
+  input.addEventListener('change', function () {
+    var out = document.querySelector('.upload__name[data-for="' + input.id + '"]');
+    if (!out) return;
+    out.textContent = input.files.length > 1
+      ? input.files.length + ' ფაილი'
+      : (input.files.length ? input.files[0].name : '');
+  });
+});
+</script>
+{% endblock %}

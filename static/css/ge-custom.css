@@ -293,6 +293,12 @@ html { scrollbar-width: thin; scrollbar-color: #005b41 transparent; }
 
 /* header logo — MW shield emblem (square), larger than the old wordmark */
 .header-top__logo img { height: 52px !important; width: auto; display: block; }
+/* ლოგოს არარსებობისას (ბექოფისიდან წაშლილია) — საიტის სახელი ტექსტად */
+.header-top__logo-text {
+  display: block; font-size: 22px; font-weight: 700; color: #fff;
+  letter-spacing: .5px; white-space: nowrap; line-height: 52px;
+}
+@media (max-width: 1024px) { .header-top__logo-text { font-size: 17px; line-height: 28px; } }
 
 /* search autocomplete */
 /* თემის საკუთარი pill-ფონი (#242731, ძველი პალიტრიდან) ჩანდა ჩვენი
@@ -805,3 +811,14 @@ img.ge-ph { object-fit: contain !important; background: #232d3f; padding: 14%; o
   .ge-top9__rank { font-size: 30px; }
   .ge-top9__info h3 { font-size: 15px; }
 }
+
+/* მენიუს ატვირთული აიქონი (ჩაშენებული SVG-ის ნაცვლად) */
+.nav-link__img { width: 24px; height: 24px; object-fit: contain; display: block; margin: 0 auto; }
+/* მხოლოდ მობილურზე ხილული პუნქტი (დესკტოპზე დამალული) */
+@media (min-width: 1025px) { .nav-item--mobile-only { display: none !important; } }
+
+/* რიგის ფონი ბექოფისიდან (ნებისმიერ რიგზე, არა მხოლოდ ვერტიკალურზე) */
+.movies--has-bg { position: relative; overflow: hidden; }
+.movies--has-bg .container { position: relative; z-index: 1; }
+/* რიგის ატვირთული აიქონი (ჩაშენებული SVG-ის ნაცვლად) */
+.ge-ico-badge .ge-ico-img { width: 22px; height: 22px; object-fit: contain; display: block; }

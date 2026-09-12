@@ -1,0 +1,394 @@
+/* ბექოფისის სტილი. საჯარო საიტის თემისგან სრულიად დამოუკიდებელი. */
+:root {
+  --bg: #0f1115;
+  --surface: #171a21;
+  --surface-2: #1e222b;
+  --line: #2a2f3a;
+  --text: #e7e9ee;
+  --muted: #9aa0ac;
+  --accent: #008170;
+  --accent-2: #00a88f;
+  --danger: #b4453c;
+  --warn: #d7b15a;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.55 "Noto Sans Georgian", "Segoe UI", system-ui, sans-serif;
+}
+
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1 { font-size: 22px; margin: 0; }
+h2 { font-size: 17px; margin: 0 0 12px; }
+h3 { font-size: 15px; margin: 0 0 4px; }
+.muted { color: var(--muted); font-size: 13px; }
+
+/* ---------------- ჩარჩო ---------------- */
+.shell { display: flex; min-height: 100vh; }
+
+.side {
+  width: 210px; flex: 0 0 210px;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column; padding: 18px 14px;
+}
+.side__brand { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 22px; }
+.side__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-2); }
+.side__nav { display: flex; flex-direction: column; gap: 2px; }
+.side__nav a {
+  color: var(--text); padding: 9px 11px; border-radius: 8px; font-size: 14px;
+}
+.side__nav a:hover { background: var(--surface-2); text-decoration: none; }
+.side__nav a.on { background: var(--accent); color: #fff; }
+.side__out { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.side__who { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+
+.main { flex: 1; padding: 22px 26px 60px; min-width: 0; }
+.main__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+
+/* ---------------- ელემენტები ---------------- */
+.panel {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 18px; margin-bottom: 18px;
+}
+
+.btn {
+  display: inline-block; border: 1px solid var(--line); background: var(--surface-2);
+  color: var(--text); padding: 8px 14px; border-radius: 8px; cursor: pointer;
+  font: inherit; font-size: 14px; line-height: 1.2;
+}
+.btn:hover { border-color: var(--accent-2); text-decoration: none; }
+.btn--primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn--primary:hover { background: var(--accent-2); border-color: var(--accent-2); }
+.btn--danger { background: transparent; border-color: var(--danger); color: #e08a83; }
+.btn--danger:hover { background: var(--danger); color: #fff; }
+.btn--ghost { background: transparent; }
+.btn--sm { padding: 6px 11px; font-size: 13px; }
+.btn--xs { padding: 4px 9px; font-size: 12px; }
+.btn--wide { width: 100%; padding: 11px; }
+
+.inp, .sel, input[type="text"], input[type="url"], input[type="number"],
+input[type="password"], input[type="search"] {
+  background: var(--surface-2); border: 1px solid var(--line); color: var(--text);
+  border-radius: 8px; padding: 8px 11px; font: inherit; font-size: 14px; width: 100%;
+}
+.inp:focus, .sel:focus, input:focus { outline: 2px solid var(--accent); outline-offset: 0; }
+.sel { width: auto; }
+
+.flashes { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+.flash { padding: 10px 13px; border-radius: 8px; font-size: 14px; border: 1px solid; }
+.flash--ok { background: rgba(0, 129, 112, .15); border-color: var(--accent); }
+.flash--error { background: rgba(180, 69, 60, .15); border-color: var(--danger); }
+.flash--warn { background: rgba(215, 177, 90, .12); border-color: var(--warn); color: #e8d6a8; }
+
+.list { margin: 0 0 14px; padding-left: 18px; color: var(--muted); font-size: 14px; }
+
+/* ---------------- დაფა ---------------- */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 16px; display: flex; flex-direction: column; gap: 4px;
+}
+.card span:last-child { font-size: 13px; color: var(--muted); }
+.card__n { font-size: 24px; font-weight: 600; }
+.card--warn .card__n { color: var(--warn); }
+
+/* ---------------- ბრენდინგი ---------------- */
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.form-grid label { display: flex; flex-direction: column; gap: 5px; font-size: 14px; }
+.form-grid small { color: var(--muted); font-size: 12px; }
+.form-grid__foot { grid-column: 1 / -1; }
+.check { flex-direction: row !important; align-items: center; gap: 8px !important; }
+.check input { width: auto; }
+
+.roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; }
+.role {
+  display: flex; gap: 14px; background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 14px;
+}
+.role__preview {
+  width: 120px; height: 90px; flex: 0 0 120px; border-radius: 8px;
+  background: repeating-conic-gradient(#23262e 0% 25%, #1b1e25 0% 50%) 50% / 14px 14px;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.role__preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.role__preview--empty span { color: var(--muted); font-size: 12px; }
+.role__body { min-width: 0; flex: 1; }
+.role__body .meta { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+.role__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+.upload { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.upload__input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.upload__name { font-size: 12px; color: var(--muted); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------------- ბიბლიოთეკა ---------------- */
+.bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.bar--filter { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.bar--filter .inp { width: auto; min-width: 220px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.tile {
+  margin: 0; background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column;
+}
+.tile img { width: 100%; height: 110px; object-fit: cover; display: block; background: var(--surface-2); }
+.tile figcaption { padding: 9px 10px; display: flex; flex-direction: column; gap: 3px; font-size: 12px; }
+.tile figcaption b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.tile form { margin-top: 5px; }
+
+.pager { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+
+/* ---------------- შესვლა ---------------- */
+.login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+.login {
+  width: 100%; max-width: 340px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: 14px; padding: 26px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.login h1 { font-size: 20px; }
+.login__hint { color: var(--muted); font-size: 13px; margin: -8px 0 0; }
+.login label { display: flex; flex-direction: column; gap: 5px; font-size: 14px; }
+
+/* ---------------- მობილური ---------------- */
+@media (max-width: 760px) {
+  .shell { flex-direction: column; }
+  .side { width: auto; flex: none; flex-direction: row; align-items: center; gap: 12px; padding: 10px 12px; overflow-x: auto; }
+  .side__brand { margin: 0; }
+  .side__nav { flex-direction: row; }
+  .side__out { margin: 0 0 0 auto; }
+  .main { padding: 16px 14px 40px; }
+  .role { flex-direction: column; }
+  .role__preview { width: 100%; flex: none; }
+}
+
+/* ---------------- კონტენტი ---------------- */
+.panel--flush { padding: 0; overflow: hidden; }
+.head-actions { display: flex; gap: 8px; }
+
+.tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+.tab {
+  padding: 7px 14px; border-radius: 8px; color: var(--text);
+  background: var(--surface-2); border: 1px solid var(--line); font-size: 14px;
+}
+.tab:hover { text-decoration: none; border-color: var(--accent-2); }
+.tab.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tbl th {
+  text-align: left; font-weight: 500; font-size: 12px; color: var(--muted);
+  padding: 11px 12px; border-bottom: 1px solid var(--line);
+}
+.tbl td { padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: 0; }
+.tbl tr:hover td { background: var(--surface-2); }
+.tbl__thumb { width: 96px; }
+.tbl__thumb img { width: 84px; height: 48px; object-fit: cover; border-radius: 5px; display: block; }
+.tbl__none { font-size: 11px; color: var(--warn); }
+
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px;
+  background: var(--surface-2); border: 1px solid var(--line); color: var(--muted);
+  margin-right: 4px;
+}
+.badge--ok { border-color: var(--accent); color: #7fd6c6; }
+
+.code {
+  font-family: ui-monospace, Consolas, monospace; font-size: 12px;
+  background: var(--surface-2); padding: 2px 6px; border-radius: 5px;
+  word-break: break-all;
+}
+
+.role-panel__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.role-panel__head h2 { margin-bottom: 2px; }
+.role-panel__body { display: flex; gap: 18px; margin-top: 14px; flex-wrap: wrap; }
+.role-panel__forms { flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 10px; }
+
+.preview { flex: 0 0 260px; }
+.preview__box {
+  border-radius: 8px; overflow: hidden; border: 1px solid var(--line);
+  background: repeating-conic-gradient(#23262e 0% 25%, #1b1e25 0% 50%) 50% / 14px 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.preview__box--wide { width: 260px; height: 146px; }
+.preview__box--portrait { width: 160px; height: 240px; }
+.preview__box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.preview__box img.is-original { opacity: .65; }
+.preview .meta { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+
+.picker summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+.picker summary:hover { color: var(--text); }
+.picker .bar { margin-top: 8px; }
+.picker .inp { width: 160px; }
+
+@media (max-width: 760px) {
+  .preview, .preview__box--wide { width: 100%; flex: none; }
+  .tbl__thumb { width: 70px; }
+  .tbl__thumb img { width: 60px; height: 34px; }
+}
+
+/* ---------------- მთავარი გვერდის კონსტრუქტორი ---------------- */
+.rowlist { display: flex; flex-direction: column; gap: 8px; }
+.rowitem { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; }
+.rowitem--off { opacity: .6; }
+.rowitem > summary {
+  display: flex; align-items: center; gap: 10px; padding: 11px 13px;
+  cursor: pointer; list-style: none; font-size: 14px;
+}
+.rowitem > summary::-webkit-details-marker { display: none; }
+.rowitem[open] > summary { border-bottom: 1px solid var(--line); }
+.rowitem__pos {
+  flex: 0 0 24px; height: 24px; border-radius: 50%; background: var(--bg);
+  display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--muted);
+}
+.rowitem__title { font-weight: 500; }
+.rowitem__meta { margin-left: auto; font-size: 12px; color: var(--muted); text-align: right; }
+.rowitem__body { padding: 14px; }
+.rowitem__order { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.rowitem__order form { display: inline; }
+
+.rowform { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.rowform label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; }
+.rowform small { color: var(--muted); font-size: 11px; }
+.rowform .sel { width: 100%; }
+.rowform__foot { margin-top: 14px; }
+
+summary.h2-like { font-size: 17px; font-weight: 600; cursor: pointer; }
+button[disabled] { opacity: .4; cursor: not-allowed; }
+
+/* ---------------- ფონური ამოცანები ---------------- */
+.warnbox {
+  background: rgba(215, 177, 90, .1); border: 1px solid var(--warn);
+  border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #e8d6a8;
+  margin: 14px 0;
+}
+.progress {
+  height: 10px; background: var(--surface-2); border-radius: 20px;
+  overflow: hidden; margin: 4px 0 8px;
+}
+.progress__bar { height: 100%; background: var(--accent-2); transition: width .4s; }
+.joblog {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px 12px; font-family: ui-monospace, Consolas, monospace; font-size: 12px;
+  max-height: 240px; overflow: auto; white-space: pre-wrap; color: var(--muted);
+  margin: 0 0 12px;
+}
+label.inline { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+label.inline .sel { width: auto; }
+
+/* ---------------- უნივერსალური სურათის სლოტი ---------------- */
+.slot { display: flex; gap: 14px; margin: 4px 0 16px; flex-wrap: wrap; }
+.slot--compact { padding: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; }
+.slot__preview {
+  border-radius: 8px; overflow: hidden; border: 1px solid var(--line); flex: none;
+  background: repeating-conic-gradient(#23262e 0% 25%, #1b1e25 0% 50%) 50% / 14px 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.slot__preview--wide { width: 220px; height: 124px; }
+.slot__preview--square { width: 96px; height: 96px; }
+.slot__preview--portrait { width: 110px; height: 165px; }
+.slot__preview img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.slot__preview--wide img { object-fit: cover; }
+.slot__preview span { color: var(--muted); font-size: 12px; }
+.slot__body { flex: 1; min-width: 250px; }
+.slot__body .meta { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+.slot__actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 10px 0 8px; }
+
+.rowitem__icon { width: 20px; height: 20px; object-fit: contain; }
+
+/* ---------------- მსახიობები ---------------- */
+.people { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.person { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.person > summary {
+  display: flex; align-items: center; gap: 11px; padding: 10px 12px;
+  cursor: pointer; list-style: none;
+}
+.person > summary::-webkit-details-marker { display: none; }
+.person[open] > summary { border-bottom: 1px solid var(--line); }
+.person__face {
+  width: 44px; height: 44px; flex: none; border-radius: 50%; overflow: hidden;
+  background: var(--surface-2); display: flex; align-items: center; justify-content: center;
+}
+.person__face img { width: 100%; height: 100%; object-fit: cover; }
+.person__face span { color: var(--muted); font-size: 12px; }
+.person__name { font-size: 14px; min-width: 0; }
+.person__body { padding: 14px; }
+.roles--wide { display: grid; grid-template-columns: repeat(auto-fill, minmax(430px, 1fr)); gap: 12px; }
+@media (max-width: 900px) { .roles--wide { grid-template-columns: 1fr; } }
+.rowitem__bg { width: 44px; height: 26px; object-fit: cover; border-radius: 4px; flex: none; }
+
+/* სლოტის გადახედვები: დაყენებული + ახლანდელი გვერდიგვერდ */
+.slot__previews { display: flex; gap: 10px; flex: none; }
+.slot__fig { margin: 0; display: flex; flex-direction: column; gap: 4px; }
+.slot__fig figcaption { font-size: 11px; color: var(--muted); text-align: center; }
+.slot__preview--now { opacity: .75; border-style: dashed; }
+.slot__size {
+  font-size: 12px; margin: 0 0 6px;
+  background: rgba(0,129,112,.12); border: 1px solid var(--accent);
+  border-radius: 6px; padding: 6px 9px; display: inline-block;
+}
+.slot__size b { color: #7fd6c6; }
+
+/* ---------------- გადათრევა ---------------- */
+.drag-handle {
+  cursor: grab; color: var(--muted); font-size: 15px; line-height: 1;
+  padding: 2px 4px; border-radius: 4px; flex: none; user-select: none;
+}
+.drag-handle:hover { color: var(--text); background: var(--surface-2); }
+.drag-handle:active { cursor: grabbing; }
+.is-dragging { opacity: .45; outline: 2px dashed var(--accent-2); }
+
+/* ---------------- რიგის ფილმების სია ---------------- */
+.pinbox {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 13px; margin-bottom: 14px;
+}
+.pinbox__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.pinbox__head h3 { margin: 0; }
+.pinbox__tools { display: flex; gap: 8px; }
+
+.pinlist { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.pinlist li {
+  display: flex; align-items: center; gap: 9px; padding: 5px 8px;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 7px;
+  font-size: 13px;
+}
+.pinlist li img { width: 58px; height: 33px; object-fit: cover; border-radius: 4px; flex: none; }
+.pinlist__n {
+  flex: none; width: 22px; text-align: center; font-size: 11px; color: var(--muted);
+}
+.pinlist__noimg { width: 58px; text-align: center; color: var(--muted); flex: none; }
+.pinlist__title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.pinlist__title:hover { color: var(--accent-2); }
+.pinlist__x { margin-left: auto; }
+
+.pinsearch { position: relative; margin-top: 12px; }
+.pinsearch__q { max-width: 420px; }
+.pinsearch__out { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; max-width: 560px; }
+.pinsearch__item {
+  display: flex; align-items: center; gap: 9px; width: 100%; text-align: left;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 7px;
+  padding: 5px 8px; cursor: pointer; color: var(--text); font: inherit; font-size: 13px;
+}
+.pinsearch__item:hover { border-color: var(--accent-2); }
+.pinsearch__item img { width: 52px; height: 30px; object-fit: cover; border-radius: 4px; flex: none; }
+.pinsearch__item span:nth-of-type(1) { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pinsearch__none { font-size: 12px; color: var(--muted); padding: 4px 2px; }
+
+/* ---------------- ჩანაცვლება და ნომერი ---------------- */
+.pinlist li { flex-wrap: wrap; }
+.pinlist__num { flex: none; margin: 0; }
+.pinlist__num input.pinlist__n {
+  width: 42px; padding: 3px 5px; text-align: center; font-size: 12px;
+  background: var(--bg); border: 1px solid var(--line); color: var(--muted);
+  border-radius: 5px;
+}
+.pinlist__num input.pinlist__n:focus { color: var(--text); border-color: var(--accent); }
+.pinswap { width: 100%; margin-top: 7px; padding-top: 7px; border-top: 1px dashed var(--line); }
+.pinswap__q { max-width: 420px; }
+.pinswap__out { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; max-width: 560px; }
+.pinswap__toggle { flex: none; }

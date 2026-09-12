@@ -8,3 +8,5 @@ venv/
 *.db-wal
 !gemovie.db
 .DS_Store
+
+media/

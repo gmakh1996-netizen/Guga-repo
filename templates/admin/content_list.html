@@ -1,0 +1,81 @@
+{% extends "admin/base.html" %}
+{% block title %}კონტენტი{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <div class="tabs">
+    <a class="tab {{ 'on' if subject_type == 'movie' }}"
+       href="{{ url_for('admin.content_list', type='movie', only=only, q=q) }}">ფილმები</a>
+    <a class="tab {{ 'on' if subject_type == 'series' }}"
+       href="{{ url_for('admin.content_list', type='series', only=only, q=q) }}">სერიალები</a>
+  </div>
+
+  <form method="get" class="bar bar--filter">
+    <input type="hidden" name="type" value="{{ subject_type }}">
+    <input type="search" name="q" value="{{ q }}" placeholder="სათაურით ძებნა" class="inp">
+    <select name="only" class="sel">
+      <option value="">ყველა</option>
+      <option value="missing" {{ 'selected' if only == 'missing' }}>უსურათო (საიტზე არ ჩანს)</option>
+      <option value="custom" {{ 'selected' if only == 'custom' }}>ბექოფისიდან დაყენებული</option>
+    </select>
+    <button type="submit" class="btn btn--ghost btn--sm">ფილტრი</button>
+    <span class="muted">ნაპოვნია {{ "{:,}".format(total).replace(",", " ") }}</span>
+  </form>
+</section>
+
+{% if items %}
+<section class="panel panel--flush">
+  <table class="tbl">
+    <thead>
+      <tr><th></th><th>სათაური</th><th>წელი</th><th>რეიტინგი</th><th>სურათები</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td class="tbl__thumb">
+          {% if item.thumb %}
+            <img src="{{ item.thumb }}" alt="" loading="lazy">
+          {% else %}
+            <span class="tbl__none">უსურათო</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('admin.content_images', subject_type=subject_type, subject_id=item.rec.id) }}">
+            {{ item.rec.title }}
+          </a>
+          {% if item.rec.original_title %}<div class="muted">{{ item.rec.original_title }}</div>{% endif %}
+        </td>
+        <td class="muted">{{ item.rec.year or "—" }}</td>
+        <td class="muted">{{ item.rec.rating or "—" }}</td>
+        <td>
+          {% if item.custom %}
+            {% for role in item.custom %}<span class="badge">{{ role }}</span>{% endfor %}
+          {% else %}
+            <span class="muted">ორიგინალი</span>
+          {% endif %}
+        </td>
+        <td>
+          <a class="btn btn--ghost btn--xs"
+             href="{{ url_for('admin.content_images', subject_type=subject_type, subject_id=item.rec.id) }}">სურათები</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<nav class="pager">
+  {% if page > 1 %}
+    <a class="btn btn--ghost btn--sm"
+       href="{{ url_for('admin.content_list', type=subject_type, page=page-1, q=q, only=only) }}">წინა</a>
+  {% endif %}
+  <span class="muted">გვერდი {{ page }}</span>
+  {% if has_more %}
+    <a class="btn btn--ghost btn--sm"
+       href="{{ url_for('admin.content_list', type=subject_type, page=page+1, q=q, only=only) }}">შემდეგი</a>
+  {% endif %}
+</nav>
+{% else %}
+<section class="panel"><p class="muted">ამ ფილტრით არაფერი მოიძებნა.</p></section>
+{% endif %}
+{% endblock %}

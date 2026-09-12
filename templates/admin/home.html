@@ -1,0 +1,309 @@
+{% extends "admin/base.html" %}
+{% from "admin/_imageslot.html" import image_slot with context %}
+{% block title %}მთავარი გვერდი{% endblock %}
+
+{% macro row_form(row, action, submit_label, prefix) %}
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <div class="rowform">
+    <label>სათაური
+      <input type="text" name="title" value="{{ row.title if row else '' }}" maxlength="120" required>
+    </label>
+    <label>ტიპი
+      <select name="kind" class="sel">
+        {% for value, label in kinds %}
+          <option value="{{ value }}" {{ 'selected' if row and row.kind == value }}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>აიქონი
+      <select name="icon" class="sel">
+        {% for name in icons %}
+          <option value="{{ name }}" {{ 'selected' if row and row.icon == name }}>{{ name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>კონტენტი
+      <select name="media_type" class="sel">
+        {% for value, label in media_types %}
+          <option value="{{ value }}" {{ 'selected' if row and row.media_type == value }}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>წყობა
+      <select name="sort_mode" class="sel">
+        {% for value, label in sorts %}
+          <option value="{{ value }}" {{ 'selected' if row and row.sort_mode == value }}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>გარეგნობა
+      <select name="layout" class="sel">
+        {% for value, label in layouts %}
+          <option value="{{ value }}" {{ 'selected' if row and row.layout == value }}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>მხოლოდ ეს ჟანრი
+      <select name="genre_id" class="sel">
+        <option value="">ყველა</option>
+        {% for g in genres %}
+          <option value="{{ g.id }}" {{ 'selected' if row and row.genre_id == g.id }}>{{ g.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>გამორიცხე ჟანრი
+      <select name="exclude_genre_id" class="sel">
+        <option value="">არცერთი</option>
+        {% for g in genres %}
+          <option value="{{ g.id }}" {{ 'selected' if row and row.exclude_genre_id == g.id }}>{{ g.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>რაოდენობა
+      <input type="number" name="item_limit" min="3" max="60" value="{{ row.item_limit if row else 18 }}">
+    </label>
+    <label>ჩნდება (თვე-დღე)
+      <input type="text" name="starts_on" value="{{ row.starts_on if row else '' }}" placeholder="12-20" maxlength="5">
+      <small>ცარიელი = ყოველთვის ჩანს</small>
+    </label>
+    <label>ქრება (თვე-დღე)
+      <input type="text" name="ends_on" value="{{ row.ends_on if row else '' }}" placeholder="01-10" maxlength="5">
+    </label>
+    <label class="check">
+      <input type="checkbox" name="is_active" {{ 'checked' if (row and row.is_active) or not row }}>
+      ჩართულია
+    </label>
+  </div>
+  <div class="rowform__foot">
+    <button type="submit" class="btn btn--primary btn--sm">{{ submit_label }}</button>
+  </div>
+{% endmacro %}
+
+{% block content %}
+{% if not rows %}
+<section class="panel">
+  <h2>რიგები ჯერ არ არის</h2>
+  <p class="muted">
+    სანამ ეს ცხრილი ცარიელია, მთავარი გვერდი ძველ, კოდში ჩაწერილ წყობას ხატავს.
+    ჩატვირთეთ იგივე 11 რიგი და შემდეგ თავისუფლად შეცვალეთ.
+  </p>
+  <form method="post" action="{{ url_for('admin.home_seed') }}">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <button type="submit" class="btn btn--primary">ნაგულისხმევი წყობის ჩატვირთვა</button>
+  </form>
+</section>
+{% else %}
+
+<section class="panel">
+  <h2>რიგები ({{ rows|length }})</h2>
+  <p class="muted">თანმიმდევრობა ზუსტად ისეა, როგორც მთავარ გვერდზე გამოჩნდება.</p>
+  <div class="rowlist" id="rowList" data-csrf="{{ csrf_token() }}">
+    {% for row in rows %}
+    <details class="rowitem {{ 'rowitem--off' if not row.is_active }}" data-row-id="{{ row.id }}">
+      <summary>
+        <span class="drag-handle" title="გადაათრიეთ ადგილის შესაცვლელად">⠿</span>
+        <span class="rowitem__pos">{{ loop.index }}</span>
+        {% if bg[row.id].url %}
+          <img src="{{ bg[row.id].url }}" alt="" class="rowitem__bg" title="რიგის ფონი">
+        {% endif %}
+        <span class="rowitem__title">{{ row.title }}</span>
+        <span class="rowitem__meta">
+          {{ row.kind if row.kind != 'movies' else row.media_type }} ·
+          {{ row.sort_mode }} · {{ row.layout }}
+          {%- if row.starts_on %} · {{ row.starts_on }}–{{ row.ends_on }}{% endif %}
+          {%- if not row.is_active %} · გამორთული{% endif %}
+        </span>
+      </summary>
+
+      <div class="rowitem__body">
+        <div class="rowitem__order">
+          <form method="post" action="{{ url_for('admin.home_move', row_id=row.id) }}">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <input type="hidden" name="dir" value="up">
+            <button type="submit" class="btn btn--ghost btn--xs" {{ 'disabled' if loop.first }}>↑ აწევა</button>
+          </form>
+          <form method="post" action="{{ url_for('admin.home_move', row_id=row.id) }}">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <input type="hidden" name="dir" value="down">
+            <button type="submit" class="btn btn--ghost btn--xs" {{ 'disabled' if loop.last }}>↓ ჩამოწევა</button>
+          </form>
+          <form method="post" action="{{ url_for('admin.home_delete', row_id=row.id) }}"
+                onsubmit="return confirm('წაიშალოს რიგი „{{ row.title }}“?');">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn--danger btn--xs">წაშლა</button>
+          </form>
+        </div>
+
+        {% if row.kind == 'movies' %}
+        <div class="pinbox" data-row="{{ row.id }}" data-csrf="{{ csrf_token() }}">
+          <div class="pinbox__head">
+            <h3>ფილმების სია</h3>
+            <div class="pinbox__tools">
+              <form method="post" action="{{ url_for('admin.home_shuffle', row_id=row.id) }}">
+                <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn--primary btn--sm">შაფლი</button>
+              </form>
+              {% if items[row.id] %}
+              <form method="post" action="{{ url_for('admin.home_items_clear', row_id=row.id) }}"
+                    onsubmit="return confirm('სია გასუფთავდეს? რიგი ისევ ავტომატურად შეივსება.');">
+                <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn--ghost btn--sm">გასუფთავება</button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if items[row.id] %}
+            <p class="muted">
+              ამ რიგში ზუსტად ეს {{ items[row.id]|length }} ჩანაწერი ჩანს, ამ თანმიმდევრობით.
+              გადაათრიეთ ადგილის შესაცვლელად.
+            </p>
+            <ol class="pinlist">
+              {% for it in items[row.id] %}
+              <li data-pk="{{ it.pk }}">
+                <span class="drag-handle">⠿</span>
+                <form method="post" class="pinlist__num"
+                      action="{{ url_for('admin.home_items_move_to', row_id=row.id, pk=it.pk) }}">
+                  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                  <input type="number" name="position" class="pinlist__n" value="{{ loop.index }}"
+                         min="1" max="{{ items[row.id]|length }}" title="ნომერი: აკრიფეთ და Enter">
+                </form>
+                {% if it.thumb %}<img src="{{ it.thumb }}" alt="" loading="lazy">{% else %}<span class="pinlist__noimg">—</span>{% endif %}
+                <a class="pinlist__title" href="{{ it.url }}" target="_blank" rel="noopener">{{ it.title }}</a>
+                <span class="muted">{{ it.year }} · {{ 'სერიალი' if it.media_type == 'tv' else 'ფილმი' }}</span>
+                <button type="button" class="btn btn--ghost btn--xs pinswap__toggle"
+                        title="ჩანაცვლება სხვა ფილმით">⇄</button>
+                <form method="post" class="pinlist__x"
+                      action="{{ url_for('admin.home_items_remove', row_id=row.id, pk=it.pk) }}">
+                  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                  <button type="submit" class="btn btn--danger btn--xs" title="მოხსნა">×</button>
+                </form>
+
+                <div class="pinswap" hidden>
+                  <input type="search" class="inp pinswap__q" autocomplete="off"
+                         placeholder="რით ჩავანაცვლოთ „{{ it.title }}“…">
+                  <div class="pinswap__out"></div>
+                  <form method="post" class="pinswap__form"
+                        action="{{ url_for('admin.home_items_replace', row_id=row.id, pk=it.pk) }}">
+                    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                    <input type="hidden" name="media_type" value="">
+                    <input type="hidden" name="item_id" value="">
+                  </form>
+                </div>
+              </li>
+              {% endfor %}
+            </ol>
+          {% else %}
+            <p class="muted">
+              სია ცარიელია, ანუ რიგი ავტომატურად ივსება
+              ({{ row.media_type }} · {{ row.sort_mode }}).
+              დააჭირეთ „შაფლს" ან მოძებნეთ და დაამატეთ კონკრეტული ფილმები.
+            </p>
+          {% endif %}
+
+          <div class="pinsearch">
+            <input type="search" class="inp pinsearch__q" placeholder="ფილმის ან სერიალის ძებნა…"
+                   autocomplete="off">
+            <div class="pinsearch__out"></div>
+            <form method="post" class="pinsearch__add"
+                  action="{{ url_for('admin.home_items_add', row_id=row.id) }}">
+              <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+              <input type="hidden" name="media_type" value="">
+              <input type="hidden" name="item_id" value="">
+            </form>
+          </div>
+        </div>
+
+          {{ image_slot('home_row', row.id, 'row_bg', 'რიგის ფონი',
+                        bg[row.id].hint,
+                        bg[row.id].asset, bg[row.id].url, shape='wide',
+                        next=url_for('admin.home_builder'), compact=true,
+                        size=bg[row.id].size, size_note=bg[row.id].size_note,
+                        current_url=bg[row.id].current_url,
+                        current_label=bg[row.id].current_label) }}
+
+          {{ image_slot('home_row', row.id, 'icon', 'რიგის აიქონი',
+                        'ატვირთული სურათი ჩაშენებული აიქონის ნაცვლად.',
+                        bg[row.id].icon_asset, bg[row.id].icon_url, shape='square',
+                        next=url_for('admin.home_builder'), compact=true,
+                        size=bg[row.id].icon_size, size_note=bg[row.id].icon_size_note,
+                        current_label='ახლა ჩაშენებული აიქონია: ' ~ (row.icon or 'film')) }}
+        {% endif %}
+
+        <form method="post" action="{{ url_for('admin.home_save', row_id=row.id) }}">
+          {{ row_form(row, 'save', 'შენახვა', 'r' ~ row.id) }}
+        </form>
+      </div>
+    </details>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="panel">
+  <details>
+    <summary class="h2-like">ახალი რიგის დამატება</summary>
+    <form method="post" action="{{ url_for('admin.home_new') }}" style="margin-top:14px">
+      {{ row_form(None, 'new', 'დამატება', 'new') }}
+    </form>
+  </details>
+</section>
+{% endif %}
+
+<section class="panel">
+  <h2>ჰერო და ტოპ-სია</h2>
+  <form method="post" action="{{ url_for('admin.home_settings') }}" class="form-grid">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label>ჰეროში დაპინული ფილმების ნომრები
+      <input type="text" name="hero_pinned_ids"
+             value="{{ (settings.hero_pinned_ids or [])|join(', ') }}" placeholder="49764, 50624">
+      <small>
+        ეს ფილმები ყოველთვის ჩნდება ჰეროში, დანარჩენს ავსებს ტოპ-სია.
+        ნომერი ფილმის მისამართშია: /movie/<b>49764</b>.
+      </small>
+    </label>
+    <label>ჰეროდან გამორიცხული ჟანრი
+      <select name="hero_exclude_genre" class="sel" style="width:100%">
+        <option value="">არცერთი</option>
+        {% for g in genres %}
+          <option value="{{ g.id }}" {{ 'selected' if settings.hero_exclude_genre == g.id }}>{{ g.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>კვირის ტოპის წლები
+      <input type="text" name="weekly_top_years" value="{{ (settings.weekly_top_years or [])|join(', ') }}"
+             placeholder="2025, 2026">
+    </label>
+    <label>კვირის ტოპის სიგრძე
+      <input type="number" name="weekly_top_limit" min="1" max="200" value="{{ settings.weekly_top_limit }}">
+    </label>
+    <div class="form-grid__foot">
+      <button type="submit" class="btn btn--primary">შენახვა</button>
+    </div>
+  </form>
+
+  {% if pinned_titles %}
+  <p class="muted" style="margin-top:12px">
+    ახლა დაპინულია:
+    {% for item in pinned_titles %}<span class="badge">{{ item.id }} · {{ item.title }}</span>{% endfor %}
+  </p>
+  {% endif %}
+</section>
+
+{% if rows %}
+<section class="panel">
+  <details>
+    <summary class="muted">ნაგულისხმევ წყობაზე დაბრუნება</summary>
+    <form method="post" action="{{ url_for('admin.home_seed') }}" style="margin-top:10px"
+          onsubmit="return confirm('ყველა არსებული რიგი წაიშლება და ნაგულისხმევი 11 რიგი ჩაიწერება. გავაგრძელოთ?');">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <input type="hidden" name="replace" value="1">
+      <button type="submit" class="btn btn--danger btn--sm">არსებულის წაშლა და თავიდან ჩატვირთვა</button>
+    </form>
+  </details>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='admin/home-builder.js') }}?v=1"></script>
+{% endblock %}

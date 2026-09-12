@@ -1,0 +1,91 @@
+{# ერთი სურათის სლოტი: რეკომენდებული ზომა, ახლანდელი სურათი, ატვირთვა,
+   მისამართიდან ჩამოტანა, ბიბლიოთეკიდან არჩევა და მოხსნა.
+   ყველა ეკრანი ამას იყენებს, ამიტომ ქცევა ყველგან ერთნაირია. #}
+{% macro image_slot(subject_type, subject_id, role, label, hint, asset, url,
+                    shape='wide', next='', compact=false,
+                    size='', size_note='', current_url='', current_label='') %}
+{% set uid = subject_type ~ '-' ~ subject_id ~ '-' ~ role %}
+<div class="slot {{ 'slot--compact' if compact }}">
+  <div class="slot__previews">
+    <figure class="slot__fig">
+      <div class="slot__preview slot__preview--{{ shape }}">
+        {% if url %}<img src="{{ url }}" alt="{{ label }}">{% else %}<span>ცარიელი</span>{% endif %}
+      </div>
+      <figcaption>{{ 'დაყენებული' if url else 'ცარიელი' }}</figcaption>
+    </figure>
+
+    {# რა ჩანს საიტზე ახლა, სანამ საკუთარს ატვირთავთ #}
+    {% if current_url and not url %}
+    <figure class="slot__fig">
+      <div class="slot__preview slot__preview--{{ shape }} slot__preview--now">
+        <img src="{{ current_url }}" alt="ახლანდელი">
+      </div>
+      <figcaption>{{ current_label or 'ახლა ასეა' }}</figcaption>
+    </figure>
+    {% endif %}
+  </div>
+
+  <div class="slot__body">
+    <h3>{{ label }}</h3>
+    {% if size %}
+      <p class="slot__size">
+        <b>რეკომენდებული ზომა: {{ size }}</b>
+        {% if size_note %}<span class="muted"> · {{ size_note }}</span>{% endif %}
+      </p>
+    {% endif %}
+    {% if hint %}<p class="muted">{{ hint }}</p>{% endif %}
+    {% if not current_url and current_label and not url %}
+      <p class="muted">{{ current_label }}</p>
+    {% endif %}
+    {% if asset %}
+      <p class="meta">ატვირთული: {{ asset.width }}×{{ asset.height }} · {{ asset.ext|upper }} ·
+        {{ asset.variants|length }} ვარიანტი</p>
+    {% endif %}
+
+    <div class="slot__actions">
+      <form method="post" enctype="multipart/form-data" class="upload"
+            action="{{ url_for('admin.image_upload', subject_type=subject_type,
+                               subject_id=subject_id, role=role) }}">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ next }}">
+        <input type="file" name="file" accept="image/*" required id="f-{{ uid }}" class="upload__input">
+        <label for="f-{{ uid }}" class="btn btn--ghost btn--sm">ფაილი</label>
+        <span class="upload__name" data-for="f-{{ uid }}"></span>
+        <button type="submit" class="btn btn--primary btn--sm">ატვირთვა</button>
+      </form>
+
+      {% if asset %}
+      <form method="post" onsubmit="return confirm('მოიხსნას „{{ label }}“?');"
+            action="{{ url_for('admin.image_delete', subject_type=subject_type,
+                               subject_id=subject_id, role=role) }}">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="btn btn--danger btn--sm">მოხსნა</button>
+      </form>
+      {% endif %}
+    </div>
+
+    <details class="picker">
+      <summary>მისამართიდან ან ბიბლიოთეკიდან</summary>
+      <form method="post" class="bar"
+            action="{{ url_for('admin.image_fetch', subject_type=subject_type,
+                               subject_id=subject_id, role=role) }}">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ next }}">
+        <input type="url" name="url" class="inp" placeholder="https://..."
+               value="{{ current_url if current_url.startswith('http') else '' }}" required>
+        <button type="submit" class="btn btn--ghost btn--sm">ჩამოტვირთვა</button>
+      </form>
+      <form method="post" class="bar"
+            action="{{ url_for('admin.image_pick', subject_type=subject_type,
+                               subject_id=subject_id, role=role) }}">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ next }}">
+        <input type="number" name="asset_id" class="inp" placeholder="ფაილის ნომერი" min="1" required>
+        <button type="submit" class="btn btn--ghost btn--sm">მიბმა</button>
+        <a class="muted" href="{{ url_for('admin.media_library') }}" target="_blank" rel="noopener">ბიბლიოთეკა ↗</a>
+      </form>
+    </details>
+  </div>
+</div>
+{% endmacro %}

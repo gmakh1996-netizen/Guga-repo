@@ -1,0 +1,138 @@
+{% extends "admin/base.html" %}
+{% from "admin/_imageslot.html" import image_slot with context %}
+{% block title %}მენიუ{% endblock %}
+
+{% macro item_fields(item) %}
+  <div class="rowform">
+    <label>სახელი
+      <input type="text" name="label" value="{{ item.label if item else '' }}" maxlength="60" required>
+    </label>
+    <label>მისამართი
+      <input type="text" name="url" value="{{ item.url if item else '/' }}" maxlength="300" required>
+    </label>
+    <label>აიქონი
+      <select name="icon" class="sel">
+        {% for name in icons %}
+          <option value="{{ name }}" {{ 'selected' if item and item.icon == name }}>{{ name }}</option>
+        {% endfor %}
+      </select>
+      <small>ატვირთული სურათი ამას გადაფარავს</small>
+    </label>
+    <label>აქტიურად ითვლება
+      <input type="text" name="match" value="{{ item.match if item else '' }}"
+             placeholder="path:/watchlist ან media:movie" maxlength="60">
+      <small>როდის იყოს პუნქტი მონიშნული</small>
+    </label>
+    <label class="check">
+      <input type="checkbox" name="is_active" {{ 'checked' if (item and item.is_active) or not item }}> ჩართული
+    </label>
+    <label class="check">
+      <input type="checkbox" name="visible_desktop" {{ 'checked' if (item and item.visible_desktop) or not item }}> დესკტოპზე
+    </label>
+    <label class="check">
+      <input type="checkbox" name="visible_mobile" {{ 'checked' if (item and item.visible_mobile) or not item }}> მობილურზე
+    </label>
+    <label class="check">
+      <input type="checkbox" name="new_tab" {{ 'checked' if item and item.new_tab }}> ახალ ფანჯარაში
+    </label>
+  </div>
+{% endmacro %}
+
+{% block content %}
+{% if not rows %}
+<section class="panel">
+  <h2>მენიუ ჯერ არ არის</h2>
+  <p class="muted">სანამ ცხრილი ცარიელია, საიტი ძველ, კოდში ჩაწერილ 7 პუნქტს ხატავს.</p>
+  <form method="post" action="{{ url_for('admin.menu_seed') }}">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <button type="submit" class="btn btn--primary">ნაგულისხმევი მენიუს ჩატვირთვა</button>
+  </form>
+</section>
+{% else %}
+
+<section class="panel">
+  <h2>პუნქტები ({{ rows|length }})</h2>
+  <p class="muted">თანმიმდევრობა ისეა, როგორც გვერდით მენიუში ჩანს.</p>
+
+  <div class="rowlist">
+    {% for row in rows %}
+    {% set item = row.item %}
+    <details class="rowitem {{ 'rowitem--off' if not item.is_active }}">
+      <summary>
+        <span class="rowitem__pos">{{ loop.index }}</span>
+        {% if row.icon_url %}
+          <img src="{{ row.icon_url }}" alt="" class="rowitem__icon">
+        {% endif %}
+        <span class="rowitem__title">{{ item.label }}</span>
+        <span class="rowitem__meta">
+          {{ item.url }}
+          {%- if not item.visible_desktop %} · მხოლოდ მობილური{% endif %}
+          {%- if not item.visible_mobile %} · მხოლოდ დესკტოპი{% endif %}
+          {%- if not item.is_active %} · გამორთული{% endif %}
+        </span>
+      </summary>
+
+      <div class="rowitem__body">
+        <div class="rowitem__order">
+          <form method="post" action="{{ url_for('admin.menu_move', item_id=item.id) }}">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <input type="hidden" name="dir" value="up">
+            <button type="submit" class="btn btn--ghost btn--xs" {{ 'disabled' if loop.first }}>↑</button>
+          </form>
+          <form method="post" action="{{ url_for('admin.menu_move', item_id=item.id) }}">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <input type="hidden" name="dir" value="down">
+            <button type="submit" class="btn btn--ghost btn--xs" {{ 'disabled' if loop.last }}>↓</button>
+          </form>
+          <form method="post" action="{{ url_for('admin.menu_delete', item_id=item.id) }}"
+                onsubmit="return confirm('წაიშალოს „{{ item.label }}“?');">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn--danger btn--xs">წაშლა</button>
+          </form>
+        </div>
+
+        {{ image_slot('menu_item', item.id, 'icon', 'აიქონის სურათი',
+                      'ატვირთული სურათი ჩაშენებული აიქონის ნაცვლად.',
+                      row.icon_asset, row.icon_url, shape='square',
+                      next=url_for('admin.menu_list'), compact=true,
+                      size=icon_size, size_note=icon_size_note,
+                      current_label='ახლა ჩაშენებული აიქონია: ' ~ (item.icon or 'movies')) }}
+
+        <form method="post" action="{{ url_for('admin.menu_save', item_id=item.id) }}">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          {{ item_fields(item) }}
+          <div class="rowform__foot">
+            <button type="submit" class="btn btn--primary btn--sm">შენახვა</button>
+          </div>
+        </form>
+      </div>
+    </details>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="panel">
+  <details>
+    <summary class="h2-like">ახალი პუნქტის დამატება</summary>
+    <form method="post" action="{{ url_for('admin.menu_new') }}" style="margin-top:14px">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      {{ item_fields(None) }}
+      <div class="rowform__foot">
+        <button type="submit" class="btn btn--primary btn--sm">დამატება</button>
+      </div>
+    </form>
+  </details>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.upload__input').forEach(function (input) {
+  input.addEventListener('change', function () {
+    var out = document.querySelector('.upload__name[data-for="' + input.id + '"]');
+    if (out) out.textContent = input.files.length ? input.files[0].name : '';
+  });
+});
+</script>
+{% endblock %}

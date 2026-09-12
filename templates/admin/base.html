@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block title %}ბექოფისი{% endblock %} · {{ site_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='fonts/noto.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin/admin.css') }}?v=1">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="side__brand">
+      <span class="side__dot"></span>
+      <span>ბექოფისი</span>
+    </div>
+    <nav class="side__nav">
+      <a href="{{ url_for('admin.dashboard') }}" class="{{ 'on' if request.endpoint == 'admin.dashboard' }}">დაფა</a>
+      <a href="{{ url_for('admin.home_builder') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('admin.home') }}">მთავარი გვერდი</a>
+      <a href="{{ url_for('admin.content_list') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('admin.content') }}">კონტენტი</a>
+      <a href="{{ url_for('admin.menu_list') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('admin.menu') }}">მენიუ</a>
+      <a href="{{ url_for('admin.persons_list') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('admin.persons') }}">მსახიობები</a>
+      <a href="{{ url_for('admin.branding') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('admin.branding') }}">ბრენდინგი</a>
+      <a href="{{ url_for('admin.media_library') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('admin.media') }}">მედია</a>
+      <a href="{{ url_for('admin.jobs_list') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('admin.jobs') }}">ამოცანები</a>
+      <a href="/" target="_blank" rel="noopener">საიტი ↗</a>
+    </nav>
+    <form method="post" action="{{ url_for('admin.logout') }}" class="side__out">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <span class="side__who">{{ admin_user.username if admin_user }}</span>
+      <button type="submit" class="btn btn--ghost btn--sm">გასვლა</button>
+    </form>
+  </aside>
+
+  <main class="main">
+    <header class="main__head">
+      <h1>{% block heading %}{{ self.title() }}{% endblock %}</h1>
+      {% block actions %}{% endblock %}
+    </header>
+
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+      {% if msgs %}
+        <div class="flashes">
+          {% for cat, msg in msgs %}
+            <div class="flash flash--{{ cat }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% block scripts %}{% endblock %}
+</body>
+</html>

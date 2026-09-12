@@ -1,0 +1,50 @@
+{% extends "admin/base.html" %}
+{% from "admin/_imageslot.html" import image_slot with context %}
+{% block title %}{{ rec.title }}{% endblock %}
+
+{% block actions %}
+<div class="head-actions">
+  <a class="btn btn--ghost btn--sm" href="{{ url_for('admin.content_list', type=subject_type) }}">სიაში დაბრუნება</a>
+  <a class="btn btn--primary btn--sm" href="{{ public_url }}" target="_blank" rel="noopener">საიტზე ნახვა ↗</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <h2>{{ rec.title }}{% if rec.year %} <span class="muted">({{ rec.year }})</span>{% endif %}</h2>
+  {% if rec.original_title %}<p class="muted">{{ rec.original_title }}</p>{% endif %}
+  <p class="muted">
+    ორიგინალი წყარო:
+    {% if source_url %}<code class="code">{{ source_url }}</code>{% else %}არ არის{% endif %}
+  </p>
+  <p class="muted">
+    ბექოფისიდან დაყენებული სურათი ყოველთვის ჯობნის ორიგინალს. ყოველდღიური იმპორტი მას ვერ გადააწერს,
+    რადგან ის ცალკე ინახება. წაშლისას საიტი ავტომატურად ბრუნდება ორიგინალ სურათზე.
+  </p>
+</section>
+
+{% for row in rows %}
+<section class="panel">
+  {{ image_slot(subject_type, subject_id, row.role, row.label, row.hint,
+                row.asset, row.url,
+                shape=('portrait' if row.role == 'poster' else 'wide'),
+                next=url_for('admin.content_images', subject_type=subject_type, subject_id=subject_id),
+                size=row.size, size_note=row.size_note,
+                current_url=(source_url if row.role in ('backdrop', 'hero') else ''),
+                current_label=('ახლანდელი სურათი (გარე წყაროდან)'
+                               if row.role in ('backdrop', 'hero')
+                               else 'ჯერ არ არსებობს: ბაზაში ვერტიკალური პოსტერი არცერთ ფილმს არ აქვს')) }}
+</section>
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.upload__input').forEach(function (input) {
+  input.addEventListener('change', function () {
+    var out = document.querySelector('.upload__name[data-for="' + input.id + '"]');
+    if (out) out.textContent = input.files.length ? input.files[0].name : '';
+  });
+});
+</script>
+{% endblock %}

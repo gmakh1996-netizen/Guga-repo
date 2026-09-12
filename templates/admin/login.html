@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>შესვლა · ბექოფისი</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='fonts/noto.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin/admin.css') }}?v=1">
+</head>
+<body class="login-page">
+  <form class="login" method="post" autocomplete="off">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <h1>ბექოფისი</h1>
+    <p class="login__hint">შესასვლელად გჭირდებათ ადმინის ანგარიში.</p>
+
+    {% if error %}<div class="flash flash--error">{{ error }}</div>{% endif %}
+
+    <label>მომხმარებელი
+      <input type="text" name="username" autocomplete="username" autofocus required>
+    </label>
+    <label>პაროლი
+      <input type="password" name="password" autocomplete="current-password" required>
+    </label>
+    <button type="submit" class="btn btn--primary btn--wide">შესვლა</button>
+  </form>
+</body>
+</html>

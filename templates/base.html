@@ -4,8 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{{ site_name }}{% endblock %}</title>
-  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}?v=cyan" sizes="any">
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}?v=cyan">
+  {# favicon: ბექოფისიდან ატვირთული ნაკრები, ან ძველი სტატიკური ფაილები #}
+  {% if brand.favicon %}
+    <link rel="icon" href="{{ brand.favicon.ico or brand.favicon.png32 }}" sizes="any">
+    {% if brand.favicon.png32 %}<link rel="icon" type="image/png" href="{{ brand.favicon.png32 }}">{% endif %}
+    {% if brand.favicon.apple %}<link rel="apple-touch-icon" href="{{ brand.favicon.apple }}">{% endif %}
+  {% else %}
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}?v=cyan" sizes="any">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}?v=cyan">
+  {% endif %}
+  <meta property="og:site_name" content="{{ site_name }}">
+  <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+  <meta property="og:type" content="website">
+  {% block og_extra %}{% endblock %}
+  {% if brand.og_default %}
+    <meta property="og:image" content="{{ brand.og_default.url }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="{{ brand.og_default.url }}">
+  {% endif %}
   <link rel="stylesheet" href="{{ url_for('static', filename='theme/web/plugins/swiper/swiper-bundle.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='theme/web/plugins/bootstrap/css/bootstrap.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='theme/web/plugins/select2/css/select2.min.css') }}">
@@ -15,6 +31,16 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='fonts/noto.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='fonts/bpg.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/ge-custom.css') }}">
+  {% if brand.page_background %}
+  {# საიტის ფონი ბექოფისიდან (/admin/branding) #}
+  <style>
+    body { background-image: url("{{ brand.page_background.url }}") !important;
+           background-size: cover; background-position: center center;
+           background-attachment: fixed; background-repeat: no-repeat; }
+  </style>
+  {% endif %}
+  {# ლოგოს სიმაღლე ბექოფისიდან. მხოლოდ დესკტოპზე: მობილურის 28px უცვლელი რჩება #}
+  <style>@media (min-width:1025px){.header-top__logo img{height:{{ site_settings.logo_height }}px !important}}</style>
 </head>
 <body>
 {% set path = request.path %}
@@ -25,7 +51,24 @@
         <div class="col-md-12">
           <div class="header-top">
             <div class="header-top__logo">
-              <a href="/"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="{{ site_name }}"></a>
+              {# ლოგოს წაშლა გატეხილ სურათს არ ნიშნავს: მის ადგილას საიტის სახელი ჩნდება #}
+              <a href="/">
+                {% if brand.logo %}
+                  <picture>
+                    {# მობილურის და მუქი ფონის ვარიანტები, თუ ბექოფისში ატვირთეს #}
+                    {% if brand.logo_mobile %}
+                      <source media="(max-width: 1024px)" srcset="{{ brand.logo_mobile.url }}">
+                    {% endif %}
+                    {% if brand.logo_dark %}
+                      <source media="(prefers-color-scheme: dark)" srcset="{{ brand.logo_dark.url }}">
+                    {% endif %}
+                    <img src="{{ brand.logo.url }}" alt="{{ site_settings.logo_alt or site_name }}"
+                         {% if brand.logo.width %}width="{{ brand.logo.width }}" height="{{ brand.logo.height }}"{% endif %}>
+                  </picture>
+                {% else %}
+                  <span class="header-top__logo-text">{{ site_name }}</span>
+                {% endif %}
+              </a>
             </div>
             {% include "_navbar.html" %}
             <button type="button" class="header-search-toggle" id="headerSearchToggle" aria-label="ძებნა">
@@ -49,11 +92,26 @@
   {% block content %}{% endblock %}
 </section>
 
+{% if brand.popup_ad and site_settings.popup_ad_enabled %}
 <div class="ge-popup-ad" id="adPopup">
   <button type="button" class="ge-popup-ad__close" id="adPopupClose" aria-label="დახურვა">&times;</button>
-  <img src="{{ url_for('static', filename='img/popup-ad.jpg') }}" alt="სარეკლამო ბანერი">
+  {% if site_settings.popup_ad_url %}
+    <a href="{{ site_settings.popup_ad_url }}" target="_blank" rel="noopener nofollow sponsored" style="display:block;width:100%;height:100%">
+      <img src="{{ brand.popup_ad.url }}" alt="{{ brand.popup_ad.alt }}">
+    </a>
+  {% else %}
+    <img src="{{ brand.popup_ad.url }}" alt="{{ brand.popup_ad.alt }}">
+  {% endif %}
 </div>
+{% endif %}
 
+<script>
+  window.GE_CFG = {
+    placeholderPoster: {{ brand.placeholder_poster|tojson }},
+    placeholderPerson: {{ brand.placeholder_person|tojson }},
+    brokenImageBehavior: {{ site_settings.broken_image_behavior|tojson }}
+  };
+</script>
 <script src="{{ url_for('static', filename='theme/web/js/int.js') }}"></script>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% block scripts %}{% endblock %}

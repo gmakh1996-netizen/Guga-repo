@@ -1,0 +1,75 @@
+{% extends "admin/base.html" %}
+{% from "admin/_imageslot.html" import image_slot with context %}
+{% block title %}ბრენდინგი{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <h2>საიტის მონაცემები</h2>
+  <form method="post" action="{{ url_for('admin.branding_settings') }}" class="form-grid">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label>საიტის სახელი
+      <input type="text" name="site_name" value="{{ settings.site_name }}" maxlength="60">
+      <small>გამოჩნდება ტაბში, ლოგოს alt-ში და მაშინ, როცა ლოგო წაშლილია.</small>
+    </label>
+    <label>ლოგოს სიმაღლე (px)
+      <input type="number" name="logo_height" value="{{ settings.logo_height }}" min="16" max="200">
+    </label>
+    <label>ლოგოს alt ტექსტი
+      <input type="text" name="logo_alt" value="{{ settings.logo_alt }}" maxlength="120"
+             placeholder="ცარიელია → საიტის სახელი">
+    </label>
+    <label>პოპაპ-ბანერის ბმული
+      <input type="url" name="popup_ad_url" value="{{ settings.popup_ad_url }}"
+             placeholder="https://...">
+      <small>ცარიელი ბმულის შემთხვევაში ბანერი უბრალოდ სურათია.</small>
+    </label>
+    <label>თუ სურათი არ ჩაიტვირთა
+      <select name="broken_image_behavior" class="sel" style="width:100%">
+        <option value="hide" {{ 'selected' if settings.broken_image_behavior == 'hide' }}>
+          ბარათი გაქრეს (დღევანდელი ქცევა)
+        </option>
+        <option value="placeholder" {{ 'selected' if settings.broken_image_behavior == 'placeholder' }}>
+          ჩამნაცვლებელი სურათი გამოჩნდეს
+        </option>
+      </select>
+      <small>„გაქრეს" ნიშნავს, რომ არასწორი მისამართის შემთხვევაში ფილმი ჩუმად ქრება გვერდიდან.</small>
+    </label>
+    <label class="check">
+      <input type="checkbox" name="popup_ad_enabled" {{ 'checked' if settings.popup_ad_enabled }}>
+      პოპაპ-ბანერი ჩართულია
+    </label>
+    <div class="form-grid__foot">
+      <button type="submit" class="btn btn--primary">შენახვა</button>
+    </div>
+  </form>
+</section>
+
+<section class="panel">
+  <h2>სურათები</h2>
+  <p class="muted">
+    ატვირთვისას ზომები ავტომატურად გენერირდება. წაშლა მხოლოდ მიბმას ხსნის, თვითონ ფაილი
+    მედია-ბიბლიოთეკაში რჩება.
+  </p>
+
+  <div class="roles roles--wide">
+    {% for row in rows %}
+      {{ image_slot('site', 0, row.role, row.label, row.hint, row.asset, row.url,
+                    shape=('square' if row.role in ('logo_light','logo_dark','logo_mobile','favicon') else 'wide'),
+                    next=url_for('admin.branding'), compact=true,
+                    size=row.size, size_note=row.size_note,
+                    current_url=row.current_url, current_label=row.current_label) }}
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.upload__input').forEach(function (input) {
+  input.addEventListener('change', function () {
+    var out = document.querySelector('.upload__name[data-for="' + input.id + '"]');
+    if (out) out.textContent = input.files.length ? input.files[0].name : '';
+  });
+});
+</script>
+{% endblock %}

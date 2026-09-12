@@ -1,0 +1,86 @@
+{% extends "admin/base.html" %}
+{% from "admin/_imageslot.html" import image_slot with context %}
+{% block title %}მსახიობები{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <form method="get" class="bar">
+    <input type="search" name="q" value="{{ q }}" placeholder="სახელით ძებნა" class="inp">
+    <select name="only" class="sel">
+      <option value="">ყველა</option>
+      <option value="missing" {{ 'selected' if only == 'missing' }}>უფოტო</option>
+      <option value="custom" {{ 'selected' if only == 'custom' }}>ბექოფისიდან დაყენებული</option>
+    </select>
+    <button type="submit" class="btn btn--ghost btn--sm">ფილტრი</button>
+    <span class="muted">ნაპოვნია {{ "{:,}".format(total).replace(",", " ") }}</span>
+  </form>
+</section>
+
+{% if rows %}
+<div class="people">
+  {% for row in rows %}
+  {% set p = row.person %}
+  <details class="person">
+    <summary>
+      <span class="person__face">
+        {% if row.url %}<img src="{{ row.url }}" alt="" loading="lazy">{% else %}<span>—</span>{% endif %}
+      </span>
+      <span class="person__name">
+        {{ p.name }}
+        {% if row.is_custom %}<span class="badge badge--ok">CMS</span>{% endif %}
+        {% if p.name_en %}<div class="muted">{{ p.name_en }}</div>{% endif %}
+      </span>
+    </summary>
+    <div class="person__body">
+      {{ image_slot('person', p.id, 'photo', 'ფოტო',
+                    'ვერტიკალური ან კვადრატული. საიტზე მრგვლად ჩანს.',
+                    row.asset, row.cms_url,
+                    shape='portrait', next=request.full_path, compact=true,
+                    size=photo_size, size_note=photo_size_note,
+                    current_url=(p.photo or ''),
+                    current_label='ახლანდელი ფოტო' if p.photo else 'ფოტო არ აქვს') }}
+
+      <form method="post" action="{{ url_for('admin.persons_save', person_id=p.id) }}">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ request.full_path }}">
+        <div class="rowform">
+          <label>ქართული სახელი
+            <input type="text" name="name" value="{{ p.name }}" maxlength="200" required>
+          </label>
+          <label>ინგლისური სახელი
+            <input type="text" name="name_en" value="{{ p.name_en or '' }}" maxlength="200">
+          </label>
+        </div>
+        <div class="rowform__foot">
+          <button type="submit" class="btn btn--primary btn--sm">შენახვა</button>
+        </div>
+      </form>
+    </div>
+  </details>
+  {% endfor %}
+</div>
+
+<nav class="pager">
+  {% if page > 1 %}
+    <a class="btn btn--ghost btn--sm" href="{{ url_for('admin.persons_list', page=page-1, q=q, only=only) }}">წინა</a>
+  {% endif %}
+  <span class="muted">გვერდი {{ page }}</span>
+  {% if has_more %}
+    <a class="btn btn--ghost btn--sm" href="{{ url_for('admin.persons_list', page=page+1, q=q, only=only) }}">შემდეგი</a>
+  {% endif %}
+</nav>
+{% else %}
+<section class="panel"><p class="muted">ამ ფილტრით არაფერი მოიძებნა.</p></section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.upload__input').forEach(function (input) {
+  input.addEventListener('change', function () {
+    var out = document.querySelector('.upload__name[data-for="' + input.id + '"]');
+    if (out) out.textContent = input.files.length ? input.files[0].name : '';
+  });
+});
+</script>
+{% endblock %}

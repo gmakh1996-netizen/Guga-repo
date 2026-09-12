@@ -2,17 +2,40 @@
 (function () {
   "use strict";
 
-  var PH = "/static/theme/web/img/poster.svg";  // გატეხილი/ცარიელი პოსტერის placeholder
+  // placeholder და გატეხილი სურათის ქცევა ბექოფისიდან მოდის (base.html → window.GE_CFG)
+  var CFG = window.GE_CFG || {};
+  var PH = CFG.placeholderPoster || "/static/theme/web/img/poster.svg";
 
-  // სურათის ჩატვირთვა თუ ჩავარდა → მთელი ბარათი ამოვშალოთ (placeholder-ის ნაცვლად),
+  // ნაგულისხმევად: სურათის ჩატვირთვა თუ ჩავარდა → მთელი ბარათი ამოვშალოთ,
   // რომ უფოტო ფილმი/სერიალი არსად გამოჩნდეს. სერვერიც ფილტრავს, ეს — უსაფრთხოების ბადე.
+  // ბექოფისიდან ეს ქცევა შეიძლება გადაირთოს placeholder-ზე, რომ CMS-ში შეყვანილი
+  // არასწორი მისამართის გამო ფილმი ჩუმად აღარ ქრებოდეს.
   window.geImgFail = function (img) {
+    if (CFG.brokenImageBehavior === "placeholder") {
+      if (img.getAttribute("src") !== PH) {
+        img.onerror = null;
+        img.src = PH;
+        img.classList.add("ge-ph");
+      }
+      return;
+    }
     var card = img.closest(".swiper-slide") || img.closest(".ge-cell") || img.closest(".movie-card");
     if (!card || !card.parentNode) { img.style.visibility = "hidden"; return; }
     var cont = card.closest(".swiper");
     card.parentNode.removeChild(card);
     if (cont && cont.swiper) { try { cont.swiper.update(); } catch (e) {} }
   };
+
+  // მსახიობის ფოტო ჩავარდა → ბექოფისში დაყენებული ჩამნაცვლებელი, თუ არა — ცარიელი წრე
+  window.gePersonFail = function (img) {
+    var ph = CFG.placeholderPerson || "";
+    img.onerror = null;
+    if (ph) { img.src = ph; return; }
+    img.outerHTML = '<div class="ge-person__ph"></div>';
+  };
+
+  // პატარა ესკიზები (ძებნის ჩამოსაშლელი) — უბრალოდ ჩამნაცვლებელზე გადავდივართ
+  window.geThumbFail = function (img) { img.onerror = null; img.src = PH; };
 
   var PLAY_SVG =
     '<svg viewBox="0 0 265.4 265.4" xmlns="http://www.w3.org/2000/svg"><path d="M194.2 123.7l-78.1-51.1c-1.9-1.3-4-1.9-6.1-1.9 -5.5 0-9.7 4.5-9.7 10.5v103.2c0 6 4.2 10.5 9.7 10.5 2.1 0 4.2-0.7 6.1-1.9l78.1-51.1c3.3-2.1 5.1-5.4 5.1-9C199.3 129.1 197.4 125.8 194.2 123.7z"></path></svg>';
@@ -67,7 +90,13 @@
     premiere: '<path d="M18 8a2 2 0 0 0 0-4 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0-4 0 2 2 0 0 0 0 4"/><path d="M10 22 9 8"/><path d="m14 22 1-14"/><path d="M20 8c.5 0 .9.4.8 1l-2.6 12c-.1.5-.7 1-1.2 1H7c-.6 0-1.1-.4-1.2-1L3.2 9c-.1-.6.3-1 .8-1Z"/>',
     top: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
   };
-  function iconSvg(name) {
+  // el გადმოგვეცემა, რომ რიგს ბექოფისიდან ატვირთული აიქონი ჰქონდეს
+  // (data-icon-img). თუ არა, ჩაშენებული SVG-ების ნაკრებიდან ავიღებთ.
+  function iconSvg(name, el) {
+    var custom = (el && el.dataset && el.dataset.iconImg) || "";
+    if (custom) {
+      return '<span class="ge-ico-badge"><img class="ge-ico-img" src="' + esc(custom) + '" alt=""></span>';
+    }
     if (!ICONS[name]) return "";
     return '<span class="ge-ico-badge"><svg class="ge-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">' + ICONS[name] + "</svg></span>";
   }
@@ -79,17 +108,32 @@
     var genre = el.dataset.genre || "";
     var excludeGenre = el.dataset.excludeGenre || "";
     var excludeIds = (usedIds && usedIds[type] && usedIds[type].size) ? Array.from(usedIds[type]).join(",") : "";
-    return api({ type: type, sort: sort, genre: genre, exclude_genre: excludeGenre, exclude_ids: excludeIds, per: 18, page: 1 }).then(function (data) {
+    // რიგის ფონი ბექოფისიდან (data-bg). თუ დაყენებულია, CSS-ში ჩაწერილ
+    // ანიმეს ფონებს გადაფარავს და ნებისმიერ რიგს ფონი შეიძლება ჰქონდეს.
+    var rowBg = (el.dataset.bg || "").replace(/['"\\]/g, encodeURIComponent);
+    // ბექოფისში ხელით შედგენილი (ან შეშაფლული) სია ყოველთვის ჯობნის ავტომატურს
+    var fixedIds = el.dataset.ids || "";
+    var query = fixedIds
+      ? { ids: fixedIds }
+      : { type: type, sort: sort, genre: genre, exclude_genre: excludeGenre,
+          exclude_ids: excludeIds, per: (+el.dataset.per || 18), page: 1 };
+    return api(query).then(function (data) {
       if (!data.items || !data.items.length) { el.remove(); return; }
       if (usedIds && usedIds[type]) { data.items.forEach(function (m) { usedIds[type].add(m.id); }); }
       var more = "/browse?type=" + type + "&sort=" + sort + (genre ? "&genre=" + genre : "");
       var isAnime = genre === "900000025";
-      var animeVariant = isAnime ? (type === "serial" ? " movies--abstract-bg-2" : " movies--abstract-bg") : "";
+      var animeVariant = (!rowBg && isAnime) ? (type === "serial" ? " movies--abstract-bg-2" : " movies--abstract-bg") : "";
+      if (rowBg) { animeVariant += " movies--has-bg"; }
+      var showBg = portrait || !!rowBg;
       el.innerHTML =
         '<section class="movies' + (portrait ? " movies--portrait" : "") + animeVariant + '">' +
-          (portrait ? '<div class="ge-prem-bg" id="premBg"></div><div class="ge-prem-shade"></div>' : "") +
+          (showBg
+            ? '<div class="ge-prem-bg" id="premBg"'
+              + (rowBg ? ' style="background-image:url(&quot;' + rowBg + '&quot;)"' : '')
+              + '></div><div class="ge-prem-shade"></div>'
+            : "") +
           '<div class="container"><div class="row"><div class="col-md-12">' +
-          '<div class="ge-row-head"><div class="ge-head-left">' + iconSvg(icon) +
+          '<div class="ge-row-head"><div class="ge-head-left">' + iconSvg(icon, el) +
           '<h2 class="ge-section-title">' + esc(title) + "</h2></div>" +
           '<a class="ge-more" href="' + more + '">ყველა →</a></div>' +
           '<div class="movies-slider"><div class="sbtns">' +
@@ -112,7 +156,10 @@
       // პრემიერა — ჰოვერზე ფონად დაჰოვერებული ფილმის backdrop
       // (ანიმეს რიგებზე კი — საკუთარი, ორიგინალური აბსტრაქტული ფონია CSS-ით, არა პოსტერი,
       // რადგან ანიმეს დაბალხარისხიანი პოსტერები დიდ ბექგრაუნდში დამახინჯებული ჩანდა)
-      if (portrait && !isAnime) {
+      //
+      // თუ ბექოფისიდან რიგს ფიქსირებული ფონი აქვს (rowBg), ჰოვერის ლოგიკა ითიშება:
+      // თორემ ატვირთული სურათი მაშინვე გადაიწერებოდა და ატვირთვა უშედეგო ჩანდა.
+      if (portrait && !isAnime && !rowBg) {
         var bgEl = el.querySelector(".ge-prem-bg");
         var slides = el.querySelectorAll(".swiper-slide[data-bg]");
         function setBg(u) { if (bgEl && u) bgEl.style.backgroundImage = "url('" + u + "')"; }
@@ -148,17 +195,28 @@
   function buildTopRow(el, usedIds) {
     var type = el.dataset.type, sort = el.dataset.sort, title = el.dataset.title, icon = el.dataset.icon;
     var excludeGenre = el.dataset.excludeGenre || "";
+    // ტოპ-9 რიგსაც იგივე ფონი აქვს ბექოფისიდან, რაც ჩვეულებრივს
+    var rowBg = (el.dataset.bg || "").replace(/['"\\]/g, encodeURIComponent);
     var excludeIds = (usedIds && usedIds[type] && usedIds[type].size) ? Array.from(usedIds[type]).join(",") : "";
-    return api({ type: type, sort: sort, exclude_genre: excludeGenre, exclude_ids: excludeIds, per: 9, page: 1 }).then(function (data) {
+    var fixedIds = el.dataset.ids || "";
+    var query = fixedIds
+      ? { ids: fixedIds }
+      : { type: type, sort: sort, exclude_genre: excludeGenre,
+          exclude_ids: excludeIds, per: 9, page: 1 };
+    return api(query).then(function (data) {
       if (!data.items || data.items.length < 2) { el.remove(); return; }
       if (usedIds && usedIds[type]) { data.items.forEach(function (m) { usedIds[type].add(m.id); }); }
       var more = "/browse?type=" + type + "&sort=" + sort;
       var feature = data.items[0];
       var rest = data.items.slice(1, 9);
       el.innerHTML =
-        '<section class="movies">' +
+        '<section class="movies' + (rowBg ? " movies--has-bg" : "") + '">' +
+          (rowBg
+            ? '<div class="ge-prem-bg" style="background-image:url(&quot;' + rowBg + '&quot;)"></div>'
+              + '<div class="ge-prem-shade"></div>'
+            : "") +
           '<div class="container"><div class="row"><div class="col-md-12">' +
-          '<div class="ge-row-head"><div class="ge-head-left">' + iconSvg(icon) +
+          '<div class="ge-row-head"><div class="ge-head-left">' + iconSvg(icon, el) +
           '<h2 class="ge-section-title">' + esc(title) + "</h2></div>" +
           '<a class="ge-more" href="' + more + '">ყველა →</a></div>' +
           '<div class="ge-top9">' +
@@ -186,7 +244,10 @@
       idx = i;
       var m = items[i];
       if (!m) return;
-      bg.style.backgroundImage = "url('" + m.poster + "')";
+      // hero-ს ცალკე სურათი (ბექოფისიდან), თუ არა — ბარათის სურათი.
+      // ბრჭყალები ეკრანირდება: მისამართი ახლა ადმინსაც შეაქვს, არა მხოლოდ სკრაპერს.
+      var heroSrc = String(m.hero || m.poster || "").replace(/['"\\]/g, encodeURIComponent);
+      bg.style.backgroundImage = "url('" + heroSrc + "')";
       title.textContent = m.title;
       genres.innerHTML = (m.genres || []).map(function (g) { return "<span>" + esc(g) + "</span>"; }).join("");
       imdb.textContent = m.rating ? "IMDb " + m.rating : "";
@@ -199,7 +260,7 @@
     }
 
     return api({ type: type, sort: el.dataset.sort || "popularity", exclude_genre: el.dataset.excludeGenre || "", per: 9, page: 1 }).then(function (data) {
-      items = (data.items || []).filter(function (m) { return m.poster; });
+      items = (data.items || []).filter(function (m) { return m.hero || m.poster; });
       if (!items.length) { el.style.display = "none"; return; }
       if (usedIds && usedIds[type]) { items.forEach(function (m) { usedIds[type].add(m.id); }); }
       thumbs.innerHTML = items.map(function (m, i) {
@@ -348,7 +409,7 @@
           if (!d.items || !d.items.length) { box.innerHTML = ""; box.classList.remove("open"); return; }
           box.innerHTML = d.items.map(function (m) {
             return '<a class="ac-item" href="' + esc(m.url) + '">' +
-              (m.poster ? '<img src="' + esc(m.poster) + '">' : "") +
+              '<img src="' + esc(m.poster || PH) + '" alt="" onerror="this.onerror=null;geThumbFail(this)">' +
               '<span class="ac-title">' + esc(m.title) + (m.year ? " (" + esc(m.year) + ")" : "") + "</span></a>";
           }).join("");
           box.classList.add("open");
@@ -390,8 +451,10 @@
     var sentinel = document.getElementById("personsSentinel");
     var st = { page: 1, hasMore: true, loading: false };
     function personCard(p) {
-      var img = p.photo
-        ? '<img src="' + esc(p.photo) + '" alt="' + esc(p.name) + '" loading="lazy" onerror="this.outerHTML=\'<div class=&quot;ge-person__ph&quot;></div>\'">'
+      // ფოტოს არარსებობისას ბექოფისში დაყენებული ჩამნაცვლებელი ჩნდება
+      var personPh = CFG.placeholderPerson || "";
+      var img = (p.photo || personPh)
+        ? '<img src="' + esc(p.photo || personPh) + '" alt="' + esc(p.name) + '" loading="lazy" onerror="this.onerror=null;gePersonFail(this)">'
         : '<div class="ge-person__ph"></div>';
       var en = p.name_en ? '<div class="ge-person__en">' + esc(p.name_en) + "</div>" : "";
       return '<div class="ge-cell"><div class="ge-person">' +
@@ -422,7 +485,7 @@
     if (!items || !items.length) { el.remove(); return; }
     el.innerHTML =
       '<section class="movies"><div class="container"><div class="row"><div class="col-md-12">' +
-        '<div class="ge-row-head"><div class="ge-head-left">' + iconSvg(icon) +
+        '<div class="ge-row-head"><div class="ge-head-left">' + iconSvg(icon, el) +
         '<h2 class="ge-section-title">' + esc(title) + "</h2></div>" +
         (moreHref ? '<a class="ge-more" href="' + moreHref + '">ყველა →</a>' : "") + "</div>" +
         '<div class="movies-slider"><div class="sbtns"><div class="prev-slide">‹</div><div class="next-slide">›</div></div>' +
@@ -470,7 +533,7 @@
       if (usedIds && usedIds.serial) { data.items.forEach(function (m) { usedIds.serial.add(m.id); }); }
       el.innerHTML =
         '<section class="movies"><div class="container"><div class="row"><div class="col-md-12">' +
-          '<div class="ge-row-head"><div class="ge-head-left">' + iconSvg(icon) +
+          '<div class="ge-row-head"><div class="ge-head-left">' + iconSvg(icon, el) +
           '<h2 class="ge-section-title">' + esc(title) + "</h2></div></div>" +
           '<div class="ge-ep-grid">' + data.items.map(episodeCard).join("") + "</div>" +
         "</div></div></div></section>";

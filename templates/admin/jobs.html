@@ -1,0 +1,117 @@
+{% extends "admin/base.html" %}
+{% block title %}ფონური ამოცანები{% endblock %}
+
+{% block content %}
+{% if plan %}
+<section class="panel">
+  <h2>სურათების ჩამოტანა</h2>
+  <p class="muted">
+    დღეს საიტის სურათები სხვისი სერვერიდან იტვირთება. ეს ამოცანა თითოეულის ასლს
+    ჩვენთან ინახავს. ბექოფისიდან ხელით დაყენებულ სურათებს არ ეხება, და თავიდან
+    გაშვებისას მხოლოდ დარჩენილს იღებს.
+  </p>
+
+  <div class="cards">
+    <div class="card"><span class="card__n">{{ "{:,}".format(plan.pending).replace(",", " ") }}</span><span>დარჩენილი</span></div>
+    <div class="card"><span class="card__n">{{ "{:,}".format(plan.already_owned).replace(",", " ") }}</span><span>უკვე ჩვენთანაა</span></div>
+    <div class="card"><span class="card__n">{{ "{:,}".format(plan.tmdb_ready).replace(",", " ") }}</span><span>TMDB-დან აიღება</span></div>
+    <div class="card"><span class="card__n">{{ "{:,}".format(plan.other).replace(",", " ") }}</span><span>ორიგინალი ჰოსტიდან</span></div>
+  </div>
+
+  {% if plan.hosts %}
+  <p class="muted">წყაროები:
+    {% for host, count in plan.hosts %}<span class="badge">{{ host }} · {{ count }}</span>{% endfor %}
+  </p>
+  {% endif %}
+
+  <div class="warnbox">
+    <b>სანამ სრულად გაუშვებთ:</b> ეს სურათებს სხვისი სერვერიდან ჩვენს საცავში გადმოიტანს.
+    ტექნიკურად ეს საიტს დამოუკიდებელს ხდის, მაგრამ hotlink-ზე სამართლებრივად უფრო მძიმეა.
+    სჯობს ჯერ მცირე რაოდენობით სცადოთ და ნახოთ, როგორ მუშაობს.
+  </div>
+
+  <form method="post" action="{{ url_for('admin.jobs_mirror') }}" class="bar">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label class="inline">რამდენი ჩანაწერი
+      <select name="limit" class="sel">
+        <option value="25">25 (სინჯი)</option>
+        <option value="200">200</option>
+        <option value="1000">1 000</option>
+        <option value="0">ყველა ({{ plan.pending }})</option>
+      </select>
+    </label>
+    <label class="check"><input type="checkbox" name="subject_types" value="movie" checked> ფილმები</label>
+    <label class="check"><input type="checkbox" name="subject_types" value="series" checked> სერიალები</label>
+    <button type="submit" class="btn btn--primary btn--sm" {{ 'disabled' if live }}>გაშვება</button>
+    {% if live %}<span class="muted">ჯერ დაასრულეთ მიმდინარე ამოცანა</span>{% endif %}
+  </form>
+</section>
+{% endif %}
+
+{% if live %}
+<section class="panel" id="livePanel" data-job="{{ live.id }}">
+  <h2>მიმდინარეობს: {{ kinds.get(live.kind, live.kind) }}</h2>
+  <div class="progress"><div class="progress__bar" id="pBar" style="width: {{ live.percent }}%"></div></div>
+  <p class="muted" id="pText">{{ live.done }} / {{ live.total }}</p>
+  <pre class="joblog" id="pLog">{{ live.log_text or '' }}</pre>
+  <form method="post" action="{{ url_for('admin.jobs_cancel', job_id=live.id) }}">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <button type="submit" class="btn btn--danger btn--sm">გაჩერება</button>
+  </form>
+</section>
+{% endif %}
+
+<section class="panel panel--flush">
+  <table class="tbl">
+    <thead><tr><th>#</th><th>ამოცანა</th><th>სტატუსი</th><th>შედეგი</th><th>დაიწყო</th></tr></thead>
+    <tbody>
+      {% for job in jobs %}
+      <tr>
+        <td class="muted">{{ job.id }}</td>
+        <td>{{ kinds.get(job.kind, job.kind) }}</td>
+        <td>
+          <span class="badge {{ 'badge--ok' if job.status == 'done' }}">{{ job.status }}</span>
+        </td>
+        <td class="muted">
+          {{ job.done or 0 }} ჩამოიტანა{% if job.failed %}, {{ job.failed }} ჩავარდა{% endif %}
+          {%- if job.skipped %}, {{ job.skipped }} გამოტოვდა{% endif %}
+          {%- if job.bytes_fetched %} · {{ '%.2f'|format((job.bytes_fetched or 0) / 1073741824) }} გბ{% endif %}
+        </td>
+        <td class="muted">{{ job.started_at.strftime('%d.%m %H:%M') if job.started_at else '—' }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="muted" style="padding:16px">ჯერ არცერთი ამოცანა არ გაშვებულა.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  var panel = document.getElementById('livePanel');
+  if (!panel) return;
+  var id = panel.dataset.job;
+  var bar = document.getElementById('pBar');
+  var text = document.getElementById('pText');
+  var log = document.getElementById('pLog');
+
+  function tick() {
+    fetch('/admin/jobs/' + id + '/status')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        bar.style.width = d.percent + '%';
+        text.textContent = d.done + ' / ' + d.total +
+          (d.failed ? ' · ჩავარდა ' + d.failed : '') +
+          (d.skipped ? ' · გამოტოვდა ' + d.skipped : '');
+        log.textContent = d.log || '';
+        log.scrollTop = log.scrollHeight;
+        if (d.live) { setTimeout(tick, 2000); } else { location.reload(); }
+      })
+      .catch(function () { setTimeout(tick, 5000); });
+  }
+  setTimeout(tick, 1500);
+})();
+</script>
+{% endblock %}

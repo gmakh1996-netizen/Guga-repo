@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+{% block title %}დაფა{% endblock %}
+
+{% block content %}
+{% if warnings %}
+  <div class="flashes">
+    {% for w in warnings %}<div class="flash flash--warn">{{ w }}</div>{% endfor %}
+  </div>
+{% endif %}
+
+<div class="cards">
+  <div class="card"><span class="card__n">{{ "{:,}".format(stats.movies).replace(",", " ") }}</span><span>ფილმი</span></div>
+  <div class="card"><span class="card__n">{{ "{:,}".format(stats.series).replace(",", " ") }}</span><span>სერიალი</span></div>
+  <div class="card"><span class="card__n">{{ "{:,}".format(stats.persons).replace(",", " ") }}</span><span>მსახიობი</span></div>
+  <div class="card"><span class="card__n">{{ stats.assets }}</span><span>მედია-ფაილი</span></div>
+  <div class="card"><span class="card__n">{{ stats.assets_bytes }}</span><span>საცავში</span></div>
+  <div class="card card--warn"><span class="card__n">{{ stats.broken_movies + stats.broken_series }}</span><span>უსურათო ჩანაწერი</span></div>
+</div>
+
+<section class="panel">
+  <h2>საცავი</h2>
+  <p class="muted">
+    რეჟიმი: <b>{{ stats.storage_backend }}</b>{% if stats.storage_free %}, თავისუფალი ადგილი: {{ stats.storage_free }}{% endif %}.
+  </p>
+  <p class="muted">
+    უსურათო ჩანაწერები საიტზე საერთოდ არ ჩანს: {{ stats.broken_movies }} ფილმი და
+    {{ stats.broken_series }} სერიალი. მათი გასწორება ფილმის რედაქტირების ეკრანიდან იქნება
+    შესაძლებელი (შემდეგი ეტაპი).
+  </p>
+</section>
+
+{% if missing_brand %}
+<section class="panel">
+  <h2>ბრენდინგი ჯერ არ არის აწყობილი</h2>
+  <p class="muted">შემდეგი ელემენტები ჯერ არ აგირჩევიათ:</p>
+  <ul class="list">
+    {% for spec in missing_brand %}<li>{{ spec.label }}</li>{% endfor %}
+  </ul>
+  <a class="btn btn--primary" href="{{ url_for('admin.branding') }}">ბრენდინგზე გადასვლა</a>
+</section>
+{% endif %}
+{% endblock %}

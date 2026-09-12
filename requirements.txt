@@ -4,3 +4,6 @@ python-dotenv==1.0.1
 requests==2.32.3
 APScheduler==3.10.4
 gunicorn==23.0.0
+Pillow==12.3.0
+# R2/S3 საცავის რეჟიმისთვის (MEDIA_BACKEND=r2) გახსენით ეს ხაზი:
+# boto3==1.40.47

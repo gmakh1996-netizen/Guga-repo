@@ -6,7 +6,8 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <div class="ge-hero" id="HeroSlider" data-type="movie" data-sort="hero_top" data-exclude-genre="900000025">
+          <div class="ge-hero" id="HeroSlider" data-type="movie" data-sort="hero_top"
+               data-exclude-genre="{{ site_settings.hero_exclude_genre or '' }}">
             <a class="ge-hero__featured" id="heroFeatured" href="#">
               <div class="ge-hero__bg" id="heroBg"></div>
               <div class="ge-hero__info">
@@ -25,17 +26,48 @@
     </div>
   </section>
 
+  {# რიგები ბექოფისიდან (/admin/home). სანამ ცხრილი ცარიელია, ქვემოთ ძველი
+     ჩაწერილი წყობა ირენდერება, ანუ მთავარი გვერდი არასდროს რჩება ცარიელი. #}
   <div id="rows">
-    <div class="cw-row" id="cwRow" data-title="განაგრძე ყურება" data-icon="resume"></div>
-    <div class="movies-row" data-title="ფილმები ქართულად"          data-icon="film"    data-type="movie"  data-sort="trending" data-exclude-genre="900000025"></div>
-    <div class="movies-row" data-title="ტოპ ფილმები"               data-icon="top"     data-type="movie"  data-sort="weekly_top" data-layout="top9" data-exclude-genre="900000025"></div>
-    <div class="movies-row" data-title="სერიალები ქართულად"        data-icon="tv"      data-type="serial" data-sort="recent" data-exclude-genre="900000025"></div>
-    <div class="movies-row" data-title="ტოპ სერიალები"             data-icon="top"     data-type="serial" data-sort="weekly_top" data-layout="top9" data-exclude-genre="900000025"></div>
-    <div class="movies-row" data-title="პრემიერა"                 data-icon="premiere" data-type="movie" data-sort="recent" data-portrait="1" data-exclude-genre="900000025"></div>
-    <div class="movies-row" data-title="ახალი დამატებული ფილმები"   data-icon="newfilm" data-type="movie"  data-sort="recent" data-exclude-genre="900000025"></div>
-    <div class="movies-row" data-title="ახალი დამატებული ეპიზოდები" data-icon="newtv"   data-type="serial" data-sort="recent" data-exclude-genre="900000025"></div>
-    <div class="movies-row" data-title="ანიმე სერიალები ქართულად" data-icon="sparkles" data-type="serial" data-sort="recent" data-portrait="1" data-genre="900000025"></div>
-    <div id="recentEpisodesRow" data-title="ბოლოს დამატებული ეპიზოდები" data-icon="newtv"></div>
-    <div class="movies-row" data-title="ანიმეები ქართულად"        data-icon="sparkles" data-type="movie" data-sort="recent" data-portrait="1" data-genre="900000025"></div>
+    {% if home_rows %}
+      {% for row in home_rows %}
+        {% if row.kind == 'continue' %}
+          <div class="cw-row" id="cwRow" data-title="{{ row.title }}" data-icon="{{ row.icon }}"></div>
+        {% elif row.kind == 'recent_episodes' %}
+          <div id="recentEpisodesRow" data-title="{{ row.title }}" data-icon="{{ row.icon }}"></div>
+        {% else %}
+          <div class="movies-row"
+               data-title="{{ row.title }}"
+               data-icon="{{ row.icon or 'film' }}"
+               data-type="{{ row.media_type }}"
+               data-sort="{{ row.sort_mode }}"
+               data-per="{{ row.item_limit or 18 }}"
+               {% set row_bg = art(row, 'row_bg', 'w1400') %}
+               {% if row_bg %}data-bg="{{ row_bg }}"{% endif %}
+               {% set row_icon = art(row, 'icon', 'h64') %}
+               {% if row_icon %}data-icon-img="{{ row_icon }}"{% endif %}
+               {# ხელით შედგენილი ან შეშაფლული სია, თუ რიგს აქვს #}
+               {%- if row.items %} data-ids="
+                 {%- for it in row.items %}{{ it.media_type }}:{{ it.item_id }}
+                 {%- if not loop.last %},{% endif %}{% endfor %}"{% endif %}
+               {% if row.layout == 'top9' %}data-layout="top9"{% endif %}
+               {% if row.layout == 'portrait' %}data-portrait="1"{% endif %}
+               {% if row.genre_id %}data-genre="{{ row.genre_id }}"{% endif %}
+               {% if row.exclude_genre_id %}data-exclude-genre="{{ row.exclude_genre_id }}"{% endif %}></div>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <div class="cw-row" id="cwRow" data-title="განაგრძე ყურება" data-icon="resume"></div>
+      <div class="movies-row" data-title="ფილმები ქართულად"          data-icon="film"    data-type="movie"  data-sort="trending" data-exclude-genre="900000025"></div>
+      <div class="movies-row" data-title="ტოპ ფილმები"               data-icon="top"     data-type="movie"  data-sort="weekly_top" data-layout="top9" data-exclude-genre="900000025"></div>
+      <div class="movies-row" data-title="სერიალები ქართულად"        data-icon="tv"      data-type="serial" data-sort="recent" data-exclude-genre="900000025"></div>
+      <div class="movies-row" data-title="ტოპ სერიალები"             data-icon="top"     data-type="serial" data-sort="weekly_top" data-layout="top9" data-exclude-genre="900000025"></div>
+      <div class="movies-row" data-title="პრემიერა"                 data-icon="premiere" data-type="movie" data-sort="recent" data-portrait="1" data-exclude-genre="900000025"></div>
+      <div class="movies-row" data-title="ახალი დამატებული ფილმები"   data-icon="newfilm" data-type="movie"  data-sort="recent" data-exclude-genre="900000025"></div>
+      <div class="movies-row" data-title="ახალი დამატებული ეპიზოდები" data-icon="newtv"   data-type="serial" data-sort="recent" data-exclude-genre="900000025"></div>
+      <div class="movies-row" data-title="ანიმე სერიალები ქართულად" data-icon="sparkles" data-type="serial" data-sort="recent" data-portrait="1" data-genre="900000025"></div>
+      <div id="recentEpisodesRow" data-title="ბოლოს დამატებული ეპიზოდები" data-icon="newtv"></div>
+      <div class="movies-row" data-title="ანიმეები ქართულად"        data-icon="sparkles" data-type="movie" data-sort="recent" data-portrait="1" data-genre="900000025"></div>
+    {% endif %}
   </div>
 {% endblock %}
