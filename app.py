@@ -1001,9 +1001,17 @@ def register_cli(app):
                 continue
             with open(path, "rb") as f:
                 data = f.read()
+            # source_url-ს იმიტომ ვინახავთ, რომ ახალ სერვერზე (სადაც media/
+            # ჯერ ცარიელია) /m/ ამ სტატიკურ ფაილზე გადაამისამართოს და
+            # ლოგო არ გატყდეს volume-ის დაყენებამდე
+            static_url = "/" + rel
             asset = media_service.store_bytes(
-                data, filename=os.path.basename(path), profile=profile, source="seed",
+                data, filename=os.path.basename(path), profile=profile,
+                source="seed", source_url=static_url,
             )
+            if not asset.source_url:          # უკვე არსებულ ჩანაწერს ვასწორებთ
+                asset.source_url = static_url
+                db.session.commit()
             media_service.bind(media_service.SITE, 0, role, asset)
             click.echo("%s ← %s (%d ვარიანტი)" % (role, rel, len(asset.variants)))
         click.echo("მზადაა. გახსენით /admin/branding.")
