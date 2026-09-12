@@ -51,9 +51,16 @@
 
     {% if is_episodic %}
     <div class="mf-episodes" id="mfEpisodes">
-      {% for s in streams %}
-        <button class="mf-episode {{ 'active' if loop.first }}" data-src="{{ s.url }}">{{ s.episode }}</button>
-      {% endfor %}
+      <label class="mf-episodes__label" for="episodeSelect">ეპიზოდი</label>
+      <div class="mf-episodes__select-wrap">
+        <select class="mf-episodes__select" id="episodeSelect">
+          {% for s in streams %}
+            <option value="{{ s.url }}" {{ 'selected' if loop.first }}>ეპიზოდი {{ s.episode }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="button" class="mf-episodes__nav" id="episodePrev" aria-label="წინა ეპიზოდი">‹</button>
+      <button type="button" class="mf-episodes__nav" id="episodeNext" aria-label="შემდეგი ეპიზოდი">›</button>
     </div>
     {% endif %}
 
@@ -153,14 +160,22 @@
         this.classList.add('active');
       });
     });
-    document.querySelectorAll('.mf-episode').forEach(function (b) {
-      b.addEventListener('click', function () {
-        if (frame) frame.src = this.dataset.src;
-        document.querySelectorAll('.mf-episode').forEach(function (x) { x.classList.remove('active'); });
-        this.classList.add('active');
-        this.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    var epSelect = document.getElementById('episodeSelect');
+    if (epSelect) {
+      epSelect.addEventListener('change', function () {
+        if (frame) frame.src = this.value;
       });
-    });
+      var epPrev = document.getElementById('episodePrev');
+      var epNext = document.getElementById('episodeNext');
+      function stepEpisode(dir) {
+        var i = epSelect.selectedIndex + dir;
+        if (i < 0 || i >= epSelect.options.length) return;
+        epSelect.selectedIndex = i;
+        epSelect.dispatchEvent(new Event('change'));
+      }
+      if (epPrev) epPrev.addEventListener('click', function () { stepEpisode(-1); });
+      if (epNext) epNext.addEventListener('click', function () { stepEpisode(1); });
+    }
     var tb = document.querySelector('.mf-trailer');
     if (tb) tb.addEventListener('click', function () { if (frame) frame.src = this.dataset.trailer; });
 
